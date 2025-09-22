@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(mkdir:*)",
+      "Bash(npx create-react-app:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss init:*)",
+      "Bash(node_modules.bintailwindcss init -p)",
+      "Bash(node_modules/.bin/tailwindcss:*)",
+      "Read(//c/Users/nikit/Desktop/**)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(set PORT=3001)",
+      "Bash(npm start)",
+      "Bash(taskkill:*)",
+      "WebSearch",
+      "Bash(npm uninstall:*)",
+      "Bash(dir:*)",
+      "Bash(npm run build:*)",
+      "Bash(git init:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
