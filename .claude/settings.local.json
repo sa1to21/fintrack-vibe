@@ -18,7 +18,12 @@
       "Bash(npm uninstall:*)",
       "Bash(dir:*)",
       "Bash(npm run build:*)",
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "Bash(echo $PWD)",
+      "Bash(export:*)",
+      "Bash(bundle install:*)",
+      "Bash(bundle exec rails:*)",
+      "Bash(gem uninstall:*)"
     ],
     "deny": [],
     "ask": []
