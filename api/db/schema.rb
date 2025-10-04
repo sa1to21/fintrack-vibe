@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_04_110443) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_04_210043) do
 # Could not dump table "accounts" because of following StandardError
 #   Unknown type 'uuid' for column 'id'
 
@@ -23,9 +23,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_04_110443) do
 #   Unknown type 'uuid' for column 'id'
 
 
-# Could not dump table "users" because of following StandardError
-#   Unknown type '' for column 'id'
-
+  create_table "users", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email"
+    t.string "password_digest"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "telegram_id"
+    t.string "username"
+    t.string "language_code"
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["telegram_id"], name: "index_users_on_telegram_id", unique: true
+  end
 
   add_foreign_key "accounts", "users"
   add_foreign_key "transactions", "accounts"

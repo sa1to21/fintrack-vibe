@@ -1,7 +1,5 @@
 module Api
   class TelegramAuthController < ApplicationController
-    skip_before_action :authenticate_request
-
     # POST /api/auth/telegram
     def authenticate
       telegram_data = validate_telegram_data(params[:init_data])
