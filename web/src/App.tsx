@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { SDKProvider } from '@telegram-apps/sdk-react';
 import { TelegramAuthProvider, useTelegramAuth } from "./contexts/TelegramAuthContext";
 import { WelcomePage } from "./components/WelcomePage";
 import { DashboardPage } from "./components/DashboardPage";
@@ -219,10 +218,8 @@ function AppContent() {
 
 export default function App() {
   return (
-    <SDKProvider acceptCustomStyles>
-      <TelegramAuthProvider>
-        <AppContent />
-      </TelegramAuthProvider>
-    </SDKProvider>
+    <TelegramAuthProvider>
+      <AppContent />
+    </TelegramAuthProvider>
   );
 }
