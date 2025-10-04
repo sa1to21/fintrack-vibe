@@ -5,6 +5,8 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  # VITE_API_URL будет настроена в Netlify UI в разделе Environment Variables
+  # Для локального тестирования используйте .env.local
 
 [[redirects]]
   from = "/*"

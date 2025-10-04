@@ -4,6 +4,9 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   namespace :api do
+    # Telegram Authentication (без версионирования для упрощения)
+    post '/auth/telegram', to: 'telegram_auth#authenticate'
+
     namespace :v1 do
       # Authentication
       post '/auth/login', to: 'auth#login'

@@ -23,7 +23,9 @@
       "Bash(export:*)",
       "Bash(bundle install:*)",
       "Bash(bundle exec rails:*)",
-      "Bash(gem uninstall:*)"
+      "Bash(gem uninstall:*)",
+      "Bash(sqlite3:*)",
+      "Read(//c/fintrack-api/**)"
     ],
     "deny": [],
     "ask": []

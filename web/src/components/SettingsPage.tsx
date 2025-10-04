@@ -1,25 +1,38 @@
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Switch } from "./ui/switch";
-import { 
-  User, 
-  Bell, 
-  Shield, 
-  Palette, 
-  Download, 
-  Upload, 
-  Trash2, 
+import {
+  User,
+  Bell,
+  Shield,
+  Palette,
+  Download,
+  Upload,
+  Trash2,
   Tags,
   DollarSign,
   ChevronRight,
   Moon,
   Globe,
   Settings as SettingsIcon,
-  Sparkles
+  Sparkles,
+  LogOut
 } from "lucide-react";
 import { motion } from "motion/react";
+import { useTelegramAuth } from "../contexts/TelegramAuthContext";
+import { toast } from "sonner";
 
 export function SettingsPage() {
+  const { logout, user, telegramUser } = useTelegramAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success('Вы вышли из аккаунта');
+    } catch (error) {
+      toast.error('Ошибка выхода');
+    }
+  };
   const settingsGroups = [
     {
       title: "Аккаунт",
@@ -245,8 +258,50 @@ export function SettingsPage() {
           </motion.div>
         ))}
 
+        {/* Logout Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.45 }}
+        >
+          <Card className="border-slate-200 bg-white shadow-sm hover:shadow-lg transition-all duration-300">
+            <CardContent className="p-4">
+              <motion.div
+                className="flex items-center justify-between cursor-pointer"
+                whileHover={{ x: 4 }}
+                transition={{ duration: 0.2 }}
+                onClick={handleLogout}
+              >
+                <div className="flex items-center gap-3">
+                  <motion.div
+                    className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 shadow-sm"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <LogOut className="w-5 h-5 text-slate-600" />
+                  </motion.div>
+                  <div>
+                    <h3 className="font-medium text-slate-800">Выйти</h3>
+                    <p className="text-sm text-slate-600">
+                      {user?.email || 'Выйти из аккаунта'}
+                    </p>
+                  </div>
+                </div>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button variant="outline" size="sm" className="border-slate-300 text-slate-600 hover:bg-slate-50">
+                    Выйти
+                  </Button>
+                </motion.div>
+              </motion.div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
         {/* Dangerous Actions */}
-        <motion.div 
+        <motion.div
           className="space-y-3"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
