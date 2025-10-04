@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { retrieveLaunchParams, initData } from '@telegram-apps/sdk-react';
 import api from '../lib/api';
 
 export interface TelegramUser {
@@ -36,6 +35,29 @@ interface TelegramAuthContextType {
 
 const TelegramAuthContext = createContext<TelegramAuthContextType | undefined>(undefined);
 
+// Объявляем глобальный интерфейс для Telegram WebApp
+declare global {
+  interface Window {
+    Telegram?: {
+      WebApp?: {
+        initData: string;
+        initDataUnsafe: {
+          user?: {
+            id: number;
+            first_name: string;
+            last_name?: string;
+            username?: string;
+            language_code?: string;
+            photo_url?: string;
+          };
+        };
+        ready: () => void;
+        expand: () => void;
+      };
+    };
+  }
+}
+
 export function TelegramAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [telegramUser, setTelegramUser] = useState<TelegramUser | null>(null);
@@ -46,27 +68,32 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initializeTelegram = async () => {
       try {
-        // Попытка получить данные из Telegram
-        const launchParams = retrieveLaunchParams();
-        const data = initData();
+        // Проверяем наличие Telegram WebApp API
+        const tg = window.Telegram?.WebApp;
 
-        if (data && data.user) {
-          // Сохраняем данные пользователя Telegram
+        if (tg && tg.initDataUnsafe?.user) {
+          // Инициализируем Telegram WebApp
+          tg.ready();
+          tg.expand();
+
           const tgUser: TelegramUser = {
-            id: data.user.id,
-            first_name: data.user.firstName,
-            last_name: data.user.lastName,
-            username: data.user.username,
-            language_code: data.user.languageCode,
-            photo_url: data.user.photoUrl,
+            id: tg.initDataUnsafe.user.id,
+            first_name: tg.initDataUnsafe.user.first_name,
+            last_name: tg.initDataUnsafe.user.last_name,
+            username: tg.initDataUnsafe.user.username,
+            language_code: tg.initDataUnsafe.user.language_code,
+            photo_url: tg.initDataUnsafe.user.photo_url,
           };
 
           setTelegramUser(tgUser);
           setIsTelegramReady(true);
 
+          console.log('Telegram user:', tgUser);
+          console.log('Authenticating with backend...');
+
           // Отправляем данные на backend для авторизации/регистрации
           const response = await api.post<AuthResponse>('/auth/telegram', {
-            init_data: launchParams.initDataRaw,
+            init_data: tg.initData,
             user: {
               telegram_id: tgUser.id,
               first_name: tgUser.first_name,
@@ -76,6 +103,8 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
             },
           });
 
+          console.log('Auth response:', response.data);
+
           // Сохраняем токен
           if (response.data.token) {
             localStorage.setItem('authToken', response.data.token);
@@ -83,9 +112,11 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
             setUser(response.data.user);
           }
         } else {
-          // Если не в Telegram (локальная разработка), пробуем загрузить из localStorage
+          // Если не в Telegram - проверяем localStorage для локальной разработки
+          console.warn('Not in Telegram WebApp environment');
           const savedUser = localStorage.getItem('user');
           if (savedUser) {
+            console.log('Loading saved user from localStorage');
             setUser(JSON.parse(savedUser));
           } else {
             setError('Приложение должно быть открыто в Telegram');
@@ -93,6 +124,7 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
         }
       } catch (err: any) {
         console.error('Telegram initialization error:', err);
+        console.error('Error details:', err.response?.data);
 
         // Fallback для локальной разработки
         const savedUser = localStorage.getItem('user');
@@ -114,7 +146,6 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
     setUser(null);
-    // В Telegram Mini App обычно не делают logout, но оставляем для гибкости
   };
 
   return (
