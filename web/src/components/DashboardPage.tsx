@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingDown, Calendar, Filter, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
+import accountsService from "../services/accounts.service";
 
 interface Account {
   id: string;
@@ -35,31 +36,45 @@ interface DashboardPageProps {
 
 export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTransactions, onTransactionClick, transactions }: DashboardPageProps) {
   const [showBalance, setShowBalance] = useState(true);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [loadingAccounts, setLoadingAccounts] = useState(true);
 
-  // Mock data - в реальном приложении это будет из Supabase
-  const [accounts] = useState<Account[]>([
-    {
-      id: "1",
-      name: "Основной счёт",
-      balance: 25430,
-      icon: Wallet,
-      color: "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700"
-    },
-    {
-      id: "2", 
-      name: "Накопления",
-      balance: 8750,
-      icon: PiggyBank,
-      color: "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700"
-    },
-    {
-      id: "3",
-      name: "Карта",
-      balance: 12340,
-      icon: CreditCard,
-      color: "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700"
-    }
-  ]);
+  // Загрузить счета из API
+  useEffect(() => {
+    const loadAccounts = async () => {
+      try {
+        const data = await accountsService.getAll();
+        // Преобразуем в формат компонента с иконками
+        const accountsWithIcons = data.map(acc => ({
+          id: acc.id,
+          name: acc.name,
+          balance: acc.balance,
+          icon: acc.account_type === 'savings' ? PiggyBank :
+                acc.account_type === 'card' ? CreditCard : Wallet,
+          color: acc.account_type === 'savings' ? "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700" :
+                 acc.account_type === 'card' ? "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700" :
+                 "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700"
+        }));
+        setAccounts(accountsWithIcons);
+      } catch (error) {
+        console.error('Failed to load accounts:', error);
+        // Fallback на моки при ошибке
+        setAccounts([
+          {
+            id: "1",
+            name: "Основной счёт",
+            balance: 0,
+            icon: Wallet,
+            color: "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700"
+          }
+        ]);
+      } finally {
+        setLoadingAccounts(false);
+      }
+    };
+
+    loadAccounts();
+  }, []);
 
   // Recent transactions (показываем только последние 3) - memoized for performance
   const recentTransactions = useMemo(() => {

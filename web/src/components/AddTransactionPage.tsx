@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
@@ -8,6 +8,8 @@ import { Textarea } from "./ui/textarea";
 import { ArrowLeft, Plus, Minus, Home, Car, ShoppingBag, Coffee, Zap, Heart, Wallet, CreditCard, PiggyBank, DollarSign, Briefcase, TrendingUp, Gift } from "lucide-react";
 import { toast } from "sonner@2.0.3";
 import { motion } from "motion/react";
+import categoriesService, { Category } from "../services/categories.service";
+import transactionsService from "../services/transactions.service";
 
 interface Transaction {
   id: string;
@@ -56,15 +58,46 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
   const [category, setCategory] = useState('');
   const [account, setAccount] = useState('');
   const [description, setDescription] = useState('');
+  const [apiCategories, setApiCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Memoize category list for performance
+  // Загрузить категории из API
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const categories = await categoriesService.getAll();
+        setApiCategories(categories);
+      } catch (error) {
+        console.error('Failed to load categories:', error);
+        toast.error('Не удалось загрузить категории');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCategories();
+  }, []);
+
+  // Fallback на хардкод категории если API не ответил
+  const expenseCategoriesFromAPI = useMemo(() => {
+    return apiCategories.filter(cat => cat.category_type === 'expense');
+  }, [apiCategories]);
+
+  const incomeCategoriesFromAPI = useMemo(() => {
+    return apiCategories.filter(cat => cat.category_type === 'income');
+  }, [apiCategories]);
+
+  // Используем API категории если есть, иначе fallback
   const currentCategories = useMemo(() => {
+    if (apiCategories.length > 0) {
+      return type === 'expense' ? expenseCategoriesFromAPI : incomeCategoriesFromAPI;
+    }
     return type === 'expense' ? expenseCategories : incomeCategories;
-  }, [type]);
+  }, [type, apiCategories, expenseCategoriesFromAPI, incomeCategoriesFromAPI]);
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!amount || !category || !account) {
       toast.error("Заполните все обязательные поля");
       return;
@@ -73,34 +106,50 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
     const currentTime = new Date();
     const currentDate = currentTime.toISOString().split('T')[0];
     const currentTimeStr = currentTime.toTimeString().slice(0, 5);
-    
-    const categoryName = currentCategories
-      .find(cat => cat.id === category)?.name || '';
 
-    const transaction = {
-      type: type as 'income' | 'expense',
-      amount: parseFloat(amount),
-      category,
-      categoryName,
-      accountId: account,
-      description,
-      date: currentDate,
-      time: currentTimeStr
-    };
+    try {
+      // Создать транзакцию через API
+      const newTransaction = await transactionsService.create({
+        amount: parseFloat(amount),
+        transaction_type: type,
+        description: description || '',
+        date: currentDate,
+        account_id: account,
+        category_id: category
+      });
 
-    onAddTransaction(transaction);
-    toast.success(`${type === 'income' ? 'Доход' : 'Расход'} добавлен!`);
-    
-    // Reset form
-    setAmount('');
-    setCategory('');
-    setAccount('');
-    setDescription('');
-    
-    // Navigate back after successful submission
-    setTimeout(() => {
-      onBack();
-    }, 1500);
+      // Также вызвать старый callback для обновления UI (пока моки используются)
+      const categoryName = currentCategories
+        .find(cat => cat.id === category)?.name || '';
+
+      const transaction = {
+        type: type as 'income' | 'expense',
+        amount: parseFloat(amount),
+        category,
+        categoryName,
+        accountId: account,
+        description,
+        date: currentDate,
+        time: currentTimeStr
+      };
+
+      onAddTransaction(transaction);
+      toast.success(`${type === 'income' ? 'Доход' : 'Расход'} добавлен!`);
+
+      // Reset form
+      setAmount('');
+      setCategory('');
+      setAccount('');
+      setDescription('');
+
+      // Navigate back after successful submission
+      setTimeout(() => {
+        onBack();
+      }, 1500);
+    } catch (error) {
+      console.error('Failed to create transaction:', error);
+      toast.error('Не удалось сохранить транзакцию');
+    }
   }, [amount, category, account, type, description, currentCategories, onAddTransaction, onBack]);
 
   return (
@@ -247,7 +296,10 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
                   {currentCategories.map((cat, index) => {
-                    const Icon = cat.icon;
+                    // Если категория из API - используем эмодзи icon, иначе Lucide Icon
+                    const isApiCategory = 'icon' in cat && typeof cat.icon === 'string';
+                    const Icon = !isApiCategory && 'icon' in cat ? cat.icon : null;
+
                     return (
                       <motion.button
                         key={cat.id}
@@ -264,14 +316,18 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                         whileHover={{ scale: 1.03, y: -1 }}
                         whileTap={{ scale: 0.97 }}
                       >
-                        <motion.div 
+                        <motion.div
                           className="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 bg-gradient-to-br from-blue-100 to-indigo-200 shadow-sm"
                           whileHover={{ scale: 1.1 }}
                           transition={{ duration: 0.2 }}
                         >
-                          <Icon className={`w-4 h-4 ${
-                            type === 'expense' ? 'text-red-600' : 'text-emerald-600'
-                          }`} />
+                          {isApiCategory ? (
+                            <span className="text-lg">{cat.icon}</span>
+                          ) : Icon ? (
+                            <Icon className={`w-4 h-4 ${
+                              type === 'expense' ? 'text-red-600' : 'text-emerald-600'
+                            }`} />
+                          ) : null}
                         </motion.div>
                         <span className="text-xs text-slate-700">{cat.name}</span>
                       </motion.button>

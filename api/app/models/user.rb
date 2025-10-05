@@ -2,6 +2,7 @@ class User < ApplicationRecord
   has_secure_password validations: false
   has_many :accounts, dependent: :destroy
   has_many :transactions, through: :accounts
+  has_many :categories, dependent: :destroy
 
   # Валидация для обычных пользователей (email/password)
   validates :email, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_nil: true

@@ -29,6 +29,10 @@ module Api
           render json: { error: user.errors.full_messages }, status: :unprocessable_entity
           return
         end
+
+        # Создать дефолтный счет и категории для нового пользователя
+        create_default_account(user)
+        create_default_categories(user)
       else
         # Обновить данные существующего пользователя
         user.update(
@@ -69,6 +73,36 @@ module Api
         exp: 30.days.from_now.to_i
       }
       JWT.encode(payload, Rails.application.credentials.secret_key_base)
+    end
+
+    def create_default_account(user)
+      user.accounts.create!(
+        name: 'Основной счёт',
+        balance: 0,
+        currency: 'RUB',
+        account_type: 'cash'
+      )
+    end
+
+    def create_default_categories(user)
+      default_categories = [
+        # Расходы
+        { name: 'Продукты', category_type: 'expense', icon: '🛒', color: '#FF6B6B' },
+        { name: 'Транспорт', category_type: 'expense', icon: '🚗', color: '#4ECDC4' },
+        { name: 'Кафе и рестораны', category_type: 'expense', icon: '🍔', color: '#FFD93D' },
+        { name: 'Развлечения', category_type: 'expense', icon: '🎮', color: '#A8E6CF' },
+        { name: 'Здоровье', category_type: 'expense', icon: '💊', color: '#FF8B94' },
+        { name: 'Покупки', category_type: 'expense', icon: '🛍️', color: '#C7CEEA' },
+
+        # Доходы
+        { name: 'Зарплата', category_type: 'income', icon: '💰', color: '#95E1D3' },
+        { name: 'Фриланс', category_type: 'income', icon: '💼', color: '#6C5CE7' },
+        { name: 'Подарки', category_type: 'income', icon: '🎁', color: '#FDCB6E' }
+      ]
+
+      default_categories.each do |category_attrs|
+        user.categories.create!(category_attrs)
+      end
     end
   end
 end
