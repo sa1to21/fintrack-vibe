@@ -71,16 +71,21 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
           categoriesService.getAll(),
           accountsService.getAll()
         ]);
+
+        console.log('Loaded categories:', categories);
+        console.log('Loaded accounts:', accounts);
+
         setApiCategories(categories);
         setApiAccounts(accounts);
 
         // Автоматически выбрать первый счет, если есть
         if (accounts.length > 0) {
-          setAccount(accounts[0].id);
+          setAccount(accounts[0].id.toString());
         }
       } catch (error) {
         console.error('Failed to load data:', error);
-        toast.error('Не удалось загрузить данные');
+        toast.error('Не удалось загрузить данные. Используются данные по умолчанию.');
+        // Fallback - оставляем loading = false, чтобы показать хардкод категории
       } finally {
         setLoading(false);
       }
