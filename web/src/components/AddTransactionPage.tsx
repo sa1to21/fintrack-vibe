@@ -10,6 +10,7 @@ import { toast } from "sonner@2.0.3";
 import { motion } from "motion/react";
 import categoriesService, { Category } from "../services/categories.service";
 import transactionsService from "../services/transactions.service";
+import accountsService, { Account } from "../services/accounts.service";
 
 interface Transaction {
   id: string;
@@ -59,23 +60,33 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
   const [account, setAccount] = useState('');
   const [description, setDescription] = useState('');
   const [apiCategories, setApiCategories] = useState<Category[]>([]);
+  const [apiAccounts, setApiAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Загрузить категории из API
+  // Загрузить категории и счета из API
   useEffect(() => {
-    const loadCategories = async () => {
+    const loadData = async () => {
       try {
-        const categories = await categoriesService.getAll();
+        const [categories, accounts] = await Promise.all([
+          categoriesService.getAll(),
+          accountsService.getAll()
+        ]);
         setApiCategories(categories);
+        setApiAccounts(accounts);
+
+        // Автоматически выбрать первый счет, если есть
+        if (accounts.length > 0 && !account) {
+          setAccount(accounts[0].id);
+        }
       } catch (error) {
-        console.error('Failed to load categories:', error);
-        toast.error('Не удалось загрузить категории');
+        console.error('Failed to load data:', error);
+        toast.error('Не удалось загрузить данные');
       } finally {
         setLoading(false);
       }
     };
 
-    loadCategories();
+    loadData();
   }, []);
 
   // Fallback на хардкод категории если API не ответил
@@ -109,11 +120,12 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
 
     try {
       // Создать транзакцию через API
-      const newTransaction = await transactionsService.create({
+      const newTransaction = await transactionsService.create(account, {
         amount: parseFloat(amount),
         transaction_type: type,
         description: description || '',
         date: currentDate,
+        time: currentTimeStr,
         account_id: account,
         category_id: category
       });
@@ -350,8 +362,8 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                       <SelectValue placeholder="Выберите счёт" />
                     </SelectTrigger>
                     <SelectContent>
-                      {accounts.map((acc) => {
-                        const Icon = acc.icon;
+                      {(apiAccounts.length > 0 ? apiAccounts : accounts).map((acc) => {
+                        const Icon = 'icon' in acc ? acc.icon : Wallet;
                         return (
                           <SelectItem key={acc.id} value={acc.id}>
                             <div className="flex items-center gap-2">

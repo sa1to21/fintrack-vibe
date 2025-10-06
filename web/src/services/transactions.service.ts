@@ -29,6 +29,7 @@ export interface CreateTransactionData {
   transaction_type: 'income' | 'expense';
   description: string;
   date: string;
+  time?: string;
   account_id: string;
   category_id: string;
 }
@@ -58,8 +59,8 @@ export interface TransactionStats {
 }
 
 class TransactionsService {
-  async getAll(filters?: TransactionFilters): Promise<Transaction[]> {
-    const response = await api.get('/transactions', { params: filters });
+  async getAll(accountId: string, filters?: TransactionFilters): Promise<Transaction[]> {
+    const response = await api.get(`/accounts/${accountId}/transactions`, { params: filters });
     return response.data;
   }
 
@@ -68,8 +69,8 @@ class TransactionsService {
     return response.data;
   }
 
-  async create(data: CreateTransactionData): Promise<Transaction> {
-    const response = await api.post('/transactions', { transaction: data });
+  async create(accountId: string, data: CreateTransactionData): Promise<Transaction> {
+    const response = await api.post(`/accounts/${accountId}/transactions`, { transaction: data });
     return response.data;
   }
 

@@ -10,18 +10,45 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_04_210043) do
-# Could not dump table "accounts" because of following StandardError
-#   Unknown type 'uuid' for column 'id'
+ActiveRecord::Schema[8.0].define(version: 2025_10_06_104910) do
+  create_table "accounts", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "account_type", null: false
+    t.decimal "balance", precision: 10, scale: 2, default: "0.0"
+    t.string "currency", default: "RUB"
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_accounts_on_user_id"
+  end
 
+  create_table "categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "category_type", null: false
+    t.string "icon"
+    t.string "color"
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "name"], name: "index_categories_on_user_id_and_name", unique: true
+    t.index ["user_id"], name: "index_categories_on_user_id"
+  end
 
-# Could not dump table "categories" because of following StandardError
-#   Unknown type 'uuid' for column 'id'
-
-
-# Could not dump table "transactions" because of following StandardError
-#   Unknown type 'uuid' for column 'id'
-
+  create_table "transactions", force: :cascade do |t|
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.string "transaction_type", null: false
+    t.text "description"
+    t.date "date", null: false
+    t.time "time"
+    t.integer "account_id", null: false
+    t.integer "category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "date"], name: "index_transactions_on_account_id_and_date"
+    t.index ["account_id"], name: "index_transactions_on_account_id"
+    t.index ["category_id", "transaction_type"], name: "index_transactions_on_category_id_and_transaction_type"
+    t.index ["category_id"], name: "index_transactions_on_category_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "name", null: false
@@ -37,6 +64,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_04_210043) do
   end
 
   add_foreign_key "accounts", "users"
+  add_foreign_key "categories", "users"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "categories"
 end

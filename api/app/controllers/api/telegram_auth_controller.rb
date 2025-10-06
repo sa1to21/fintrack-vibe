@@ -9,7 +9,8 @@ module Api
         return
       end
 
-      user_params = params[:user]
+      # Поддерживаем оба формата: params[:user] и прямые параметры
+      user_params = params[:user] || params
       telegram_id = user_params[:telegram_id]
 
       # Найти или создать пользователя
