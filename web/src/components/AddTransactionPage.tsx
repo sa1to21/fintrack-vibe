@@ -75,17 +75,26 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
         console.log('Loaded categories:', categories);
         console.log('Loaded accounts:', accounts);
 
-        setApiCategories(categories);
-        setApiAccounts(accounts);
+        // Проверяем что данные - массивы
+        if (Array.isArray(categories)) {
+          setApiCategories(categories);
+        } else {
+          console.error('Categories is not an array:', categories);
+        }
 
-        // Автоматически выбрать первый счет, если есть
-        if (accounts.length > 0) {
+        if (Array.isArray(accounts) && accounts.length > 0) {
+          setApiAccounts(accounts);
           setAccount(accounts[0].id.toString());
+        } else {
+          console.error('Accounts is not an array or empty:', accounts);
+          // Используем первый хардкод счет
+          setAccount('1');
         }
       } catch (error) {
         console.error('Failed to load data:', error);
         toast.error('Не удалось загрузить данные. Используются данные по умолчанию.');
-        // Fallback - оставляем loading = false, чтобы показать хардкод категории
+        // Fallback - используем хардкод данные
+        setAccount('1');
       } finally {
         setLoading(false);
       }
