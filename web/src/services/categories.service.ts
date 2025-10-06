@@ -1,12 +1,12 @@
 import api from '../lib/api';
 
 export interface Category {
-  id: string;
+  id: string | number;
   name: string;
   category_type: 'income' | 'expense';
   color: string;
   icon: string;
-  user_id: string;
+  user_id?: string | number;
   created_at: string;
   updated_at: string;
 }

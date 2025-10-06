@@ -75,7 +75,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
         setApiAccounts(accounts);
 
         // Автоматически выбрать первый счет, если есть
-        if (accounts.length > 0 && !account) {
+        if (accounts.length > 0) {
           setAccount(accounts[0].id);
         }
       } catch (error) {
@@ -87,6 +87,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
     };
 
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fallback на хардкод категории если API не ответил
@@ -132,7 +133,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
 
       // Также вызвать старый callback для обновления UI (пока моки используются)
       const categoryName = currentCategories
-        .find(cat => cat.id === category)?.name || '';
+        .find(cat => String(cat.id) === category)?.name || '';
 
       const transaction = {
         type: type as 'income' | 'expense',
@@ -311,17 +312,18 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                     // Если категория из API - используем эмодзи icon, иначе Lucide Icon
                     const isApiCategory = 'icon' in cat && typeof cat.icon === 'string';
                     const Icon = !isApiCategory && 'icon' in cat ? cat.icon : null;
+                    const categoryId = String(cat.id);
 
                     return (
                       <motion.button
-                        key={cat.id}
+                        key={categoryId}
                         type="button"
                         className={`p-3 rounded-lg border text-center transition-all duration-200 ${
-                          category === cat.id
+                          category === categoryId
                             ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
                             : 'border-blue-200 hover:border-blue-400 hover:bg-blue-50/30'
                         }`}
-                        onClick={() => setCategory(cat.id)}
+                        onClick={() => setCategory(categoryId)}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.2, delay: 0.4 + index * 0.02 }}
