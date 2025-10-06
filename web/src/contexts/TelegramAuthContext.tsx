@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import api from '../lib/api';
+import { authApi } from '../lib/api';
 
 export interface TelegramUser {
   id: number;
@@ -143,7 +143,7 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
           console.log('[TelegramAuth] Authenticating with backend...');
 
           // Отправляем данные на backend для авторизации/регистрации
-          const response = await api.post<AuthResponse>('/auth/telegram', {
+          const response = await authApi.post<AuthResponse>('/auth/telegram', {
             init_data: tg.initData,
             user: {
               telegram_id: tgUser.id,

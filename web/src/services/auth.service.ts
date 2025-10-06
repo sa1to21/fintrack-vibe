@@ -1,4 +1,4 @@
-import api from '../lib/api';
+import { authApi } from '../lib/api';
 
 export interface RegisterData {
   email: string;
@@ -25,7 +25,7 @@ export interface AuthResponse {
 
 class AuthService {
   async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await api.post('/auth/register', { user: data });
+    const response = await authApi.post('/auth/register', { user: data });
     if (response.data.token) {
       localStorage.setItem('authToken', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -34,7 +34,7 @@ class AuthService {
   }
 
   async login(data: LoginData): Promise<AuthResponse> {
-    const response = await api.post('/auth/login', { user: data });
+    const response = await authApi.post('/auth/login', { user: data });
     if (response.data.token) {
       localStorage.setItem('authToken', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -44,7 +44,7 @@ class AuthService {
 
   async logout(): Promise<void> {
     try {
-      await api.delete('/auth/logout');
+      await authApi.delete('/auth/logout');
     } finally {
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
