@@ -113,13 +113,10 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
     return apiCategories.filter(cat => cat.category_type === 'income');
   }, [apiCategories]);
 
-  // Используем API категории если есть, иначе fallback
+  // Используем только API категории (без fallback на хардкод)
   const currentCategories = useMemo(() => {
-    if (apiCategories.length > 0) {
-      return type === 'expense' ? expenseCategoriesFromAPI : incomeCategoriesFromAPI;
-    }
-    return type === 'expense' ? expenseCategories : incomeCategories;
-  }, [type, apiCategories, expenseCategoriesFromAPI, incomeCategoriesFromAPI]);
+    return type === 'expense' ? expenseCategoriesFromAPI : incomeCategoriesFromAPI;
+  }, [type, expenseCategoriesFromAPI, incomeCategoriesFromAPI]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,6 +183,22 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-slate-600">Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Если категории не загрузились - показываем ошибку
+  if (apiCategories.length === 0) {
+    return (
+      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <div className="text-red-600 text-5xl mb-4">⚠️</div>
+          <h2 className="text-xl font-semibold text-slate-800 mb-2">Не удалось загрузить категории</h2>
+          <p className="text-slate-600 mb-4">Проверьте подключение к интернету и попробуйте снова</p>
+          <Button onClick={() => window.location.reload()} className="bg-blue-600 hover:bg-blue-700">
+            Обновить страницу
+          </Button>
         </div>
       </div>
     );
