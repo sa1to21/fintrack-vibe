@@ -146,14 +146,13 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
     const currentTimeStr = currentTime.toTimeString().slice(0, 5);
 
     try {
-      // Создать транзакцию через API
+      // Создать транзакцию через API (account_id передается в URL, не в теле)
       const newTransaction = await transactionsService.create(account, {
         amount: parseFloat(amount),
         transaction_type: type,
         description: description || '',
         date: currentDate,
         time: currentTimeStr,
-        account_id: parseInt(account),
         category_id: parseInt(category)
       });
 

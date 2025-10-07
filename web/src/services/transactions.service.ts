@@ -30,8 +30,8 @@ export interface CreateTransactionData {
   description: string;
   date: string;
   time?: string;
-  account_id: string | number;
   category_id: string | number;
+  account_id?: string | number; // Опционально, т.к. передается в URL
 }
 
 export interface UpdateTransactionData {
