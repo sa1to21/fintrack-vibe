@@ -67,40 +67,55 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
   useEffect(() => {
     const loadData = async () => {
       try {
+        console.log('[AddTransaction] Starting data load...');
+        console.log('[AddTransaction] Auth token:', localStorage.getItem('authToken') ? 'exists' : 'missing');
+
         const [categories, accounts] = await Promise.all([
           categoriesService.getAll(),
           accountsService.getAll()
         ]);
 
-        console.log('Loaded categories:', categories);
-        console.log('Loaded accounts:', accounts);
+        console.log('[AddTransaction] Loaded categories:', categories);
+        console.log('[AddTransaction] Loaded accounts:', accounts);
 
         // Проверяем что данные - массивы
-        if (Array.isArray(categories)) {
+        if (Array.isArray(categories) && categories.length > 0) {
           setApiCategories(categories);
+          console.log('[AddTransaction] Categories set successfully');
         } else {
-          console.error('Categories is not an array:', categories);
+          console.error('[AddTransaction] Categories is not an array or empty:', categories);
+          toast.error('Не удалось загрузить категории. Попробуйте перезапустить приложение.');
         }
 
         if (Array.isArray(accounts) && accounts.length > 0) {
           setApiAccounts(accounts);
           setAccount(accounts[0].id.toString());
+          console.log('[AddTransaction] Accounts set successfully, default:', accounts[0].id);
         } else {
-          console.error('Accounts is not an array or empty:', accounts);
-          // Используем первый хардкод счет
-          setAccount('1');
+          console.error('[AddTransaction] Accounts is not an array or empty:', accounts);
+          toast.error('Не удалось загрузить счета. Попробуйте перезапустить приложение.');
         }
-      } catch (error) {
-        console.error('Failed to load data:', error);
-        toast.error('Не удалось загрузить данные. Используются данные по умолчанию.');
-        // Fallback - используем хардкод данные
-        setAccount('1');
+      } catch (error: any) {
+        console.error('[AddTransaction] Failed to load data:', error);
+        console.error('[AddTransaction] Error response:', error.response);
+        console.error('[AddTransaction] Error message:', error.message);
+
+        if (error.response?.status === 401) {
+          toast.error('Ошибка авторизации. Перезапустите приложение.');
+        } else {
+          toast.error('Не удалось загрузить данные. Проверьте подключение к интернету.');
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    loadData();
+    // Небольшая задержка чтобы токен успел сохраниться
+    const timer = setTimeout(() => {
+      loadData();
+    }, 500);
+
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
