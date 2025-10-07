@@ -153,8 +153,8 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
         description: description || '',
         date: currentDate,
         time: currentTimeStr,
-        account_id: account,
-        category_id: category
+        account_id: parseInt(account),
+        category_id: parseInt(category)
       });
 
       // Также вызвать старый callback для обновления UI (пока моки используются)
@@ -421,7 +421,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                       {(apiAccounts.length > 0 ? apiAccounts : accounts).map((acc) => {
                         const Icon = 'icon' in acc ? acc.icon : Wallet;
                         return (
-                          <SelectItem key={acc.id} value={acc.id}>
+                          <SelectItem key={acc.id} value={String(acc.id)}>
                             <div className="flex items-center gap-2">
                               <Icon className="w-4 h-4 text-blue-600" />
                               <span>{acc.name}</span>

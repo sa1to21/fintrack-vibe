@@ -30,8 +30,8 @@ export interface CreateTransactionData {
   description: string;
   date: string;
   time?: string;
-  account_id: string;
-  category_id: string;
+  account_id: string | number;
+  category_id: string | number;
 }
 
 export interface UpdateTransactionData {
