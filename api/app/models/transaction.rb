@@ -4,7 +4,6 @@ class Transaction < ApplicationRecord
 
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :transaction_type, presence: true, inclusion: { in: %w[income expense] }
-  validates :description, presence: true
   validates :date, presence: true
   validates :time, presence: true
 
