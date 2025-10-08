@@ -81,7 +81,7 @@ export function DateRangePicker({
           </span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="center">
+      <PopoverContent className="w-auto p-0 max-h-[80vh] overflow-auto" align="center">
         <div className="p-4">
           {!showCalendar ? (
             // Показываем только кнопки периодов
