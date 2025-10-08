@@ -247,33 +247,23 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           </motion.div>
 
           {/* Accounts - Horizontal Scroll */}
-          <motion.div
-            className="flex gap-3 overflow-x-auto overflow-y-visible pb-3 pt-1 -mx-4 px-4 scrollbar-hide snap-x snap-mandatory"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
+          <div
+            className="flex gap-3 overflow-x-auto pb-3 pt-1 -mx-4 px-4 scrollbar-hide"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
+              WebkitOverflowScrolling: 'touch'
             }}
           >
             {accounts.map((account, index) => {
               const Icon = account.icon;
               return (
-                <motion.div
+                <div
                   key={account.id}
-                  className="min-w-[160px] flex-shrink-0 snap-start"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3, delay: 0.3 + index * 0.05 }}
-                  whileHover={{
-                    scale: 1.02,
-                    y: -2,
-                    transition: { duration: 0.2 }
-                  }}
-                  whileTap={{ scale: 0.98 }}
+                  className="flex-shrink-0"
+                  style={{ width: '160px' }}
                 >
-                  <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl w-full">
+                  <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl h-full">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${account.color}`}>
@@ -283,21 +273,15 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                           {account.name}
                         </span>
                       </div>
-                      <motion.p
-                        className="text-white font-medium"
-                        key={showBalance ? account.balance : 'hidden'}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                      >
+                      <p className="text-white font-medium">
                         {showBalance ? formatCurrency(account.balance) : "• • •"}
-                      </motion.p>
+                      </p>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </div>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </motion.div>
 
