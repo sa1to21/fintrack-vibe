@@ -4,14 +4,15 @@ import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Badge } from "./ui/badge";
+import { DateRangePicker } from "./DateRangePicker";
 import accountsService from "../services/accounts.service";
 import transactionsService, { Transaction as APITransaction } from "../services/transactions.service";
 import { Loader2 } from "lucide-react";
-import { 
-  ArrowLeft, 
-  Search, 
-  Filter, 
-  TrendingUp, 
+import {
+  ArrowLeft,
+  Search,
+  Filter,
+  TrendingUp,
   TrendingDown,
   Calendar,
   Wallet,
@@ -73,7 +74,11 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<'all' | 'income' | 'expense'>('all');
   const [selectedAccount, setSelectedAccount] = useState<string>('all');
-  const [selectedMonth, setSelectedMonth] = useState<string>('all');
+  const [selectedPeriod, setSelectedPeriod] = useState('month');
+  const [customRange, setCustomRange] = useState<{
+    from: Date | undefined;
+    to: Date | undefined;
+  }>({ from: undefined, to: undefined });
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -153,17 +158,54 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
     });
   };
 
+  // Вычисление диапазона дат на основе выбранного периода
+  const getDateRange = () => {
+    const now = new Date();
+    let from: Date;
+    let to: Date = now;
+
+    switch (selectedPeriod) {
+      case 'week':
+        from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+        break;
+      case 'month':
+        from = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      case '3months':
+        from = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+        break;
+      case 'year':
+        from = new Date(now.getFullYear(), 0, 1);
+        break;
+      case 'custom':
+        if (customRange.from && customRange.to) {
+          return { from: customRange.from, to: customRange.to };
+        }
+        from = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      default:
+        from = new Date(now.getFullYear(), now.getMonth(), 1);
+    }
+
+    return { from, to };
+  };
+
   // Memoized filtering and grouping for performance
   const { filteredTransactions, groupedTransactions, sortedDates, totalIncome, totalExpenses } = useMemo(() => {
+    const dateRange = getDateRange();
+
     // Фильтрация операций
     const filtered = allTransactions.filter(transaction => {
       const matchesSearch = transaction.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            transaction.categoryName.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesType = selectedType === 'all' || transaction.type === selectedType;
       const matchesAccount = selectedAccount === 'all' || transaction.accountId === selectedAccount;
-      const matchesMonth = selectedMonth === 'all' || transaction.date.startsWith(`2025-${selectedMonth}`);
-      
-      return matchesSearch && matchesType && matchesAccount && matchesMonth;
+
+      // Фильтр по дате
+      const transactionDate = new Date(transaction.date);
+      const matchesDate = transactionDate >= dateRange.from && transactionDate <= dateRange.to;
+
+      return matchesSearch && matchesType && matchesAccount && matchesDate;
     });
 
     // Группировка по дням
@@ -195,7 +237,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
       totalIncome: income,
       totalExpenses: expenses
     };
-  }, [allTransactions, searchQuery, selectedType, selectedAccount, selectedMonth]);
+  }, [allTransactions, searchQuery, selectedType, selectedAccount, selectedPeriod, customRange]);
 
   if (loading) {
     return (
@@ -332,17 +374,12 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
             </Select>
           </div>
 
-          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-            <SelectTrigger className="border-blue-200 focus:border-blue-400 bg-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Все месяцы</SelectItem>
-              <SelectItem value="01">Январь 2025</SelectItem>
-              <SelectItem value="12">Декабрь 2024</SelectItem>
-              <SelectItem value="11">Ноябрь 2024</SelectItem>
-            </SelectContent>
-          </Select>
+          <DateRangePicker
+            selectedPeriod={selectedPeriod}
+            onPeriodChange={setSelectedPeriod}
+            customRange={customRange}
+            onCustomRangeChange={setCustomRange}
+          />
         </motion.div>
 
         {/* Results count */}
