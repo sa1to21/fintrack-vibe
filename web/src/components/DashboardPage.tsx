@@ -171,7 +171,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
     <div className="min-h-full bg-background">
       {/* Header */}
       <motion.div
-        className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 px-4 py-6 pb-8 relative overflow-hidden"
+        className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 px-4 py-6 relative overflow-hidden"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
@@ -246,24 +246,32 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             </div>
           </motion.div>
 
-          {/* Accounts - Horizontal Scroll */}
-          <div
-            className="flex gap-3 overflow-x-auto pb-3 pt-1 -mx-4 px-4 scrollbar-hide"
-            style={{
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-              WebkitOverflowScrolling: 'touch'
+          {/* Accounts Grid */}
+          <motion.div
+            className="grid grid-cols-2 gap-3"
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
             }}
+            initial="hidden"
+            animate="show"
           >
             {accounts.map((account, index) => {
               const Icon = account.icon;
               return (
-                <div
+                <motion.div
                   key={account.id}
-                  className="flex-shrink-0"
-                  style={{ width: '160px' }}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    show: { opacity: 1, y: 0 }
+                  }}
                 >
-                  <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl h-full">
+                  <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${account.color}`}>
@@ -278,10 +286,10 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                       </p>
                     </CardContent>
                   </Card>
-                </div>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </motion.div>
 
