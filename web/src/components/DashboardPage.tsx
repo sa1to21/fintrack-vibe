@@ -419,7 +419,12 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-medium text-foreground">Последние операции</h2>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200">
+              <Button
+                onClick={onViewAllTransactions}
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+              >
                 <Filter className="w-4 h-4 mr-1" />
                 Все
               </Button>
