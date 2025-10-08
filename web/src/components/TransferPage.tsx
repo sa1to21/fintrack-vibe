@@ -16,10 +16,15 @@ interface TransferPageProps {
   onSuccess: () => void;
 }
 
-const iconMap: Record<string, typeof Wallet> = {
-  wallet: Wallet,
-  credit_card: CreditCard,
-  piggy_bank: PiggyBank,
+const getAccountIcon = (accountType: string) => {
+  switch (accountType) {
+    case 'savings':
+      return PiggyBank;
+    case 'card':
+      return CreditCard;
+    default:
+      return Wallet;
+  }
 };
 
 export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
@@ -194,7 +199,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                   </SelectTrigger>
                   <SelectContent>
                     {accounts.map((account) => {
-                      const Icon = iconMap[account.account_type] || Wallet;
+                      const Icon = getAccountIcon(account.account_type);
                       return (
                         <SelectItem key={account.id} value={String(account.id)}>
                           <div className="flex items-center justify-between w-full gap-4">
@@ -219,7 +224,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
               </div>
 
               {/* Arrow Icon */}
-              <div className="flex justify-center">
+              <div className="flex justify-center -my-3">
                 <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                   <ArrowRightLeft className="w-5 h-5 text-blue-600" />
                 </div>
@@ -236,7 +241,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                     {accounts
                       .filter(acc => String(acc.id) !== fromAccountId)
                       .map((account) => {
-                        const Icon = iconMap[account.account_type] || Wallet;
+                        const Icon = getAccountIcon(account.account_type);
                         return (
                           <SelectItem key={account.id} value={String(account.id)}>
                             <div className="flex items-center justify-between w-full gap-4">
