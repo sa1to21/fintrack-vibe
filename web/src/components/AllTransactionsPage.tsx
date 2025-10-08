@@ -1,9 +1,12 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Badge } from "./ui/badge";
+import accountsService from "../services/accounts.service";
+import transactionsService, { Transaction as APITransaction } from "../services/transactions.service";
+import { Loader2 } from "lucide-react";
 import { 
   ArrowLeft, 
   Search, 
@@ -44,11 +47,12 @@ interface AllTransactionsPageProps {
   onTransactionClick: (transaction: Transaction) => void;
 }
 
-const accounts = [
-  { id: "1", name: "Основной счёт", icon: Wallet },
-  { id: "2", name: "Накопления", icon: PiggyBank },
-  { id: "3", name: "Карта", icon: CreditCard },
-];
+interface Account {
+  id: string;
+  name: string;
+  balance: number;
+  icon: typeof Wallet;
+}
 
 const categoryIcons: { [key: string]: typeof Coffee } = {
   food: Coffee,
@@ -70,120 +74,59 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
   const [selectedType, setSelectedType] = useState<'all' | 'income' | 'expense'>('all');
   const [selectedAccount, setSelectedAccount] = useState<string>('all');
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data - расширенный список операций
-  const [allTransactions] = useState<Transaction[]>([
-    {
-      id: "1",
-      type: "expense",
-      amount: 350,
-      category: "food",
-      categoryName: "Еда",
-      description: "Покупки в супермаркете",
-      accountId: "1",
-      date: "2025-01-20",
-      time: "14:30"
-    },
-    {
-      id: "2",
-      type: "income",
-      amount: 5000,
-      category: "freelance",
-      categoryName: "Фриланс",
-      description: "Оплата за проект",
-      accountId: "1",
-      date: "2025-01-19",
-      time: "10:15"
-    },
-    {
-      id: "3",
-      type: "expense",
-      amount: 1200,
-      category: "transport",
-      categoryName: "Транспорт",
-      description: "Заправка автомобиля",
-      accountId: "3",
-      date: "2025-01-18",
-      time: "18:45"
-    },
-    {
-      id: "4",
-      type: "expense",
-      amount: 2500,
-      category: "shopping",
-      categoryName: "Покупки",
-      description: "Одежда и обувь",
-      accountId: "1",
-      date: "2025-01-17",
-      time: "16:20"
-    },
-    {
-      id: "5",
-      type: "income",
-      amount: 45000,
-      category: "salary",
-      categoryName: "Зарплата",
-      description: "Зарплата за январь",
-      accountId: "1",
-      date: "2025-01-15",
-      time: "09:00"
-    },
-    {
-      id: "6",
-      type: "expense",
-      amount: 850,
-      category: "utilities",
-      categoryName: "Коммуналка",
-      description: "Оплата за свет и газ",
-      accountId: "1",
-      date: "2025-01-14",
-      time: "12:30"
-    },
-    {
-      id: "7",
-      type: "expense",
-      amount: 1500,
-      category: "health",
-      categoryName: "Здоровье",
-      description: "Визит к врачу и лекарства",
-      accountId: "2",
-      date: "2025-01-12",
-      time: "11:45"
-    },
-    {
-      id: "8",
-      type: "income",
-      amount: 3000,
-      category: "gift",
-      categoryName: "Подарок",
-      description: "Подарок от родителей",
-      accountId: "2",
-      date: "2025-01-10",
-      time: "15:30"
-    },
-    {
-      id: "9",
-      type: "expense",
-      amount: 680,
-      category: "food",
-      categoryName: "Еда",
-      description: "Ужин в ресторане",
-      accountId: "3",
-      date: "2025-01-08",
-      time: "19:00"
-    },
-    {
-      id: "10",
-      type: "expense",
-      amount: 450,
-      category: "transport",
-      categoryName: "Транспорт",
-      description: "Такси и метро",
-      accountId: "3",
-      date: "2025-01-05",
-      time: "08:15"
-    }
-  ]);
+  // Загрузка счетов и транзакций из API
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+
+        // Загружаем счета
+        const accountsData = await accountsService.getAll();
+        const accountsWithIcons = accountsData.map(acc => ({
+          id: acc.id,
+          name: acc.name,
+          balance: parseFloat(acc.balance.toString()),
+          icon: acc.account_type === 'savings' ? PiggyBank :
+                acc.account_type === 'card' ? CreditCard : Wallet
+        }));
+        setAccounts(accountsWithIcons);
+
+        // Загружаем транзакции со всех счетов
+        const allTransactionsPromises = accountsData.map(acc =>
+          transactionsService.getAll(acc.id)
+        );
+        const transactionsArrays = await Promise.all(allTransactionsPromises);
+        const allTransactionsData = transactionsArrays.flat();
+
+        // Преобразуем в формат компонента
+        const formattedTransactions: Transaction[] = allTransactionsData.map(t => ({
+          id: t.id,
+          amount: parseFloat(t.amount.toString()),
+          type: t.transaction_type,
+          category: t.category_id,
+          categoryName: t.category?.name || 'Без категории',
+          description: t.description || '',
+          accountId: t.account_id,
+          date: t.date,
+          time: t.time || new Date(t.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+        }));
+
+        setAllTransactions(formattedTransactions);
+      } catch (error) {
+        console.error('Failed to load data:', error);
+        setAccounts([]);
+        setAllTransactions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ru-RU', {
@@ -244,6 +187,17 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
       totalExpenses: expenses
     };
   }, [allTransactions, searchQuery, selectedType, selectedAccount, selectedMonth]);
+
+  if (loading) {
+    return (
+      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
+          <p className="text-slate-600">Загрузка операций...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">

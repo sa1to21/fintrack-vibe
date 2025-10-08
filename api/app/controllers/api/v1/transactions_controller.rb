@@ -14,6 +14,17 @@ class Api::V1::TransactionsController < Api::V1::BaseController
   def create
     transaction = @account.transactions.build(transaction_params)
 
+    # Проверка баланса для расходных транзакций
+    if transaction.transaction_type == 'expense'
+      new_balance = @account.balance - transaction.amount
+      if new_balance < 0
+        return render json: {
+          error: 'Недостаточно средств',
+          details: ['Баланс счета не может быть отрицательным']
+        }, status: :unprocessable_entity
+      end
+    end
+
     if transaction.save
       render json: transaction, serializer: TransactionSerializer, status: :created
     else
@@ -22,6 +33,26 @@ class Api::V1::TransactionsController < Api::V1::BaseController
   end
 
   def update
+    # Проверка баланса при обновлении транзакции
+    if transaction_params[:transaction_type] == 'expense' || (@transaction.transaction_type == 'expense' && transaction_params[:amount])
+      # Вычисляем разницу между старой и новой суммой
+      old_amount = @transaction.transaction_type == 'expense' ? @transaction.amount : 0
+      new_amount = (transaction_params[:amount] || @transaction.amount).to_f
+      new_type = transaction_params[:transaction_type] || @transaction.transaction_type
+
+      if new_type == 'expense'
+        balance_change = old_amount - new_amount
+        new_balance = @transaction.account.balance + balance_change
+
+        if new_balance < 0
+          return render json: {
+            error: 'Недостаточно средств',
+            details: ['Баланс счета не может быть отрицательным']
+          }, status: :unprocessable_entity
+        end
+      end
+    end
+
     if @transaction.update(transaction_params)
       render json: @transaction, serializer: TransactionSerializer
     else
