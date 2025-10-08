@@ -246,50 +246,93 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             </div>
           </motion.div>
 
-          {/* Accounts Grid */}
-          <motion.div
-            className="grid grid-cols-2 gap-3"
-            variants={{
-              hidden: { opacity: 0 },
-              show: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.1
-                }
-              }
-            }}
-            initial="hidden"
-            animate="show"
-          >
-            {accounts.map((account, index) => {
-              const Icon = account.icon;
-              return (
-                <motion.div
-                  key={account.id}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    show: { opacity: 1, y: 0 }
-                  }}
-                >
-                  <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${account.color}`}>
-                          <Icon className="w-4 h-4" />
-                        </div>
-                        <span className="text-white/90 text-sm font-medium truncate">
-                          {account.name}
-                        </span>
-                      </div>
-                      <p className="text-white font-medium">
-                        {showBalance ? formatCurrency(account.balance) : "• • •"}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </motion.div>
+          {/* Accounts */}
+          <div>
+            {/* First 2 accounts in grid */}
+            {accounts.length > 0 && (
+              <motion.div
+                className="grid grid-cols-2 gap-3 mb-3"
+                variants={{
+                  hidden: { opacity: 0 },
+                  show: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.1
+                    }
+                  }
+                }}
+                initial="hidden"
+                animate="show"
+              >
+                {accounts.slice(0, 2).map((account) => {
+                  const Icon = account.icon;
+                  return (
+                    <motion.div
+                      key={account.id}
+                      variants={{
+                        hidden: { opacity: 0, y: 20 },
+                        show: { opacity: 1, y: 0 }
+                      }}
+                    >
+                      <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${account.color}`}>
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <span className="text-white/90 text-sm font-medium truncate">
+                              {account.name}
+                            </span>
+                          </div>
+                          <p className="text-white font-medium">
+                            {showBalance ? formatCurrency(account.balance) : "• • •"}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            )}
+
+            {/* Remaining accounts in horizontal scroll */}
+            {accounts.length > 2 && (
+              <div
+                className="flex gap-3 overflow-x-auto -mx-4 px-4 pb-2 scrollbar-hide"
+                style={{
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  WebkitOverflowScrolling: 'touch'
+                }}
+              >
+                {accounts.slice(2).map((account) => {
+                  const Icon = account.icon;
+                  return (
+                    <div
+                      key={account.id}
+                      className="flex-shrink-0 w-[160px]"
+                    >
+                      <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl h-full">
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${account.color}`}>
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <span className="text-white/90 text-sm font-medium truncate">
+                              {account.name}
+                            </span>
+                          </div>
+                          <p className="text-white font-medium">
+                            {showBalance ? formatCurrency(account.balance) : "• • •"}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </motion.div>
 
