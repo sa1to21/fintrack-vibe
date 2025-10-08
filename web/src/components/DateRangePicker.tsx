@@ -74,12 +74,11 @@ export function DateRangePicker({
       if (!open) setShowCalendar(false);
     }}>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="justify-between min-w-[120px] w-full">
+        <Button variant="outline" className="justify-center min-w-[120px] w-full">
           <span className="flex items-center gap-2">
             <CalendarIcon className="w-4 h-4" />
             {getDisplayText()}
           </span>
-          <ChevronDown className="w-4 h-4" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="center">
