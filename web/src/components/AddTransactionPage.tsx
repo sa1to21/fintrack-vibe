@@ -184,9 +184,15 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
       setTimeout(() => {
         onBack();
       }, 1500);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to create transaction:', error);
-      toast.error('Не удалось сохранить транзакцию');
+
+      // Проверяем, является ли ошибка связанной с недостатком средств
+      if (error.response?.data?.error === 'Недостаточно средств') {
+        toast.error('Недостаточно средств на счете');
+      } else {
+        toast.error('Не удалось сохранить транзакцию');
+      }
     }
   }, [amount, category, account, type, description, currentCategories, onAddTransaction, onBack]);
 
