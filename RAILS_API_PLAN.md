@@ -414,8 +414,9 @@ end
 | GET | `/api/v1/accounts/:id/transactions` | Транзакции счета |
 | POST | `/api/v1/accounts/:id/transactions` | Добавить транзакцию |
 | GET | `/api/v1/transactions/:id` | Детали транзакции |
-| PUT | `/api/v1/transactions/:id` | Обновить транзакцию |
-| DELETE | `/api/v1/transactions/:id` | Удалить транзакцию |
+| PUT | `/api/v1/transactions/:id` | Обновить транзакцию ✅ |
+| DELETE | `/api/v1/transactions/:id` | Удалить транзакцию ✅ |
+| POST | `/api/v1/transfers` | **Перевод между счетами** ✅ |
 | GET | `/api/v1/categories` | Список категорий |
 | GET | `/api/v1/analytics/summary` | Общая статистика |
 | GET | `/api/v1/analytics/monthly` | Месячная аналитика |
