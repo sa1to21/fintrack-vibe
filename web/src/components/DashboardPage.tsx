@@ -5,6 +5,7 @@ import { Badge } from "./ui/badge";
 import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingDown, Calendar, Filter, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 import accountsService from "../services/accounts.service";
+import transactionsService, { Transaction as APITransaction } from "../services/transactions.service";
 
 interface Account {
   id: string;
@@ -31,13 +32,14 @@ interface DashboardPageProps {
   onManageAccounts: () => void;
   onViewAllTransactions: () => void;
   onTransactionClick: (transaction: Transaction) => void;
-  transactions: Transaction[];
 }
 
-export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTransactions, onTransactionClick, transactions }: DashboardPageProps) {
+export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTransactions, onTransactionClick }: DashboardPageProps) {
   const [showBalance, setShowBalance] = useState(true);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loadingAccounts, setLoadingAccounts] = useState(true);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loadingTransactions, setLoadingTransactions] = useState(true);
 
   // Загрузить счета из API
   useEffect(() => {
@@ -75,6 +77,43 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
     loadAccounts();
   }, []);
+
+  // Загрузить транзакции из API после загрузки счетов
+  useEffect(() => {
+    if (accounts.length === 0) return;
+
+    const loadTransactions = async () => {
+      try {
+        const accountId = accounts[0].id;
+        const data = await transactionsService.getAll(accountId);
+
+        // Преобразуем API транзакции в формат компонента
+        const formattedTransactions: Transaction[] = data.map(t => {
+          const createdDate = new Date(t.created_at);
+          return {
+            id: t.id,
+            amount: parseFloat(t.amount.toString()),
+            type: t.transaction_type,
+            category: t.category_id,
+            categoryName: t.category?.name || 'Без категории',
+            description: t.description || '',
+            accountId: t.account_id,
+            date: t.date,
+            time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+          };
+        });
+
+        setTransactions(formattedTransactions);
+      } catch (error) {
+        console.error('Failed to load transactions:', error);
+        setTransactions([]);
+      } finally {
+        setLoadingTransactions(false);
+      }
+    };
+
+    loadTransactions();
+  }, [accounts]);
 
   // Recent transactions (показываем только последние 3) - memoized for performance
   const recentTransactions = useMemo(() => {

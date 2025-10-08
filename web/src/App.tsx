@@ -31,43 +31,6 @@ function AppContent() {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('welcome');
   const [hasSeenWelcome, setHasSeenWelcome] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
-  
-  // Mock data for transactions - в реальном приложении это будет из Supabase
-  const [transactions, setTransactions] = useState<Transaction[]>([
-    {
-      id: "1",
-      type: "expense",
-      amount: 350,
-      category: "food",
-      categoryName: "Еда",
-      description: "Покупки в супермаркете",
-      accountId: "1",
-      date: "2025-01-20",
-      time: "14:30"
-    },
-    {
-      id: "2",
-      type: "income",
-      amount: 5000,
-      category: "freelance",
-      categoryName: "Фриланс",
-      description: "Оплата за проект",
-      accountId: "1",
-      date: "2025-01-19",
-      time: "10:15"
-    },
-    {
-      id: "3",
-      type: "expense",
-      amount: 1200,
-      category: "transport",
-      categoryName: "Транспорт",
-      description: "Заправка автомобиля",
-      accountId: "3",
-      date: "2025-01-18",
-      time: "18:45"
-    }
-  ]);
 
   const handleGetStarted = () => {
     setHasSeenWelcome(true);
@@ -92,23 +55,18 @@ function AppContent() {
   };
 
   const handleUpdateTransaction = (updatedTransaction: Transaction) => {
-    setTransactions(prev => 
-      prev.map(t => t.id === updatedTransaction.id ? updatedTransaction : t)
-    );
+    // TODO: Обновить транзакцию через API
     setSelectedTransaction(updatedTransaction);
   };
 
   const handleDeleteTransaction = (transactionId: string) => {
-    setTransactions(prev => prev.filter(t => t.id !== transactionId));
+    // TODO: Удалить транзакцию через API
     setCurrentScreen('dashboard');
   };
 
   const handleAddNewTransaction = (newTransaction: Omit<Transaction, 'id'>) => {
-    const transaction: Transaction = {
-      ...newTransaction,
-      id: Date.now().toString()
-    };
-    setTransactions(prev => [...prev, transaction]);
+    // TODO: Обработка уже происходит в AddTransactionPage через API
+    // Здесь можно добавить callback для обновления Dashboard
   };
 
   const handleBack = () => {
@@ -168,12 +126,11 @@ function AppContent() {
             <WelcomePage onGetStarted={handleGetStarted} />
           )}
           {currentScreen === 'dashboard' && (
-            <DashboardPage 
+            <DashboardPage
               onAddTransaction={handleAddTransaction}
               onManageAccounts={handleManageAccounts}
               onViewAllTransactions={handleViewAllTransactions}
               onTransactionClick={handleTransactionClick}
-              transactions={transactions}
             />
           )}
           {currentScreen === 'analytics' && <AnalyticsPage />}
