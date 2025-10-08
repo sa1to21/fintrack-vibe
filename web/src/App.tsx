@@ -6,6 +6,7 @@ import { AddTransactionPage } from "./components/AddTransactionPage";
 import { ManageAccountsPage } from "./components/ManageAccountsPage";
 import { AllTransactionsPage } from "./components/AllTransactionsPage";
 import { TransactionDetailPage } from "./components/TransactionDetailPage";
+import { TransferPage } from "./components/TransferPage";
 import { AnalyticsPage } from "./components/AnalyticsPage";
 import { EducationPage } from "./components/EducationPage";
 import { SettingsPage } from "./components/SettingsPage";
@@ -24,7 +25,7 @@ interface Transaction {
   time: string;
 }
 
-type AppScreen = 'welcome' | 'dashboard' | 'analytics' | 'education' | 'settings' | 'add-transaction' | 'manage-accounts' | 'all-transactions' | 'transaction-detail';
+type AppScreen = 'welcome' | 'dashboard' | 'analytics' | 'education' | 'settings' | 'add-transaction' | 'manage-accounts' | 'all-transactions' | 'transaction-detail' | 'transfer';
 
 function AppContent() {
   const { isAuthenticated, loading, error, isNewUser } = useTelegramAuth();
@@ -145,6 +146,7 @@ function AppContent() {
               onManageAccounts={handleManageAccounts}
               onViewAllTransactions={handleViewAllTransactions}
               onTransactionClick={handleTransactionClick}
+              onTransfer={() => setCurrentScreen('transfer')}
             />
           )}
           {currentScreen === 'analytics' && <AnalyticsPage />}
@@ -166,11 +168,20 @@ function AppContent() {
             />
           )}
           {currentScreen === 'transaction-detail' && selectedTransaction && (
-            <TransactionDetailPage 
+            <TransactionDetailPage
               transaction={selectedTransaction}
               onBack={handleBack}
               onUpdate={handleUpdateTransaction}
               onDelete={handleDeleteTransaction}
+            />
+          )}
+          {currentScreen === 'transfer' && (
+            <TransferPage
+              onBack={handleBack}
+              onSuccess={() => {
+                handleBack();
+                // Можно добавить перезагрузку данных если нужно
+              }}
             />
           )}
         </div>

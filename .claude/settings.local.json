@@ -36,7 +36,9 @@
       "Bash(tasklist:*)",
       "Bash(git commit:*)",
       "Bash(timeout:*)",
-      "Bash(del tmppidsserver.pid)"
+      "Bash(del tmppidsserver.pid)",
+      "Bash(del apitmppidsserver.pid)",
+      "Bash(npx netlify-cli deploy:*)"
     ],
     "deny": [],
     "ask": []

@@ -34,6 +34,9 @@ Rails.application.routes.draw do
 
       # User Data Management
       delete '/user_data', to: 'user_data#destroy_all'
+
+      # Transfers
+      post '/transfers', to: 'transfers#create'
     end
   end
 end

@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingDown, Calendar, Filter, Sparkles } from "lucide-react";
+import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingDown, Calendar, Filter, Sparkles, ArrowRightLeft } from "lucide-react";
 import { motion } from "motion/react";
 import accountsService from "../services/accounts.service";
 import transactionsService, { Transaction as APITransaction } from "../services/transactions.service";
@@ -32,9 +32,10 @@ interface DashboardPageProps {
   onManageAccounts: () => void;
   onViewAllTransactions: () => void;
   onTransactionClick: (transaction: Transaction) => void;
+  onTransfer?: () => void;
 }
 
-export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTransactions, onTransactionClick }: DashboardPageProps) {
+export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTransactions, onTransactionClick, onTransfer }: DashboardPageProps) {
   const [showBalance, setShowBalance] = useState(true);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loadingAccounts, setLoadingAccounts] = useState(true);
@@ -382,6 +383,22 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 <span className="text-sm">Управление счетами</span>
               </Button>
             </motion.div>
+            {onTransfer && accounts.length >= 2 && (
+              <motion.div
+                whileHover={{ scale: 1.03, y: -3 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Button
+                  onClick={onTransfer}
+                  variant="outline"
+                  className="w-full border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400 p-4 h-auto flex-col gap-2 shadow-sm hover:shadow-md transition-all duration-300"
+                >
+                  <ArrowRightLeft className="w-5 h-5" />
+                  <span className="text-sm">Перевод между счетами</span>
+                </Button>
+              </motion.div>
+            )}
           </div>
         </motion.div>
 
