@@ -123,33 +123,38 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   }, [transactions]);
 
   // Memoize calculations for performance
-  const { totalBalance, monthlyIncome, monthlyExpenses, monthlyChange } = useMemo(() => {
+  const { totalBalance, monthlyIncome, monthlyExpenses, monthlyChange, currentMonthName } = useMemo(() => {
     const balance = accounts.reduce((sum, account) => sum + account.balance, 0);
-    
+
     // Calculate actual monthly stats from transactions
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
-    
+
+    // Получаем название текущего месяца
+    const monthName = currentDate.toLocaleDateString('ru-RU', { month: 'long' });
+    const capitalizedMonthName = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
     const monthlyTransactions = transactions.filter(t => {
       const transactionDate = new Date(t.date);
-      return transactionDate.getMonth() + 1 === currentMonth && 
+      return transactionDate.getMonth() + 1 === currentMonth &&
              transactionDate.getFullYear() === currentYear;
     });
-    
+
     const income = monthlyTransactions
       .filter(t => t.type === 'income')
       .reduce((sum, t) => sum + t.amount, 0);
-    
+
     const expenses = monthlyTransactions
       .filter(t => t.type === 'expense')
       .reduce((sum, t) => sum + t.amount, 0);
-    
+
     return {
       totalBalance: balance,
       monthlyIncome: income,
       monthlyExpenses: expenses,
-      monthlyChange: income - expenses
+      monthlyChange: income - expenses,
+      currentMonthName: capitalizedMonthName
     };
   }, [accounts, transactions]);
 
@@ -310,7 +315,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200">
                 <Calendar className="w-4 h-4 mr-1" />
-                Январь
+                {currentMonthName}
               </Button>
             </motion.div>
           </div>
