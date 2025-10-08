@@ -251,10 +251,11 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
+            className="space-y-3"
           >
             {/* Первые 2 счета в grid */}
             {accounts.length > 0 && (
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="grid grid-cols-2 gap-3">
                 {accounts.slice(0, 2).map((account, index) => {
                   const Icon = account.icon;
                   return (
@@ -277,29 +278,36 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 })}
               </div>
             )}
+          </motion.div>
 
-            {/* Остальные счета в горизонтальном слайдере */}
-            {accounts.length > 2 && (
+          {/* Остальные счета в горизонтальном слайдере - вне max-w-md контейнера */}
+          {accounts.length > 2 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.25 }}
+              className="-mx-4"
+            >
               <div
-                className="flex gap-3 overflow-x-auto pb-2"
+                className="flex gap-3 overflow-x-scroll px-4 pb-3 pt-3"
                 style={{
                   scrollbarWidth: 'none',
                   msOverflowStyle: 'none',
-                  WebkitOverflowScrolling: 'touch'
+                  WebkitOverflowScrolling: 'touch',
+                  scrollSnapType: 'x mandatory'
                 }}
               >
-                <style>{`
-                  .flex.gap-3.overflow-x-auto::-webkit-scrollbar {
-                    display: none;
-                  }
-                `}</style>
                 {accounts.slice(2).map((account) => {
                   const Icon = account.icon;
                   return (
                     <div
                       key={account.id}
                       className="flex-shrink-0"
-                      style={{ width: '47%', minWidth: '150px' }}
+                      style={{
+                        width: 'calc(50% - 12px)',
+                        minWidth: '160px',
+                        scrollSnapAlign: 'start'
+                      }}
                     >
                       <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
                         <CardContent className="p-4">
@@ -320,8 +328,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   );
                 })}
               </div>
-            )}
-          </motion.div>
+            </motion.div>
+          )}
         </div>
       </motion.div>
 

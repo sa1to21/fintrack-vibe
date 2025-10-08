@@ -4029,3 +4029,10 @@ html {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Force hide scrollbar for account slider */
+.overflow-x-scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
