@@ -1,27 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from "./ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
-import { 
-  ArrowLeft, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Wallet, 
-  CreditCard, 
-  PiggyBank, 
+import {
+  ArrowLeft,
+  Plus,
+  Edit,
+  Trash2,
+  Wallet,
+  CreditCard,
+  PiggyBank,
   Banknote,
   DollarSign,
   TrendingUp,
   TrendingDown,
   Settings,
-  Sparkles
+  Sparkles,
+  Loader2
 } from "lucide-react";
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 import { motion } from "motion/react";
+import accountsService from "../services/accounts.service";
+import transactionsService from "../services/transactions.service";
 
 interface ManageAccountsPageProps {
   onBack: () => void;
@@ -33,42 +36,18 @@ interface Account {
   balance: number;
   icon: typeof Wallet;
   color: string;
+  account_type: string;
 }
 
 const accountIcons = [
-  { icon: Wallet, name: "Кошелёк", color: "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700" },
-  { icon: CreditCard, name: "Карта", color: "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700" },
-  { icon: PiggyBank, name: "Накопления", color: "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700" },
-  { icon: Banknote, name: "Наличные", color: "bg-gradient-to-br from-orange-100 to-orange-200 text-orange-700" },
-  { icon: DollarSign, name: "Доллары", color: "bg-gradient-to-br from-green-100 to-green-200 text-green-700" },
+  { icon: Wallet, name: "Кошелёк", color: "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700", type: "cash" },
+  { icon: CreditCard, name: "Карта", color: "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700", type: "card" },
+  { icon: PiggyBank, name: "Накопления", color: "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700", type: "savings" },
 ];
 
 export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
-  // Mock data - в реальном приложении это будет из Supabase
-  const [accounts, setAccounts] = useState<Account[]>([
-    {
-      id: "1",
-      name: "Основной счёт",
-      balance: 25430,
-      icon: Wallet,
-      color: "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700"
-    },
-    {
-      id: "2", 
-      name: "Накопления",
-      balance: 8750,
-      icon: PiggyBank,
-      color: "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700"
-    },
-    {
-      id: "3",
-      name: "Карта",
-      balance: 12340,
-      icon: CreditCard,
-      color: "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700"
-    }
-  ]);
-
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [loading, setLoading] = useState(true);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   const [newAccountName, setNewAccountName] = useState("");
   const [selectedIcon, setSelectedIcon] = useState(accountIcons[0]);
@@ -77,6 +56,39 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const [isBalanceDialogOpen, setIsBalanceDialogOpen] = useState(false);
   const [balanceChange, setBalanceChange] = useState("");
   const [balanceChangeType, setBalanceChangeType] = useState<'increase' | 'decrease'>('increase');
+  const [actionLoading, setActionLoading] = useState(false);
+
+  // Загрузка счетов из API
+  useEffect(() => {
+    loadAccounts();
+  }, []);
+
+  const loadAccounts = async () => {
+    try {
+      setLoading(true);
+      const data = await accountsService.getAll();
+
+      // Преобразуем API данные в формат компонента
+      const accountsWithIcons = data.map(acc => ({
+        id: acc.id,
+        name: acc.name,
+        balance: parseFloat(acc.balance.toString()),
+        account_type: acc.account_type,
+        icon: acc.account_type === 'savings' ? PiggyBank :
+              acc.account_type === 'card' ? CreditCard : Wallet,
+        color: acc.account_type === 'savings' ? "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700" :
+               acc.account_type === 'card' ? "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700" :
+               "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700"
+      }));
+
+      setAccounts(accountsWithIcons);
+    } catch (error) {
+      console.error('Failed to load accounts:', error);
+      toast.error('Не удалось загрузить счета');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ru-RU', {
@@ -87,97 +99,119 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
     }).format(amount);
   };
 
-  const handleAddAccount = () => {
+  const handleAddAccount = async () => {
     if (!newAccountName.trim()) {
       toast.error("Введите название счёта");
       return;
     }
 
-    const newAccount: Account = {
-      id: Date.now().toString(),
-      name: newAccountName.trim(),
-      balance: 0,
-      icon: selectedIcon.icon,
-      color: selectedIcon.color
-    };
+    try {
+      setActionLoading(true);
+      await accountsService.create({
+        name: newAccountName.trim(),
+        balance: 0,
+        currency: 'RUB',
+        account_type: selectedIcon.type
+      });
 
-    setAccounts([...accounts, newAccount]);
-    setNewAccountName("");
-    setSelectedIcon(accountIcons[0]);
-    setIsAddDialogOpen(false);
-    toast.success("Счёт создан!");
+      // Перезагружаем счета
+      await loadAccounts();
+      setNewAccountName("");
+      setSelectedIcon(accountIcons[0]);
+      setIsAddDialogOpen(false);
+      toast.success("Счёт создан!");
+    } catch (error) {
+      console.error('Failed to create account:', error);
+      toast.error("Не удалось создать счёт");
+    } finally {
+      setActionLoading(false);
+    }
   };
 
-  const handleEditAccount = () => {
+  const handleEditAccount = async () => {
     if (!editingAccount || !newAccountName.trim()) {
       toast.error("Введите название счёта");
       return;
     }
 
-    setAccounts(accounts.map(account => 
-      account.id === editingAccount.id 
-        ? { ...account, name: newAccountName.trim(), icon: selectedIcon.icon, color: selectedIcon.color }
-        : account
-    ));
+    try {
+      setActionLoading(true);
+      await accountsService.update(editingAccount.id, {
+        name: newAccountName.trim(),
+        account_type: selectedIcon.type
+      });
 
-    setEditingAccount(null);
-    setNewAccountName("");
-    setSelectedIcon(accountIcons[0]);
-    setIsEditDialogOpen(false);
-    toast.success("Счёт обновлён!");
+      // Перезагружаем счета
+      await loadAccounts();
+      setEditingAccount(null);
+      setNewAccountName("");
+      setSelectedIcon(accountIcons[0]);
+      setIsEditDialogOpen(false);
+      toast.success("Счёт обновлён!");
+    } catch (error) {
+      console.error('Failed to update account:', error);
+      toast.error("Не удалось обновить счёт");
+    } finally {
+      setActionLoading(false);
+    }
   };
 
-  const handleDeleteAccount = (accountId: string) => {
-    setAccounts(accounts.filter(account => account.id !== accountId));
-    toast.success("Счёт удалён!");
+  const handleDeleteAccount = async (accountId: string) => {
+    try {
+      setActionLoading(true);
+      await accountsService.delete(accountId);
+
+      // Перезагружаем счета
+      await loadAccounts();
+      toast.success("Счёт удалён!");
+    } catch (error) {
+      console.error('Failed to delete account:', error);
+      toast.error("Не удалось удалить счёт");
+    } finally {
+      setActionLoading(false);
+    }
   };
 
-  const handleBalanceChange = () => {
+  const handleBalanceChange = async () => {
     if (!editingAccount || !balanceChange || parseFloat(balanceChange) <= 0) {
       toast.error("Введите корректную сумму");
       return;
     }
 
     const changeAmount = parseFloat(balanceChange);
-    const newBalance = balanceChangeType === 'increase' 
-      ? editingAccount.balance + changeAmount
-      : editingAccount.balance - changeAmount;
 
-    if (newBalance < 0) {
-      toast.error("Недостаточно средств на счёте");
-      return;
+    try {
+      setActionLoading(true);
+
+      // Создаём транзакцию для изменения баланса
+      await transactionsService.create(editingAccount.id, {
+        amount: changeAmount,
+        transaction_type: balanceChangeType === 'increase' ? 'income' : 'expense',
+        description: `${balanceChangeType === 'increase' ? 'Пополнение' : 'Снятие'} средств`,
+        date: new Date().toISOString().split('T')[0],
+        category_id: 1 // TODO: Использовать категорию "Корректировка баланса"
+      });
+
+      // Перезагружаем счета чтобы получить обновлённый баланс
+      await loadAccounts();
+
+      setEditingAccount(null);
+      setBalanceChange("");
+      setBalanceChangeType('increase');
+      setIsBalanceDialogOpen(false);
+      toast.success(`Баланс ${balanceChangeType === 'increase' ? 'пополнен' : 'уменьшен'}!`);
+    } catch (error) {
+      console.error('Failed to change balance:', error);
+      toast.error("Не удалось изменить баланс");
+    } finally {
+      setActionLoading(false);
     }
-
-    // Обновляем баланс счёта
-    setAccounts(accounts.map(account => 
-      account.id === editingAccount.id 
-        ? { ...account, balance: newBalance }
-        : account
-    ));
-
-    // Здесь бы записывалась операция в базу данных
-    const transaction = {
-      type: 'balance_adjustment',
-      amount: changeAmount,
-      balanceChangeType,
-      accountId: editingAccount.id,
-      description: `${balanceChangeType === 'increase' ? 'Пополнение' : 'Снятие'} средств`,
-      date: new Date().toISOString(),
-    };
-
-    console.log("Creating balance adjustment transaction:", transaction);
-
-    setEditingAccount(null);
-    setBalanceChange("");
-    setBalanceChangeType('increase');
-    setIsBalanceDialogOpen(false);
-    toast.success(`Баланс ${balanceChangeType === 'increase' ? 'пополнен' : 'уменьшен'}!`);
   };
 
   const openEditDialog = (account: Account) => {
     setEditingAccount(account);
     setNewAccountName(account.name);
-    const iconData = accountIcons.find(item => item.icon === account.icon) || accountIcons[0];
+    const iconData = accountIcons.find(item => item.type === account.account_type) || accountIcons[0];
     setSelectedIcon(iconData);
     setIsEditDialogOpen(true);
   };
@@ -186,6 +220,17 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
     setEditingAccount(account);
     setIsBalanceDialogOpen(true);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
+          <p className="text-slate-600">Загрузка счетов...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
