@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Switch } from "./ui/switch";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "./ui/alert-dialog";
 import {
   User,
   Bell,
@@ -21,9 +23,12 @@ import {
 import { motion } from "motion/react";
 import { useTelegramAuth } from "../contexts/TelegramAuthContext";
 import { toast } from "sonner";
+import userDataService from "../services/userData.service";
 
 export function SettingsPage() {
   const { logout, user, telegramUser } = useTelegramAuth();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -31,6 +36,25 @@ export function SettingsPage() {
       toast.success('Вы вышли из аккаунта');
     } catch (error) {
       toast.error('Ошибка выхода');
+    }
+  };
+
+  const handleDeleteAllData = async () => {
+    try {
+      setIsDeleting(true);
+      await userDataService.deleteAll();
+      toast.success('Все данные успешно удалены');
+      setIsDeleteDialogOpen(false);
+
+      // Перезагружаем страницу через небольшую задержку
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error('Failed to delete data:', error);
+      toast.error('Не удалось удалить данные');
+    } finally {
+      setIsDeleting(false);
     }
   };
   const settingsGroups = [
@@ -326,7 +350,7 @@ export function SettingsPage() {
                       transition={{ duration: 0.2 }}
                     >
                       <div className="flex items-center gap-3">
-                        <motion.div 
+                        <motion.div
                           className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-red-500 to-pink-600 shadow-sm"
                           whileHover={{ scale: 1.1, rotate: 5 }}
                           transition={{ duration: 0.2 }}
@@ -344,8 +368,14 @@ export function SettingsPage() {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                       >
-                        <Button variant="destructive" size="sm" className="shadow-sm hover:shadow-md transition-all duration-200">
-                          Удалить
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => setIsDeleteDialogOpen(true)}
+                          disabled={isDeleting}
+                          className="shadow-sm hover:shadow-md transition-all duration-200"
+                        >
+                          {isDeleting ? 'Удаление...' : 'Удалить'}
                         </Button>
                       </motion.div>
                     </motion.div>
@@ -355,6 +385,41 @@ export function SettingsPage() {
             </Card>
           </motion.div>
         </motion.div>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <AlertDialogContent className="border-red-200 bg-gradient-to-br from-white to-red-50/30">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-red-700 flex items-center gap-2">
+                <Trash2 className="w-5 h-5" />
+                Удалить все данные?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-red-600">
+                Это действие нельзя отменить. Будут безвозвратно удалены:
+                <ul className="list-disc list-inside mt-2 space-y-1">
+                  <li>Все транзакции</li>
+                  <li>Все счета</li>
+                  <li>Все категории</li>
+                </ul>
+                <p className="mt-2 font-medium">
+                  После удаления будут созданы стандартный счёт и категории.
+                </p>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="border-red-300" disabled={isDeleting}>
+                Отмена
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteAllData}
+                disabled={isDeleting}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                {isDeleting ? 'Удаление...' : 'Да, удалить всё'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         {/* App Info */}
         <motion.div 

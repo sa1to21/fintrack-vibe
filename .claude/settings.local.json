@@ -25,7 +25,18 @@
       "Bash(bundle exec rails:*)",
       "Bash(gem uninstall:*)",
       "Bash(sqlite3:*)",
-      "Read(//c/fintrack-api/**)"
+      "Read(//c/fintrack-api/**)",
+      "Bash(git push:*)",
+      "Bash(curl:*)",
+      "Bash(bin/rails generate:*)",
+      "Bash(bin/rails:*)",
+      "Bash(tasklist)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Integrate API with frontend - categories, accounts, transactions\n\nBackend changes:\n- Add has_many :categories to User model\n- Create default account on user registration (Основной счёт)\n- Create 9 default categories on user registration (6 expense, 3 income)\n- Auto-create account and categories in TelegramAuthController\n\nFrontend changes:\n- Load categories from API in AddTransactionPage\n- Support emoji icons from API categories\n- Load accounts from API in DashboardPage  \n- Save transactions to API via transactionsService\n- Fallback to mock data if API fails\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(tasklist:*)",
+      "Bash(git commit:*)",
+      "Bash(timeout:*)",
+      "Bash(del tmppidsserver.pid)"
     ],
     "deny": [],
     "ask": []
