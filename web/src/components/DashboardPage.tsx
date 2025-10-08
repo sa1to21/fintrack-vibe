@@ -337,90 +337,18 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
       </motion.div>
 
       {/* Content */}
-      <motion.div 
+      <motion.div
         className="px-4 py-6 max-w-md mx-auto"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.35 }}
       >
-        {/* Quick Stats */}
-        <motion.div 
-          className="mb-6"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
-        >
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-medium text-foreground">Этот месяц</h2>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200">
-                <Calendar className="w-4 h-4 mr-1" />
-                {currentMonthName}
-              </Button>
-            </motion.div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <motion.div
-              whileHover={{ scale: 1.02, y: -2 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 hover:shadow-md transition-all duration-300">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center shadow-sm">
-                      <TrendingUp className="w-4 h-4 text-emerald-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-emerald-600/70">Доходы</p>
-                      <motion.p 
-                        className="font-medium text-sm text-emerald-700"
-                        key={showBalance ? monthlyIncome : 'hidden'}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {showBalance ? formatCurrency(monthlyIncome) : "• • •"}
-                      </motion.p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-            <motion.div
-              whileHover={{ scale: 1.02, y: -2 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Card className="border-red-200 bg-gradient-to-br from-red-50 to-rose-50 hover:shadow-md transition-all duration-300">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center shadow-sm">
-                      <TrendingDown className="w-4 h-4 text-red-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-red-600/70">Расходы</p>
-                      <motion.p 
-                        className="font-medium text-sm text-red-700"
-                        key={showBalance ? monthlyExpenses : 'hidden'}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {showBalance ? formatCurrency(monthlyExpenses) : "• • •"}
-                      </motion.p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </motion.div>
-
         {/* Quick Actions */}
-        <motion.div 
+        <motion.div
           className="mb-6"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: 0.45 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
         >
           <h2 className="font-medium mb-3 text-foreground">Быстрые действия</h2>
           <div className="space-y-3">
@@ -451,6 +379,78 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 <Wallet className="w-5 h-5" />
                 <span className="text-sm">Управление счетами</span>
               </Button>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Quick Stats */}
+        <motion.div
+          className="mb-6"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.45 }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-medium text-foreground">Этот месяц</h2>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200">
+                <Calendar className="w-4 h-4 mr-1" />
+                {currentMonthName}
+              </Button>
+            </motion.div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <motion.div
+              whileHover={{ scale: 1.02, y: -2 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 hover:shadow-md transition-all duration-300">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center shadow-sm">
+                      <TrendingUp className="w-4 h-4 text-emerald-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-emerald-600/70">Доходы</p>
+                      <motion.p
+                        className="font-medium text-sm text-emerald-700"
+                        key={showBalance ? monthlyIncome : 'hidden'}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {showBalance ? formatCurrency(monthlyIncome) : "• • •"}
+                      </motion.p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.02, y: -2 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Card className="border-red-200 bg-gradient-to-br from-red-50 to-rose-50 hover:shadow-md transition-all duration-300">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center shadow-sm">
+                      <TrendingDown className="w-4 h-4 text-red-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-red-600/70">Расходы</p>
+                      <motion.p
+                        className="font-medium text-sm text-red-700"
+                        key={showBalance ? monthlyExpenses : 'hidden'}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {showBalance ? formatCurrency(monthlyExpenses) : "• • •"}
+                      </motion.p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
           </div>
         </motion.div>
