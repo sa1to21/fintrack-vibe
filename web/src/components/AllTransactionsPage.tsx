@@ -103,17 +103,26 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
         const allTransactionsData = transactionsArrays.flat();
 
         // Преобразуем в формат компонента
-        const formattedTransactions: Transaction[] = allTransactionsData.map(t => ({
-          id: t.id,
-          amount: parseFloat(t.amount.toString()),
-          type: t.transaction_type,
-          category: t.category_id,
-          categoryName: t.category?.name || 'Без категории',
-          description: t.description || '',
-          accountId: t.account_id,
-          date: t.date,
-          time: t.time || new Date(t.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
-        }));
+        const formattedTransactions: Transaction[] = allTransactionsData.map(t => {
+          // Форматируем время из поля time (которое приходит как datetime)
+          let timeStr = '00:00';
+          if (t.time) {
+            const timeDate = new Date(t.time);
+            timeStr = timeDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+          }
+
+          return {
+            id: t.id,
+            amount: parseFloat(t.amount.toString()),
+            type: t.transaction_type,
+            category: t.category_id,
+            categoryName: t.category?.name || 'Без категории',
+            description: t.description || '',
+            accountId: t.account_id,
+            date: t.date,
+            time: timeStr
+          };
+        });
 
         setAllTransactions(formattedTransactions);
       } catch (error) {
