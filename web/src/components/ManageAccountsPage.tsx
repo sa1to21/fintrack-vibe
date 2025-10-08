@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { motion } from "motion/react";
 import accountsService from "../services/accounts.service";
 import transactionsService from "../services/transactions.service";
+import categoriesService from "../services/categories.service";
 
 interface ManageAccountsPageProps {
   onBack: () => void;
@@ -47,6 +48,7 @@ const accountIcons = [
 
 export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   const [newAccountName, setNewAccountName] = useState("");
@@ -58,9 +60,10 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const [balanceChangeType, setBalanceChangeType] = useState<'increase' | 'decrease'>('increase');
   const [actionLoading, setActionLoading] = useState(false);
 
-  // Загрузка счетов из API
+  // Загрузка счетов и категорий из API
   useEffect(() => {
     loadAccounts();
+    loadCategories();
   }, []);
 
   const loadAccounts = async () => {
@@ -87,6 +90,15 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       toast.error('Не удалось загрузить счета');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      const data = await categoriesService.getAll();
+      setCategories(data);
+    } catch (error) {
+      console.error('Failed to load categories:', error);
     }
   };
 
@@ -183,13 +195,22 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
     try {
       setActionLoading(true);
 
+      // Находим подходящую категорию для корректировки баланса
+      const categoryType = balanceChangeType === 'increase' ? 'income' : 'expense';
+      const suitableCategory = categories.find(cat => cat.category_type === categoryType);
+
+      if (!suitableCategory) {
+        toast.error("Не найдена подходящая категория");
+        return;
+      }
+
       // Создаём транзакцию для изменения баланса
       await transactionsService.create(editingAccount.id, {
         amount: changeAmount,
-        transaction_type: balanceChangeType === 'increase' ? 'income' : 'expense',
+        transaction_type: categoryType,
         description: `${balanceChangeType === 'increase' ? 'Пополнение' : 'Снятие'} средств`,
         date: new Date().toISOString().split('T')[0],
-        category_id: 1 // TODO: Использовать категорию "Корректировка баланса"
+        category_id: suitableCategory.id
       });
 
       // Перезагружаем счета чтобы получить обновлённый баланс
