@@ -165,9 +165,15 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
       onUpdate(updatedTransaction);
       setIsEditing(false);
       toast.success("Операция обновлена!");
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to update transaction:', error);
-      toast.error('Не удалось обновить операцию');
+
+      // Проверяем, является ли ошибка связанной с недостатком средств
+      if (error.response?.data?.error === 'Недостаточно средств') {
+        toast.error('Недостаточно средств на счете');
+      } else {
+        toast.error('Не удалось обновить операцию');
+      }
     }
   }, [editData, transaction, currentCategory, onUpdate]);
 
