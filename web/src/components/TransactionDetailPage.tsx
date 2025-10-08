@@ -35,6 +35,7 @@ import { toast } from "sonner@2.0.3";
 import { motion } from "motion/react";
 import categoriesService, { Category } from "../services/categories.service";
 import accountsService, { Account as APIAccount } from "../services/accounts.service";
+import transactionsService from "../services/transactions.service";
 
 interface Transaction {
   id: string;
@@ -131,32 +132,57 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
     };
   }, [editData.type, editData.category, editData.accountId, categories, accounts]);
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     if (!editData.amount || !editData.category || !editData.accountId) {
       toast.error("Заполните все обязательные поля");
       return;
     }
 
-    const updatedTransaction: Transaction = {
-      ...transaction,
-      amount: parseFloat(editData.amount),
-      type: editData.type as 'income' | 'expense',
-      category: editData.category,
-      categoryName: currentCategory?.name || '',
-      accountId: editData.accountId,
-      description: editData.description,
-      date: editData.date,
-      time: editData.time
-    };
+    try {
+      // Обновляем через API
+      await transactionsService.update(transaction.id, {
+        amount: parseFloat(editData.amount),
+        transaction_type: editData.type as 'income' | 'expense',
+        description: editData.description,
+        date: editData.date,
+        account_id: editData.accountId,
+        category_id: parseInt(editData.category)
+      });
 
-    onUpdate(updatedTransaction);
-    setIsEditing(false);
-    toast.success("Операция обновлена!");
+      // Обновляем локальное состояние
+      const updatedTransaction: Transaction = {
+        ...transaction,
+        amount: parseFloat(editData.amount),
+        type: editData.type as 'income' | 'expense',
+        category: editData.category,
+        categoryName: currentCategory?.name || '',
+        accountId: editData.accountId,
+        description: editData.description,
+        date: editData.date,
+        time: editData.time
+      };
+
+      onUpdate(updatedTransaction);
+      setIsEditing(false);
+      toast.success("Операция обновлена!");
+    } catch (error) {
+      console.error('Failed to update transaction:', error);
+      toast.error('Не удалось обновить операцию');
+    }
   }, [editData, transaction, currentCategory, onUpdate]);
 
-  const handleDelete = useCallback(() => {
-    onDelete(transaction.id);
-    toast.success("Операция удалена!");
+  const handleDelete = useCallback(async () => {
+    try {
+      // Удаляем через API
+      await transactionsService.delete(transaction.id);
+
+      // Обновляем локальное состояние
+      onDelete(transaction.id);
+      toast.success("Операция удалена!");
+    } catch (error) {
+      console.error('Failed to delete transaction:', error);
+      toast.error('Не удалось удалить операцию');
+    }
   }, [transaction.id, onDelete]);
 
   const handleTypeChange = useCallback((newType: 'income' | 'expense') => {
