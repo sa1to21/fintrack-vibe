@@ -302,26 +302,26 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.4 }}
-                className="relative -mx-4 px-4"
               >
                 <div
-                  className="flex gap-3 overflow-x-scroll pb-2 snap-x snap-mandatory scrollbar-hide"
+                  className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide"
                   style={{
                     scrollbarWidth: 'none',
                     msOverflowStyle: 'none',
-                    WebkitOverflowScrolling: 'touch'
+                    WebkitOverflowScrolling: 'touch',
+                    touchAction: 'pan-x'
                   }}
                 >
                   {accounts.slice(2).map((account, index) => {
                     const Icon = account.icon;
                     return (
-                      <motion.div
+                      <div
                         key={account.id}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
-                        className="flex-shrink-0 snap-center"
-                        style={{ width: 'calc(50% - 6px)' }}
+                        className="flex-shrink-0"
+                        style={{
+                          width: '45%',
+                          minWidth: '160px'
+                        }}
                       >
                         <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl h-full">
                           <CardContent className="p-4">
@@ -333,18 +333,12 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                                 {account.name}
                               </span>
                             </div>
-                            <motion.p
-                              className="text-white font-medium"
-                              key={showBalance ? account.balance : 'hidden'}
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ duration: 0.3 }}
-                            >
+                            <p className="text-white font-medium">
                               {showBalance ? formatCurrency(account.balance) : "• • •"}
-                            </motion.p>
+                            </p>
                           </CardContent>
                         </Card>
-                      </motion.div>
+                      </div>
                     );
                   })}
                 </div>
