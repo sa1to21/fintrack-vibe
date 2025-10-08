@@ -302,9 +302,16 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.4 }}
-                className="relative"
+                className="relative -mx-4 px-4"
               >
-                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                <div
+                  className="flex gap-3 overflow-x-scroll pb-2 snap-x snap-mandatory scrollbar-hide"
+                  style={{
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                    WebkitOverflowScrolling: 'touch'
+                  }}
+                >
                   {accounts.slice(2).map((account, index) => {
                     const Icon = account.icon;
                     return (
@@ -313,13 +320,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
-                        whileHover={{
-                          scale: 1.02,
-                          y: -2,
-                          transition: { duration: 0.2 }
-                        }}
-                        whileTap={{ scale: 0.98 }}
-                        className="flex-shrink-0"
+                        className="flex-shrink-0 snap-center"
                         style={{ width: 'calc(50% - 6px)' }}
                       >
                         <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl h-full">
