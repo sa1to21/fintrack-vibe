@@ -247,52 +247,109 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           </motion.div>
 
           {/* Accounts */}
-          <motion.div 
-            className="grid grid-cols-2 gap-3"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            {accounts.map((account, index) => {
-              const Icon = account.icon;
-              return (
-                <motion.div
-                  key={account.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3, delay: 0.3 + index * 0.05 }}
-                  whileHover={{ 
-                    scale: 1.02,
-                    y: -2,
-                    transition: { duration: 0.2 }
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${account.color}`}>
-                          <Icon className="w-4 h-4" />
+          <div className="space-y-3">
+            {/* Первые 2 счета в grid */}
+            <motion.div
+              className="grid grid-cols-2 gap-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+            >
+              {accounts.slice(0, 2).map((account, index) => {
+                const Icon = account.icon;
+                return (
+                  <motion.div
+                    key={account.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3, delay: 0.3 + index * 0.05 }}
+                    whileHover={{
+                      scale: 1.02,
+                      y: -2,
+                      transition: { duration: 0.2 }
+                    }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${account.color}`}>
+                            <Icon className="w-4 h-4" />
+                          </div>
+                          <span className="text-white/90 text-sm font-medium truncate">
+                            {account.name}
+                          </span>
                         </div>
-                        <span className="text-white/90 text-sm font-medium truncate">
-                          {account.name}
-                        </span>
-                      </div>
-                      <motion.p 
-                        className="text-white font-medium"
-                        key={showBalance ? account.balance : 'hidden'}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
+                        <motion.p
+                          className="text-white font-medium"
+                          key={showBalance ? account.balance : 'hidden'}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {showBalance ? formatCurrency(account.balance) : "• • •"}
+                        </motion.p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+
+            {/* Остальные счета в горизонтальном слайдере */}
+            {accounts.length > 2 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.4 }}
+                className="relative"
+              >
+                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                  {accounts.slice(2).map((account, index) => {
+                    const Icon = account.icon;
+                    return (
+                      <motion.div
+                        key={account.id}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
+                        whileHover={{
+                          scale: 1.02,
+                          y: -2,
+                          transition: { duration: 0.2 }
+                        }}
+                        whileTap={{ scale: 0.98 }}
+                        className="flex-shrink-0"
+                        style={{ width: 'calc(50% - 6px)' }}
                       >
-                        {showBalance ? formatCurrency(account.balance) : "• • •"}
-                      </motion.p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </motion.div>
+                        <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl h-full">
+                          <CardContent className="p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${account.color}`}>
+                                <Icon className="w-4 h-4" />
+                              </div>
+                              <span className="text-white/90 text-sm font-medium truncate">
+                                {account.name}
+                              </span>
+                            </div>
+                            <motion.p
+                              className="text-white font-medium"
+                              key={showBalance ? account.balance : 'hidden'}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              {showBalance ? formatCurrency(account.balance) : "• • •"}
+                            </motion.p>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </div>
         </div>
       </motion.div>
 
