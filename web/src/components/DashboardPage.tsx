@@ -50,7 +50,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         const accountsWithIcons = data.map(acc => ({
           id: acc.id,
           name: acc.name,
-          balance: acc.balance,
+          balance: parseFloat(acc.balance.toString()) || 0,
           icon: acc.account_type === 'savings' ? PiggyBank :
                 acc.account_type === 'card' ? CreditCard : Wallet,
           color: acc.account_type === 'savings' ? "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700" :
