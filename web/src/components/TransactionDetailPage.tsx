@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
@@ -7,23 +7,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Textarea } from "./ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "./ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
-import { 
-  ArrowLeft, 
-  Edit, 
-  Trash2, 
-  Save, 
+import {
+  ArrowLeft,
+  Edit,
+  Trash2,
+  Save,
   Calendar,
   Clock,
   Wallet,
   CreditCard,
   PiggyBank,
-  Plus, 
-  Minus, 
-  Home, 
-  Car, 
-  ShoppingBag, 
-  Coffee, 
-  Zap, 
+  Plus,
+  Minus,
+  Home,
+  Car,
+  ShoppingBag,
+  Coffee,
+  Zap,
   Heart,
   DollarSign,
   Briefcase,
@@ -33,6 +33,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner@2.0.3";
 import { motion } from "motion/react";
+import categoriesService, { Category } from "../services/categories.service";
+import accountsService, { Account as APIAccount } from "../services/accounts.service";
 
 interface Transaction {
   id: string;
@@ -46,13 +48,6 @@ interface Transaction {
   time: string;
 }
 
-interface Account {
-  id: string;
-  name: string;
-  icon: typeof Wallet;
-  balance: number;
-}
-
 interface TransactionDetailPageProps {
   transaction: Transaction;
   onBack: () => void;
@@ -60,32 +55,17 @@ interface TransactionDetailPageProps {
   onDelete: (transactionId: string) => void;
 }
 
-const expenseCategories = [
-  { id: "food", name: "Еда", icon: Coffee },
-  { id: "transport", name: "Транспорт", icon: Car },
-  { id: "shopping", name: "Покупки", icon: ShoppingBag },
-  { id: "home", name: "Дом", icon: Home },
-  { id: "utilities", name: "Коммуналка", icon: Zap },
-  { id: "health", name: "Здоровье", icon: Heart },
-];
-
-const incomeCategories = [
-  { id: "salary", name: "Зарплата", icon: DollarSign },
-  { id: "freelance", name: "Фриланс", icon: Briefcase },
-  { id: "business", name: "Бизнес", icon: TrendingUp },
-  { id: "investment", name: "Инвестиции", icon: TrendingUp },
-  { id: "gift", name: "Подарок", icon: Gift },
-  { id: "other", name: "Другое", icon: Plus },
-];
-
-const accounts: Account[] = [
-  { id: "1", name: "Основной счёт", icon: Wallet, balance: 25430 },
-  { id: "2", name: "Накопления", icon: PiggyBank, balance: 8750 },
-  { id: "3", name: "Карта", icon: CreditCard, balance: 12340 },
-];
+const iconMap: Record<string, typeof Wallet> = {
+  wallet: Wallet,
+  credit_card: CreditCard,
+  piggy_bank: PiggyBank,
+};
 
 export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete }: TransactionDetailPageProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [accounts, setAccounts] = useState<APIAccount[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
   const [editData, setEditData] = useState({
     amount: transaction.amount.toString(),
     type: transaction.type,
@@ -95,6 +75,27 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
     date: transaction.date,
     time: transaction.time
   });
+
+  // Загрузка счетов и категорий
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [accountsData, categoriesData] = await Promise.all([
+          accountsService.getAll(),
+          categoriesService.getAll()
+        ]);
+        setAccounts(accountsData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error('Failed to load data:', error);
+        toast.error('Не удалось загрузить данные');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ru-RU', {
@@ -115,16 +116,20 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
 
   // Memoize category and account lookups for performance
   const { currentCategories, currentCategory, currentAccount } = useMemo(() => {
-    const categories = editData.type === 'expense' ? expenseCategories : incomeCategories;
-    const category = categories.find(cat => cat.id === editData.category);
-    const account = accounts.find(acc => acc.id === editData.accountId);
-    
+    // Используем категории из API, фильтруем по типу
+    const apiCategories = categories.filter(cat =>
+      editData.type === 'expense' ? cat.category_type === 'expense' : cat.category_type === 'income'
+    );
+
+    const category = apiCategories.find(cat => String(cat.id) === String(editData.category));
+    const account = accounts.find(acc => String(acc.id) === String(editData.accountId));
+
     return {
-      currentCategories: categories,
+      currentCategories: apiCategories,
       currentCategory: category,
       currentAccount: account
     };
-  }, [editData.type, editData.category, editData.accountId]);
+  }, [editData.type, editData.category, editData.accountId, categories, accounts]);
 
   const handleSave = useCallback(() => {
     if (!editData.amount || !editData.category || !editData.accountId) {
@@ -161,6 +166,17 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
       category: '' // Reset category when type changes
     }));
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-blue-600">Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
@@ -328,10 +344,10 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                   {currentCategory && (
                     <>
                       <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full flex items-center justify-center">
-                        <currentCategory.icon className="w-5 h-5 text-blue-600" />
+                        <span className="text-xl">{currentCategory.icon}</span>
                       </div>
                       <div>
-                        <p className="font-medium text-slate-800">{transaction.categoryName}</p>
+                        <p className="font-medium text-slate-800">{currentCategory.name}</p>
                         <p className="text-sm text-slate-600">Категория</p>
                       </div>
                     </>
@@ -343,7 +359,10 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                   {currentAccount && (
                     <>
                       <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center">
-                        <currentAccount.icon className="w-5 h-5 text-purple-600" />
+                        {(() => {
+                          const Icon = iconMap[currentAccount.account_type] || Wallet;
+                          return <Icon className="w-5 h-5 text-purple-600" />;
+                        })()}
                       </div>
                       <div>
                         <p className="font-medium text-slate-800">{currentAccount.name}</p>
@@ -452,22 +471,21 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                   <Label>Категория *</Label>
                   <div className="grid grid-cols-3 gap-2">
                     {currentCategories.map((cat) => {
-                      const Icon = cat.icon;
                       return (
                         <motion.button
                           key={cat.id}
                           type="button"
                           className={`p-3 rounded-lg border text-center transition-all duration-200 ${
-                            editData.category === cat.id
+                            String(editData.category) === String(cat.id)
                               ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
                               : 'border-blue-200 hover:border-blue-400 hover:bg-blue-50/30'
                           }`}
-                          onClick={() => setEditData(prev => ({ ...prev, category: cat.id }))}
+                          onClick={() => setEditData(prev => ({ ...prev, category: String(cat.id) }))}
                           whileHover={{ scale: 1.03 }}
                           whileTap={{ scale: 0.97 }}
                         >
                           <div className="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 bg-gradient-to-br from-blue-100 to-indigo-200">
-                            <Icon className="w-4 h-4 text-blue-600" />
+                            <span className="text-lg">{cat.icon}</span>
                           </div>
                           <span className="text-xs">{cat.name}</span>
                         </motion.button>
@@ -479,15 +497,15 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                 {/* Account */}
                 <div className="space-y-2">
                   <Label>Счёт *</Label>
-                  <Select value={editData.accountId} onValueChange={(value) => setEditData(prev => ({ ...prev, accountId: value }))}>
+                  <Select value={String(editData.accountId)} onValueChange={(value) => setEditData(prev => ({ ...prev, accountId: value }))}>
                     <SelectTrigger className="border-blue-200 focus:border-blue-400">
                       <SelectValue placeholder="Выберите счёт" />
                     </SelectTrigger>
                     <SelectContent>
                       {accounts.map((acc) => {
-                        const Icon = acc.icon;
+                        const Icon = iconMap[acc.account_type] || Wallet;
                         return (
-                          <SelectItem key={acc.id} value={acc.id}>
+                          <SelectItem key={acc.id} value={String(acc.id)}>
                             <div className="flex items-center gap-2">
                               <Icon className="w-4 h-4 text-blue-600" />
                               <span>{acc.name}</span>
