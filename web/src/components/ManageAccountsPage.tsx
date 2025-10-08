@@ -205,11 +205,13 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       }
 
       // Создаём транзакцию для изменения баланса
+      const now = new Date();
       await transactionsService.create(editingAccount.id, {
         amount: changeAmount,
         transaction_type: categoryType,
         description: `${balanceChangeType === 'increase' ? 'Пополнение' : 'Снятие'} средств`,
-        date: new Date().toISOString().split('T')[0],
+        date: now.toISOString().split('T')[0],
+        time: now.toTimeString().substring(0, 5),
         category_id: suitableCategory.id
       });
 
