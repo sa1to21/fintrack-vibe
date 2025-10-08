@@ -87,10 +87,13 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         const accountId = accounts[0].id;
         const data = await transactionsService.getAll(accountId);
 
+        console.log('API Transactions:', data);
+        console.log('Accounts:', accounts);
+
         // Преобразуем API транзакции в формат компонента
         const formattedTransactions: Transaction[] = data.map(t => {
           const createdDate = new Date(t.created_at);
-          return {
+          const formatted = {
             id: t.id,
             amount: parseFloat(t.amount.toString()),
             type: t.transaction_type,
@@ -101,6 +104,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             date: t.date,
             time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
           };
+          console.log('Formatted transaction:', formatted);
+          return formatted;
         });
 
         setTransactions(formattedTransactions);
@@ -534,7 +539,11 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                           {showBalance ? formatCurrency(transaction.amount) : "• • •"}
                         </motion.p>
                         <Badge variant="outline" className="text-xs border-blue-300 text-blue-700">
-                          {accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
+                          {(() => {
+                            const account = accounts.find(acc => String(acc.id) === String(transaction.accountId));
+                            console.log('Looking for account:', transaction.accountId, 'Found:', account, 'All accounts:', accounts.map(a => a.id));
+                            return account?.name || 'Неизвестно';
+                          })()}
                         </Badge>
                       </div>
                     </div>
