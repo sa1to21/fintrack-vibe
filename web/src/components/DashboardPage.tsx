@@ -534,7 +534,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                           {showBalance ? formatCurrency(transaction.amount) : "• • •"}
                         </motion.p>
                         <Badge variant="outline" className="text-xs border-blue-300 text-blue-700">
-                          {accounts.find(acc => acc.id === transaction.accountId)?.name || 'Неизвестно'}
+                          {accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
                         </Badge>
                       </div>
                     </div>
