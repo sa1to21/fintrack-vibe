@@ -273,6 +273,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         hidden: { opacity: 0, y: 20 },
                         show: { opacity: 1, y: 0 }
                       }}
+                      onClick={onManageAccounts}
                     >
                       <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
                         <CardContent className="p-4">
@@ -311,6 +312,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     <div
                       key={account.id}
                       className="flex-shrink-0 w-[160px]"
+                      onClick={onManageAccounts}
                     >
                       <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl h-full">
                         <CardContent className="p-4">
