@@ -15,8 +15,9 @@ module Api
 
       # Найти или создать пользователя
       user = User.find_or_initialize_by(telegram_id: telegram_id)
+      is_new_user = user.new_record?
 
-      if user.new_record?
+      if is_new_user
         # Новый пользователь
         user.assign_attributes(
           name: "#{user_params[:first_name]} #{user_params[:last_name]}".strip,
@@ -48,7 +49,8 @@ module Api
 
       render json: {
         token: token,
-        user: UserSerializer.new(user).as_json
+        user: UserSerializer.new(user).as_json,
+        is_new_user: is_new_user
       }, status: :ok
     end
 

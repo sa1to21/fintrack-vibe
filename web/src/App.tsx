@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TelegramAuthProvider, useTelegramAuth } from "./contexts/TelegramAuthContext";
 import { WelcomePage } from "./components/WelcomePage";
 import { DashboardPage } from "./components/DashboardPage";
@@ -27,10 +27,24 @@ interface Transaction {
 type AppScreen = 'welcome' | 'dashboard' | 'analytics' | 'education' | 'settings' | 'add-transaction' | 'manage-accounts' | 'all-transactions' | 'transaction-detail';
 
 function AppContent() {
-  const { isAuthenticated, loading, error } = useTelegramAuth();
+  const { isAuthenticated, loading, error, isNewUser } = useTelegramAuth();
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('welcome');
   const [hasSeenWelcome, setHasSeenWelcome] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+
+  // Автоматически пропускаем Welcome Page для вернувшихся пользователей
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      if (!isNewUser) {
+        // Это вернувшийся пользователь - идём сразу в Dashboard
+        setHasSeenWelcome(true);
+        setCurrentScreen('dashboard');
+      } else {
+        // Новый пользователь - показываем Welcome Page
+        setCurrentScreen('welcome');
+      }
+    }
+  }, [loading, isAuthenticated, isNewUser]);
 
   const handleGetStarted = () => {
     setHasSeenWelcome(true);

@@ -21,6 +21,7 @@ export interface User {
 export interface AuthResponse {
   token: string;
   user: User;
+  is_new_user: boolean;
 }
 
 interface TelegramAuthContextType {
@@ -31,6 +32,7 @@ interface TelegramAuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   isTelegramReady: boolean;
+  isNewUser: boolean;
 }
 
 const TelegramAuthContext = createContext<TelegramAuthContextType | undefined>(undefined);
@@ -64,6 +66,7 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isTelegramReady, setIsTelegramReady] = useState(false);
+  const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
     // Функция ожидания загрузки Telegram SDK с таймаутом
@@ -156,12 +159,14 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
 
           console.log('[TelegramAuth] Auth response:', response.data);
 
-          // Сохраняем токен
+          // Сохраняем токен и флаг нового пользователя
           if (response.data.token) {
             localStorage.setItem('authToken', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
             setUser(response.data.user);
+            setIsNewUser(response.data.is_new_user);
             console.log('[TelegramAuth] User authenticated successfully');
+            console.log('[TelegramAuth] Is new user:', response.data.is_new_user);
           }
         } else {
           // Если нет данных пользователя
@@ -215,6 +220,7 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
         logout,
         isAuthenticated: !!user,
         isTelegramReady,
+        isNewUser,
       }}
     >
       {children}
