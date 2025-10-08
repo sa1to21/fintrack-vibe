@@ -170,8 +170,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   return (
     <div className="min-h-full bg-background">
       {/* Header */}
-      <motion.div 
-        className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 px-4 py-6 relative overflow-hidden"
+      <motion.div
+        className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 px-4 py-6 pb-8 relative overflow-hidden"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
@@ -246,18 +246,23 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             </div>
           </motion.div>
 
-          {/* Accounts */}
+          {/* Accounts - Horizontal Scroll */}
           <motion.div
-            className="grid grid-cols-2 gap-3"
+            className="flex gap-3 overflow-x-auto overflow-y-visible pb-3 pt-1 -mx-4 px-4 scrollbar-hide snap-x snap-mandatory"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
           >
             {accounts.map((account, index) => {
               const Icon = account.icon;
               return (
                 <motion.div
                   key={account.id}
+                  className="min-w-[160px] flex-shrink-0 snap-start"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: 0.3 + index * 0.05 }}
@@ -268,7 +273,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
+                  <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl w-full">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${account.color}`}>
