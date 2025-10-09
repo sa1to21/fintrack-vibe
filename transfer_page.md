@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
@@ -6,102 +6,38 @@ import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
 import { ArrowLeft, ArrowRightLeft, Wallet, CreditCard, PiggyBank } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "sonner@2.0.3";
 import { motion } from "motion/react";
-import accountsService, { Account } from "../services/accounts.service";
-import transfersService from "../services/transfers.service";
+
+interface Transaction {
+  id: string;
+  amount: number;
+  type: 'income' | 'expense' | 'transfer';
+  category: string;
+  categoryName: string;
+  description: string;
+  accountId: string;
+  toAccountId?: string;
+  date: string;
+  time: string;
+}
 
 interface TransferPageProps {
   onBack: () => void;
-  onSuccess: () => void;
+  onAddTransfer: (transfer: Omit<Transaction, 'id'>) => void;
 }
 
-const getAccountIcon = (accountType: string) => {
-  switch (accountType) {
-    case 'savings':
-      return PiggyBank;
-    case 'card':
-      return CreditCard;
-    default:
-      return Wallet;
-  }
-};
+const accounts = [
+  { id: "1", name: "Основной счёт", icon: Wallet, balance: 25430 },
+  { id: "2", name: "Накопления", icon: PiggyBank, balance: 8750 },
+  { id: "3", name: "Карта", icon: CreditCard, balance: 12340 },
+];
 
-export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [fromAccountId, setFromAccountId] = useState<string>("");
-  const [toAccountId, setToAccountId] = useState<string>("");
-  const [amount, setAmount] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-
-  const swapAccounts = () => {
-    const temp = fromAccountId;
-    setFromAccountId(toAccountId);
-    setToAccountId(temp);
-  };
-
-  useEffect(() => {
-    loadAccounts();
-  }, []);
-
-  const loadAccounts = async () => {
-    try {
-      const data = await accountsService.getAll();
-      setAccounts(data);
-    } catch (error) {
-      console.error('Failed to load accounts:', error);
-      toast.error('Не удалось загрузить счета');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!fromAccountId || !toAccountId || !amount) {
-      toast.error('Заполните все поля');
-      return;
-    }
-
-    if (fromAccountId === toAccountId) {
-      toast.error('Выберите разные счета');
-      return;
-    }
-
-    const amountNum = parseFloat(amount);
-    if (amountNum <= 0) {
-      toast.error('Сумма должна быть больше нуля');
-      return;
-    }
-
-    try {
-      setSubmitting(true);
-      await transfersService.create({
-        from_account_id: fromAccountId,
-        to_account_id: toAccountId,
-        amount: amountNum,
-        description: description || undefined
-      });
-
-      toast.success('Перевод выполнен успешно!');
-      onSuccess();
-    } catch (error: any) {
-      console.error('Transfer failed:', error);
-
-      if (error.response?.data?.error === 'Недостаточно средств') {
-        toast.error('Недостаточно средств на счете');
-      } else if (error.response?.data?.error === 'Нельзя перевести на тот же счет') {
-        toast.error('Нельзя перевести на тот же счет');
-      } else {
-        toast.error('Не удалось выполнить перевод');
-      }
-    } finally {
-      setSubmitting(false);
-    }
-  };
+export function TransferPage({ onBack, onAddTransfer }: TransferPageProps) {
+  const [amount, setAmount] = useState('');
+  const [fromAccount, setFromAccount] = useState('');
+  const [toAccount, setToAccount] = useState('');
+  const [description, setDescription] = useState('');
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ru-RU', {
@@ -112,60 +48,68 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
     }).format(amount);
   };
 
-  const fromAccount = accounts.find(acc => String(acc.id) === fromAccountId);
-  const toAccount = accounts.find(acc => String(acc.id) === toAccountId);
+  const handleSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!amount || !fromAccount || !toAccount) {
+      toast.error("Заполните все обязательные поля");
+      return;
+    }
 
-  if (loading) {
-    return (
-      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-blue-600">Загрузка...</p>
-        </div>
-      </div>
-    );
-  }
+    if (fromAccount === toAccount) {
+      toast.error("Выберите разные счета для перевода");
+      return;
+    }
 
-  if (accounts.length < 2) {
-    return (
-      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-        <motion.div
-          className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-4 relative overflow-hidden"
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onBack}
-              className="text-white hover:bg-white/20"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <h1 className="font-medium text-white">Перевод между счетами</h1>
-            <div className="w-8" />
-          </div>
-        </motion.div>
+    const transferAmount = parseFloat(amount);
+    const fromAccountData = accounts.find(acc => acc.id === fromAccount);
+    
+    if (fromAccountData && transferAmount > fromAccountData.balance) {
+      toast.error("Недостаточно средств на счёте");
+      return;
+    }
 
-        <div className="p-4 max-w-md mx-auto mt-8 text-center">
-          <ArrowRightLeft className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-          <h2 className="text-lg font-medium mb-2">Недостаточно счетов</h2>
-          <p className="text-gray-600 mb-4">
-            Для перевода между счетами необходимо минимум 2 счета
-          </p>
-          <Button onClick={onBack} variant="outline">
-            Вернуться назад
-          </Button>
-        </div>
-      </div>
-    );
-  }
+    const currentTime = new Date();
+    const currentDate = currentTime.toISOString().split('T')[0];
+    const currentTimeStr = currentTime.toTimeString().slice(0, 5);
+
+    const transfer = {
+      type: 'transfer' as const,
+      amount: transferAmount,
+      category: 'transfer',
+      categoryName: 'Перевод',
+      accountId: fromAccount,
+      toAccountId: toAccount,
+      description: description || `Перевод: ${fromAccountData?.name} → ${accounts.find(acc => acc.id === toAccount)?.name}`,
+      date: currentDate,
+      time: currentTimeStr
+    };
+
+    onAddTransfer(transfer);
+    toast.success("Перевод выполнен успешно!");
+    
+    // Reset form
+    setAmount('');
+    setFromAccount('');
+    setToAccount('');
+    setDescription('');
+    
+    // Navigate back after successful submission
+    setTimeout(() => {
+      onBack();
+    }, 1500);
+  }, [amount, fromAccount, toAccount, description, onAddTransfer, onBack]);
+
+  const swapAccounts = () => {
+    const temp = fromAccount;
+    setFromAccount(toAccount);
+    setToAccount(temp);
+  };
 
   return (
     <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Header */}
-      <motion.div
+      <motion.div 
         className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-4 pb-6 relative overflow-hidden"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -174,8 +118,8 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
         {/* Background decorations */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-y-12"></div>
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-
-        <motion.div
+        
+        <motion.div 
           className="flex items-center justify-between relative z-10"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -185,9 +129,9 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Button
-              variant="ghost"
-              size="sm"
+            <Button 
+              variant="ghost" 
+              size="sm" 
               onClick={onBack}
               className="text-white hover:bg-white/20 backdrop-blur-sm transition-all duration-200"
             >
@@ -199,8 +143,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
         </motion.div>
       </motion.div>
 
-      {/* Form */}
-      <motion.div
+      <motion.div 
         className="p-4 -mt-2"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -221,7 +164,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* From Account */}
-              <motion.div
+              <motion.div 
                 className="space-y-2"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -229,22 +172,22 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
               >
                 <Label htmlFor="fromAccount" className="text-slate-700">Откуда *</Label>
                 <motion.div whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
-                  <Select value={fromAccountId} onValueChange={setFromAccountId}>
+                  <Select value={fromAccount} onValueChange={setFromAccount}>
                     <SelectTrigger className="border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 bg-gradient-to-br from-white to-blue-50/30">
                       <SelectValue placeholder="Выберите счёт списания" />
                     </SelectTrigger>
                     <SelectContent>
-                      {accounts.map((account) => {
-                        const Icon = getAccountIcon(account.account_type);
+                      {accounts.map((acc) => {
+                        const Icon = acc.icon;
                         return (
-                          <SelectItem key={account.id} value={String(account.id)} disabled={String(account.id) === toAccountId}>
+                          <SelectItem key={acc.id} value={acc.id} disabled={acc.id === toAccount}>
                             <div className="flex items-center justify-between gap-4 w-full">
                               <div className="flex items-center gap-2">
                                 <Icon className="w-4 h-4 text-blue-600" />
-                                <span>{account.name}</span>
+                                <span>{acc.name}</span>
                               </div>
                               <span className="text-xs text-muted-foreground">
-                                {formatCurrency(parseFloat(account.balance.toString()))}
+                                {formatCurrency(acc.balance)}
                               </span>
                             </div>
                           </SelectItem>
@@ -256,7 +199,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
               </motion.div>
 
               {/* Swap Button */}
-              <motion.div
+              <motion.div 
                 className="flex justify-center -my-2"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -272,7 +215,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                     variant="outline"
                     size="icon"
                     onClick={swapAccounts}
-                    disabled={!fromAccountId || !toAccountId}
+                    disabled={!fromAccount || !toAccount}
                     className="rounded-full border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 shadow-md disabled:opacity-50"
                   >
                     <ArrowRightLeft className="w-5 h-5" />
@@ -281,7 +224,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
               </motion.div>
 
               {/* To Account */}
-              <motion.div
+              <motion.div 
                 className="space-y-2"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -289,36 +232,34 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
               >
                 <Label htmlFor="toAccount" className="text-slate-700">Куда *</Label>
                 <motion.div whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
-                  <Select value={toAccountId} onValueChange={setToAccountId}>
+                  <Select value={toAccount} onValueChange={setToAccount}>
                     <SelectTrigger className="border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 bg-gradient-to-br from-white to-blue-50/30">
                       <SelectValue placeholder="Выберите счёт зачисления" />
                     </SelectTrigger>
                     <SelectContent>
-                      {accounts
-                        .filter(acc => String(acc.id) !== fromAccountId)
-                        .map((account) => {
-                          const Icon = getAccountIcon(account.account_type);
-                          return (
-                            <SelectItem key={account.id} value={String(account.id)}>
-                              <div className="flex items-center justify-between gap-4 w-full">
-                                <div className="flex items-center gap-2">
-                                  <Icon className="w-4 h-4 text-blue-600" />
-                                  <span>{account.name}</span>
-                                </div>
-                                <span className="text-xs text-muted-foreground">
-                                  {formatCurrency(parseFloat(account.balance.toString()))}
-                                </span>
+                      {accounts.map((acc) => {
+                        const Icon = acc.icon;
+                        return (
+                          <SelectItem key={acc.id} value={acc.id} disabled={acc.id === fromAccount}>
+                            <div className="flex items-center justify-between gap-4 w-full">
+                              <div className="flex items-center gap-2">
+                                <Icon className="w-4 h-4 text-blue-600" />
+                                <span>{acc.name}</span>
                               </div>
-                            </SelectItem>
-                          );
-                        })}
+                              <span className="text-xs text-muted-foreground">
+                                {formatCurrency(acc.balance)}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </motion.div>
               </motion.div>
 
               {/* Amount */}
-              <motion.div
+              <motion.div 
                 className="space-y-2"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -348,7 +289,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
               </motion.div>
 
               {/* Description */}
-              <motion.div
+              <motion.div 
                 className="space-y-2"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -375,10 +316,9 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Button
-                  type="submit"
+                <Button 
+                  type="submit" 
                   className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group"
-                  disabled={submitting}
                 >
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full"
@@ -386,7 +326,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                   />
                   <ArrowRightLeft className="w-5 h-5 mr-2 relative z-10" />
                   <span className="relative z-10 font-medium">
-                    {submitting ? 'Выполняем перевод...' : 'Выполнить перевод'}
+                    Выполнить перевод
                   </span>
                 </Button>
               </motion.div>

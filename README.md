@@ -371,7 +371,7 @@ VITE_API_URL=https://e1e8f46f6a8a.ngrok-free.app/api/v1
 - **Publish directory**: `web/dist`
 
 ### Backend (ngrok + local)
-- **Current ngrok**: https://e1e8f46f6a8a.ngrok-free.app
+- **Current ngrok**: https://e1b06042c578.ngrok-free.app
 - **Local**: http://localhost:3000
 - **Note**: Обновлять `.env.production` при смене ngrok URL
 
