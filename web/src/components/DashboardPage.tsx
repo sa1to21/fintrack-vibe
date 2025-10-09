@@ -541,9 +541,13 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                           )}
                         </motion.div>
                         <div>
-                          <h3 className="font-medium text-sm">{transaction.categoryName}</h3>
+                          <h3 className="font-medium text-sm">
+                            {transaction.type === 'transfer' ? 'Перевод' : transaction.categoryName}
+                          </h3>
                           <p className="text-xs text-muted-foreground">
-                            {transaction.description}
+                            {transaction.type === 'transfer' && transaction.toAccountId
+                              ? `Перевод: ${accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?'} → ${accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?'}`
+                              : transaction.description}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {new Date(transaction.date).toLocaleDateString('ru-RU')} в {transaction.time}
@@ -567,7 +571,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                             : transaction.type === 'income' ? '+' : '-'}
                           {showBalance ? formatCurrency(transaction.amount) : "• • •"}
                         </motion.p>
-                        <Badge variant="outline" className="text-xs border-blue-300 text-blue-700">
+                        <Badge variant="outline" className="text-xs border-purple-300 text-purple-700">
                           {transaction.type === 'transfer' && transaction.toAccountId
                             ? `${accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?'} → ${accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?'}`
                             : accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
