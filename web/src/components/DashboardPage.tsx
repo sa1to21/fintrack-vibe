@@ -377,16 +377,17 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
               </Button>
             </motion.div>
             <div className="grid grid-cols-2 gap-3">
-              {onTransfer && accounts.length >= 2 && (
+              {onTransfer && (
                 <motion.div
-                  whileHover={{ scale: 1.03, y: -3 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileHover={accounts.length >= 2 ? { scale: 1.03, y: -3 } : {}}
+                  whileTap={accounts.length >= 2 ? { scale: 0.97 } : {}}
                   transition={{ duration: 0.2 }}
                 >
                   <Button
                     onClick={onTransfer}
                     variant="outline"
-                    className="w-full border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400 p-4 h-auto flex-col gap-2 shadow-sm hover:shadow-md transition-all duration-300"
+                    disabled={accounts.length < 2}
+                    className="w-full border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400 p-4 h-auto flex-col gap-2 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ArrowRightLeft className="w-5 h-5" />
                     <span className="text-sm">Перевод</span>
