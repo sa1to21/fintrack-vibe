@@ -544,11 +544,11 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                           <h3 className="font-medium text-sm">
                             {transaction.type === 'transfer' ? 'Перевод' : transaction.categoryName}
                           </h3>
-                          <p className="text-xs text-muted-foreground">
-                            {transaction.type === 'transfer' && transaction.toAccountId
-                              ? `${accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?'} → ${accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?'}`
-                              : transaction.description}
-                          </p>
+                          {transaction.type !== 'transfer' && (
+                            <p className="text-xs text-muted-foreground">
+                              {transaction.description}
+                            </p>
+                          )}
                           <p className="text-xs text-muted-foreground">
                             {new Date(transaction.date).toLocaleDateString('ru-RU')} в {transaction.time}
                           </p>
