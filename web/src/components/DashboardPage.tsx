@@ -545,7 +545,14 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                           <h3 className="font-medium text-sm">
                             {transaction.type === 'transfer' ? 'Перевод' : transaction.categoryName}
                           </h3>
-                          {transaction.type !== 'transfer' && (
+                          {transaction.type === 'transfer' ? (
+                            transaction.description &&
+                            transaction.description !== `${accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || ''} → ${accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || ''}` && (
+                              <p className="text-xs text-muted-foreground">
+                                {transaction.description}
+                              </p>
+                            )
+                          ) : (
                             <p className="text-xs text-muted-foreground">
                               {transaction.description}
                             </p>
