@@ -405,16 +405,16 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm hover:shadow-lg transition-all duration-300">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <motion.div 
-                          className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm ${account.color}`}
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <motion.div
+                          className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${account.color}`}
                           whileHover={{ scale: 1.1, rotate: 5 }}
                           transition={{ duration: 0.2 }}
                         >
                           <Icon className="w-6 h-6" />
                         </motion.div>
-                        <div>
-                          <h3 className="font-medium text-slate-800">{account.name}</h3>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-medium text-slate-800 truncate">{account.name}</h3>
                           <p className="text-lg font-medium text-slate-700">
                             {formatCurrency(account.balance)}
                           </p>
