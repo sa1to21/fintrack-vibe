@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
@@ -207,19 +207,8 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
         transition={{ duration: 0.4, delay: 0.15 }}
       >
         <Card className="border-none shadow-xl bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm">
-          <CardHeader className="pb-4">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-            >
-              <CardTitle className="text-center bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Перевод средств
-              </CardTitle>
-            </motion.div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <CardContent className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {/* From Account */}
               <motion.div
                 className="space-y-2"
@@ -257,7 +246,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
 
               {/* Swap Button */}
               <motion.div
-                className="flex justify-center -my-2"
+                className="flex justify-center"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: 0.3 }}
