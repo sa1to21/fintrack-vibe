@@ -548,7 +548,9 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                           {transaction.type === 'transfer' ? (
                             transaction.description && transaction.description.trim() !== '' && (
                               <p className="text-xs text-muted-foreground">
-                                {transaction.description}
+                                {transaction.description.length > 20
+                                  ? transaction.description.substring(0, 20) + '...'
+                                  : transaction.description}
                               </p>
                             )
                           ) : (
