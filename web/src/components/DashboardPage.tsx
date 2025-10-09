@@ -571,7 +571,14 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                             : transaction.type === 'income' ? '+' : '-'}
                           {showBalance ? formatCurrency(transaction.amount) : "• • •"}
                         </motion.p>
-                        <Badge variant="outline" className="text-xs border-purple-300 text-purple-700">
+                        <Badge
+                          variant="outline"
+                          className={`text-xs ${
+                            transaction.type === 'transfer'
+                              ? 'border-purple-300 text-purple-700'
+                              : 'border-gray-300 text-gray-700'
+                          }`}
+                        >
                           {transaction.type === 'transfer' && transaction.toAccountId
                             ? `${accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?'} → ${accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?'}`
                             : accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
