@@ -481,10 +481,10 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     whileHover={{ x: 4 }}
                     onClick={() => onTransactionClick(transaction)}
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
                         <motion.div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${
+                          className={`w-11 h-11 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${
                             transaction.type === 'transfer'
                               ? 'bg-gradient-to-br from-purple-100 to-purple-200'
                               : transaction.type === 'income'
@@ -503,17 +503,17 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                           )}
                         </motion.div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="font-medium text-sm text-slate-800">
+                          <h3 className="font-medium text-base text-slate-900 mb-0.5">
                             {transaction.type === 'transfer' ? 'Перевод' : transaction.categoryName}
                           </h3>
-                          <p className="text-xs text-slate-500 mt-0.5">
+                          <p className="text-xs text-slate-500">
                             {new Date(transaction.date).toLocaleDateString('ru-RU')} в {transaction.time}
                           </p>
                         </div>
                       </div>
-                      <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                      <div className="flex flex-col items-end gap-1 flex-shrink-0">
                         <motion.p
-                          className={`font-semibold text-base ${
+                          className={`font-semibold text-lg leading-tight ${
                             transaction.type === 'transfer'
                               ? 'text-purple-600'
                               : transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
