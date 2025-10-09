@@ -256,10 +256,10 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
           {/* Accounts */}
           <div>
-            {/* First 3 accounts in grid (2 in first row, 1 in second row) */}
+            {/* First 4 accounts in 2x2 grid */}
             {accounts.length > 0 && (
               <motion.div
-                className="grid grid-cols-2 gap-3 mb-3"
+                className="grid grid-cols-2 gap-3"
                 variants={{
                   hidden: { opacity: 0 },
                   show: {
@@ -272,12 +272,11 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 initial="hidden"
                 animate="show"
               >
-                {accounts.slice(0, 3).map((account, index) => {
+                {accounts.slice(0, 4).map((account) => {
                   const Icon = account.icon;
                   return (
                     <motion.div
                       key={account.id}
-                      className={index === 2 ? "col-span-2" : ""}
                       variants={{
                         hidden: { opacity: 0, y: 20 },
                         show: { opacity: 1, y: 0 }
@@ -303,45 +302,6 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   );
                 })}
               </motion.div>
-            )}
-
-            {/* Remaining accounts (4+) in horizontal scroll */}
-            {accounts.length > 3 && (
-              <div
-                className="flex gap-3 overflow-x-auto -mx-4 px-4 pb-2 scrollbar-hide"
-                style={{
-                  scrollbarWidth: 'none',
-                  msOverflowStyle: 'none',
-                  WebkitOverflowScrolling: 'touch'
-                }}
-              >
-                {accounts.slice(3).map((account) => {
-                  const Icon = account.icon;
-                  return (
-                    <div
-                      key={account.id}
-                      className="flex-shrink-0 w-[160px]"
-                      onClick={onManageAccounts}
-                    >
-                      <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl h-full">
-                        <CardContent className="p-4">
-                          <div className="flex items-center gap-2 mb-2 min-w-0">
-                            <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${account.color}`}>
-                              <Icon className="w-4 h-4" />
-                            </div>
-                            <span className="text-white/90 text-sm font-medium truncate min-w-0 flex-1">
-                              {account.name}
-                            </span>
-                          </div>
-                          <p className="text-white font-medium">
-                            {showBalance ? formatCurrency(account.balance) : "• • •"}
-                          </p>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  );
-                })}
-              </div>
             )}
           </div>
         </div>
