@@ -472,7 +472,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 {recentTransactions.map((transaction, index) => (
                   <motion.div
                     key={transaction.id}
-                    className={`p-5 hover:bg-blue-50/50 transition-colors duration-200 cursor-pointer ${
+                    className={`p-4 hover:bg-blue-50/50 transition-colors duration-200 cursor-pointer ${
                       index !== recentTransactions.length - 1 ? 'border-b border-blue-100' : ''
                     }`}
                     initial={{ opacity: 0, x: -20 }}
@@ -481,10 +481,10 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     whileHover={{ x: 4 }}
                     onClick={() => onTransactionClick(transaction)}
                   >
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
                         <motion.div
-                          className={`w-11 h-11 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${
+                          className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm ${
                             transaction.type === 'transfer'
                               ? 'bg-gradient-to-br from-purple-100 to-purple-200'
                               : transaction.type === 'income'
@@ -502,18 +502,23 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                             <TrendingDown className="w-5 h-5 text-red-600" />
                           )}
                         </motion.div>
-                        <div className="min-w-0 flex-1">
-                          <h3 className="font-medium text-base text-slate-900 mb-0.5">
+                        <div>
+                          <h3 className="font-medium text-sm">
                             {transaction.type === 'transfer' ? 'Перевод' : transaction.categoryName}
                           </h3>
-                          <p className="text-xs text-slate-500">
+                          {transaction.type !== 'transfer' && (
+                            <p className="text-xs text-muted-foreground">
+                              {transaction.description}
+                            </p>
+                          )}
+                          <p className="text-xs text-muted-foreground">
                             {new Date(transaction.date).toLocaleDateString('ru-RU')} в {transaction.time}
                           </p>
                         </div>
                       </div>
-                      <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                      <div className="text-right">
                         <motion.p
-                          className={`font-semibold text-lg leading-tight ${
+                          className={`font-medium ${
                             transaction.type === 'transfer'
                               ? 'text-purple-600'
                               : transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
@@ -530,14 +535,14 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         </motion.p>
                         <Badge
                           variant="outline"
-                          className={`text-xs px-2 py-0.5 ${
+                          className={`text-xs ${
                             transaction.type === 'transfer'
-                              ? 'border-purple-200 bg-purple-50 text-purple-700'
-                              : 'border-slate-200 bg-slate-50 text-slate-700'
+                              ? 'border-purple-300 text-purple-700'
+                              : 'border-blue-300 text-blue-700'
                           }`}
                         >
                           {transaction.type === 'transfer' && transaction.toAccountId
-                            ? accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'
+                            ? `${accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?'} → ${accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?'}`
                             : accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
                         </Badge>
                       </div>
