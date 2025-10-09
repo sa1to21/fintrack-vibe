@@ -546,7 +546,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                           </h3>
                           <p className="text-xs text-muted-foreground">
                             {transaction.type === 'transfer' && transaction.toAccountId
-                              ? `Перевод: ${accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?'} → ${accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?'}`
+                              ? `${accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?'} → ${accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?'}`
                               : transaction.description}
                           </p>
                           <p className="text-xs text-muted-foreground">
