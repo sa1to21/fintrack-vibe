@@ -393,31 +393,6 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
             </form>
           </CardContent>
         </Card>
-
-        {/* Info Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.55 }}
-        >
-          <Card className="mt-4 border-blue-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/30">
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center flex-shrink-0">
-                  <ArrowRightLeft className="w-4 h-4 text-blue-600" />
-                </div>
-                <div className="text-sm text-slate-600">
-                  <p className="mb-1">
-                    Переводы между счетами помогают отслеживать движение средств и не влияют на общий баланс.
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    История переводов отображается отдельно от доходов и расходов.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
       </motion.div>
     </div>
   );
