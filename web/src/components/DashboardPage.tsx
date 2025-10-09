@@ -286,10 +286,10 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                       <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl">
                         <CardContent className="p-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${account.color}`}>
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${account.color}`}>
                               <Icon className="w-4 h-4" />
                             </div>
-                            <span className="text-white/90 text-sm font-medium truncate">
+                            <span className="text-white/90 text-sm font-medium truncate min-w-0">
                               {account.name}
                             </span>
                           </div>
@@ -325,10 +325,10 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                       <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl h-full">
                         <CardContent className="p-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${account.color}`}>
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${account.color}`}>
                               <Icon className="w-4 h-4" />
                             </div>
-                            <span className="text-white/90 text-sm font-medium truncate">
+                            <span className="text-white/90 text-sm font-medium truncate min-w-0">
                               {account.name}
                             </span>
                           </div>
