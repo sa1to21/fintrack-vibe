@@ -11,6 +11,7 @@ import { motion } from "motion/react";
 import categoriesService, { Category } from "../services/categories.service";
 import transactionsService from "../services/transactions.service";
 import accountsService, { Account } from "../services/accounts.service";
+import { getAccountIconComponent } from "../utils/accountIcons";
 
 interface Transaction {
   id: string;
@@ -424,7 +425,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                     </SelectTrigger>
                     <SelectContent>
                       {(apiAccounts.length > 0 ? apiAccounts : accounts).map((acc) => {
-                        const Icon = 'icon' in acc ? acc.icon : Wallet;
+                        const Icon = 'account_type' in acc ? getAccountIconComponent(acc.account_type) : ('icon' in acc ? acc.icon : Wallet);
                         return (
                           <SelectItem key={acc.id} value={String(acc.id)}>
                             <div className="flex items-center gap-2">

@@ -5,27 +5,17 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { ArrowLeft, ArrowRightLeft, Wallet, CreditCard, PiggyBank } from "lucide-react";
+import { ArrowLeft, ArrowRightLeft } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import accountsService, { Account } from "../services/accounts.service";
 import transfersService from "../services/transfers.service";
+import { getAccountIconComponent } from "../utils/accountIcons";
 
 interface TransferPageProps {
   onBack: () => void;
   onSuccess: () => void;
 }
-
-const getAccountIcon = (accountType: string) => {
-  switch (accountType) {
-    case 'savings':
-      return PiggyBank;
-    case 'card':
-      return CreditCard;
-    default:
-      return Wallet;
-  }
-};
 
 export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -224,7 +214,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                     </SelectTrigger>
                     <SelectContent>
                       {accounts.map((account) => {
-                        const Icon = getAccountIcon(account.account_type);
+                        const Icon = getAccountIconComponent(account.account_type);
                         return (
                           <SelectItem key={account.id} value={String(account.id)} disabled={String(account.id) === toAccountId}>
                             <div className="flex items-center justify-between gap-4 w-full">
@@ -286,7 +276,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                       {accounts
                         .filter(acc => String(acc.id) !== fromAccountId)
                         .map((account) => {
-                          const Icon = getAccountIcon(account.account_type);
+                          const Icon = getAccountIconComponent(account.account_type);
                           return (
                             <SelectItem key={account.id} value={String(account.id)}>
                               <div className="flex items-center justify-between gap-4 w-full">
