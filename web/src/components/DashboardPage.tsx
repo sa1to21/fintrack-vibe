@@ -324,11 +324,11 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     >
                       <Card className="bg-white/15 border-white/30 backdrop-blur-md hover:bg-white/20 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl h-full">
                         <CardContent className="p-4">
-                          <div className="flex items-center gap-2 mb-2">
+                          <div className="flex items-center gap-2 mb-2 min-w-0">
                             <div className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${account.color}`}>
                               <Icon className="w-4 h-4" />
                             </div>
-                            <span className="text-white/90 text-sm font-medium truncate min-w-0">
+                            <span className="text-white/90 text-sm font-medium truncate min-w-0 flex-1">
                               {account.name}
                             </span>
                           </div>
@@ -582,14 +582,20 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         </motion.p>
                         <Badge
                           variant="outline"
-                          className={`text-xs ${
+                          className={`text-xs max-w-[200px] truncate ${
                             transaction.type === 'transfer'
                               ? 'border-purple-300 text-purple-700'
                               : 'border-gray-300 text-gray-700'
                           }`}
                         >
                           {transaction.type === 'transfer' && transaction.toAccountId
-                            ? `${accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?'} → ${accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?'}`
+                            ? (() => {
+                                const fromName = accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?';
+                                const toName = accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?';
+                                const truncateText = (text: string, maxLen: number) =>
+                                  text.length > maxLen ? text.substring(0, maxLen) + '...' : text;
+                                return `${truncateText(fromName, 12)} → ${truncateText(toName, 12)}`;
+                              })()
                             : accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
                         </Badge>
                       </div>
