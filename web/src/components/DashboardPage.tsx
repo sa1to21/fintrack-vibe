@@ -523,7 +523,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <motion.div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm ${
+                          className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${
                             transaction.type === 'transfer'
                               ? 'bg-gradient-to-br from-purple-100 to-purple-200'
                               : transaction.type === 'income'
@@ -546,8 +546,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                             {transaction.type === 'transfer' ? 'Перевод' : transaction.categoryName}
                           </h3>
                           {transaction.type === 'transfer' ? (
-                            transaction.description &&
-                            transaction.description !== `${accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || ''} → ${accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || ''}` && (
+                            transaction.description && transaction.description.trim() !== '' && (
                               <p className="text-xs text-muted-foreground">
                                 {transaction.description}
                               </p>

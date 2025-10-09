@@ -37,7 +37,7 @@ module Api
           expense = from_account.transactions.create!(
             amount: amount,
             transaction_type: 'expense',
-            description: transfer_params[:description] || "#{from_account.name} → #{to_account.name}",
+            description: transfer_params[:description] || '',
             date: Date.today,
             time: Time.current,
             category_id: get_transfer_category.id,
@@ -48,7 +48,7 @@ module Api
           income = to_account.transactions.create!(
             amount: amount,
             transaction_type: 'income',
-            description: transfer_params[:description] || "#{from_account.name} → #{to_account.name}",
+            description: transfer_params[:description] || '',
             date: Date.today,
             time: Time.current,
             category_id: get_transfer_category.id,
