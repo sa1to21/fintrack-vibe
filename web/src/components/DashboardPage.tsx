@@ -18,11 +18,12 @@ interface Account {
 interface Transaction {
   id: string;
   amount: number;
-  type: 'income' | 'expense';
+  type: 'income' | 'expense' | 'transfer';
   category: string;
   categoryName: string;
   description: string;
   accountId: string;
+  toAccountId?: string;
   date: string;
   time: string;
 }
@@ -91,14 +92,20 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         // Преобразуем API транзакции в формат компонента
         const formattedTransactions: Transaction[] = data.map(t => {
           const createdDate = new Date(t.created_at);
+
+          // Определяем тип транзакции (перевод или обычная)
+          const isTransfer = !!t.transfer_id;
+          const type = isTransfer ? 'transfer' : t.transaction_type;
+
           return {
             id: t.id,
             amount: parseFloat(t.amount.toString()),
-            type: t.transaction_type,
+            type: type as 'income' | 'expense' | 'transfer',
             category: t.category_id,
             categoryName: t.category?.name || 'Без категории',
             description: t.description || '',
             accountId: t.account_id,
+            toAccountId: t.paired_account_id,
             date: t.date,
             time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
           };
@@ -514,16 +521,20 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <motion.div 
+                        <motion.div
                           className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm ${
-                            transaction.type === 'income' 
-                              ? 'bg-gradient-to-br from-emerald-100 to-emerald-200' 
+                            transaction.type === 'transfer'
+                              ? 'bg-gradient-to-br from-purple-100 to-purple-200'
+                              : transaction.type === 'income'
+                              ? 'bg-gradient-to-br from-emerald-100 to-emerald-200'
                               : 'bg-gradient-to-br from-red-100 to-red-200'
                           }`}
                           whileHover={{ scale: 1.1, rotate: 5 }}
                           transition={{ duration: 0.2 }}
                         >
-                          {transaction.type === 'income' ? (
+                          {transaction.type === 'transfer' ? (
+                            <ArrowRightLeft className="w-5 h-5 text-purple-600" />
+                          ) : transaction.type === 'income' ? (
                             <TrendingUp className="w-5 h-5 text-emerald-600" />
                           ) : (
                             <TrendingDown className="w-5 h-5 text-red-600" />
@@ -540,20 +551,26 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         </div>
                       </div>
                       <div className="text-right">
-                        <motion.p 
+                        <motion.p
                           className={`font-medium ${
-                            transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
+                            transaction.type === 'transfer'
+                              ? 'text-purple-600'
+                              : transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
                           }`}
                           key={showBalance ? transaction.amount : 'hidden'}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ duration: 0.3 }}
                         >
-                          {transaction.type === 'income' ? '+' : '-'}
+                          {transaction.type === 'transfer'
+                            ? ''
+                            : transaction.type === 'income' ? '+' : '-'}
                           {showBalance ? formatCurrency(transaction.amount) : "• • •"}
                         </motion.p>
                         <Badge variant="outline" className="text-xs border-blue-300 text-blue-700">
-                          {accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
+                          {transaction.type === 'transfer' && transaction.toAccountId
+                            ? `${accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?'} → ${accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?'}`
+                            : accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
                         </Badge>
                       </div>
                     </div>

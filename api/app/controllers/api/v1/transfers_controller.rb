@@ -30,25 +30,34 @@ module Api
 
         # Выполняем перевод в транзакции
         ActiveRecord::Base.transaction do
+          # Генерируем уникальный ID для связи двух транзакций
+          transfer_id = SecureRandom.uuid
+
           # Создаем расход на счете отправителя
           expense = from_account.transactions.create!(
             amount: amount,
             transaction_type: 'expense',
-            description: transfer_params[:description] || "Перевод на #{to_account.name}",
+            description: transfer_params[:description] || "Перевод: #{from_account.name} → #{to_account.name}",
             date: Date.today,
             time: Time.current,
-            category_id: get_transfer_category.id
+            category_id: get_transfer_category.id,
+            transfer_id: transfer_id
           )
 
           # Создаем доход на счете получателя
           income = to_account.transactions.create!(
             amount: amount,
             transaction_type: 'income',
-            description: transfer_params[:description] || "Перевод с #{from_account.name}",
+            description: transfer_params[:description] || "Перевод: #{from_account.name} → #{to_account.name}",
             date: Date.today,
             time: Time.current,
-            category_id: get_transfer_category.id
+            category_id: get_transfer_category.id,
+            transfer_id: transfer_id
           )
+
+          # Связываем транзакции
+          expense.update!(paired_transaction_id: income.id)
+          income.update!(paired_transaction_id: expense.id)
 
           render json: {
             success: true,

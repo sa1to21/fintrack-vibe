@@ -11,6 +11,10 @@ export interface Transaction {
   user_id: string;
   created_at: string;
   updated_at: string;
+  // Поля для переводов
+  transfer_id?: string;
+  paired_transaction_id?: string;
+  paired_account_id?: string;
   // Расширенные данные (join)
   account?: {
     id: string;

@@ -1,6 +1,7 @@
 class Transaction < ApplicationRecord
   belongs_to :account
   belongs_to :category
+  belongs_to :paired_transaction, class_name: 'Transaction', optional: true
 
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :transaction_type, presence: true, inclusion: { in: %w[income expense] }
@@ -13,7 +14,20 @@ class Transaction < ApplicationRecord
 
   scope :income, -> { where(transaction_type: 'income') }
   scope :expense, -> { where(transaction_type: 'expense') }
+  scope :transfers, -> { where.not(transfer_id: nil) }
   scope :by_date_range, ->(start_date, end_date) { where(date: start_date..end_date) }
+
+  # Проверка, является ли транзакция переводом
+  def transfer?
+    transfer_id.present?
+  end
+
+  # Получить парную транзакцию для перевода
+  def get_paired_account
+    return nil unless transfer?
+    return paired_transaction.account if paired_transaction
+    nil
+  end
 
   private
 
