@@ -472,7 +472,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 {recentTransactions.map((transaction, index) => (
                   <motion.div
                     key={transaction.id}
-                    className={`p-4 hover:bg-blue-50/50 transition-colors duration-200 cursor-pointer ${
+                    className={`p-5 hover:bg-blue-50/50 transition-colors duration-200 cursor-pointer ${
                       index !== recentTransactions.length - 1 ? 'border-b border-blue-100' : ''
                     }`}
                     initial={{ opacity: 0, x: -20 }}
