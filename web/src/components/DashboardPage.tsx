@@ -256,7 +256,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
           {/* Accounts */}
           <div>
-            {/* First 2 accounts in grid */}
+            {/* First 3 accounts in grid (2 in first row, 1 in second row) */}
             {accounts.length > 0 && (
               <motion.div
                 className="grid grid-cols-2 gap-3 mb-3"
@@ -272,11 +272,12 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 initial="hidden"
                 animate="show"
               >
-                {accounts.slice(0, 2).map((account) => {
+                {accounts.slice(0, 3).map((account, index) => {
                   const Icon = account.icon;
                   return (
                     <motion.div
                       key={account.id}
+                      className={index === 2 ? "col-span-2" : ""}
                       variants={{
                         hidden: { opacity: 0, y: 20 },
                         show: { opacity: 1, y: 0 }
@@ -304,8 +305,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
               </motion.div>
             )}
 
-            {/* Remaining accounts in horizontal scroll */}
-            {accounts.length > 2 && (
+            {/* Remaining accounts (4+) in horizontal scroll */}
+            {accounts.length > 3 && (
               <div
                 className="flex gap-3 overflow-x-auto -mx-4 px-4 pb-2 scrollbar-hide"
                 style={{
@@ -314,7 +315,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   WebkitOverflowScrolling: 'touch'
                 }}
               >
-                {accounts.slice(2).map((account) => {
+                {accounts.slice(3).map((account) => {
                   const Icon = account.icon;
                   return (
                     <div
