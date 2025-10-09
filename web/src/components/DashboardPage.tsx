@@ -582,21 +582,26 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         </motion.p>
                         <Badge
                           variant="outline"
-                          className={`text-xs max-w-[200px] truncate ${
+                          className={`text-xs px-2.5 py-1 max-w-[220px] ${
                             transaction.type === 'transfer'
                               ? 'border-purple-300 text-purple-700'
                               : 'border-gray-300 text-gray-700'
                           }`}
                         >
-                          {transaction.type === 'transfer' && transaction.toAccountId
-                            ? (() => {
-                                const fromName = accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?';
-                                const toName = accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?';
-                                const truncateText = (text: string, maxLen: number) =>
-                                  text.length > maxLen ? text.substring(0, maxLen) + '...' : text;
-                                return `${truncateText(fromName, 12)} → ${truncateText(toName, 12)}`;
-                              })()
-                            : accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
+                          <span className="truncate block">
+                            {transaction.type === 'transfer' && transaction.toAccountId
+                              ? (() => {
+                                  const fromName = accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?';
+                                  const toName = accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?';
+                                  // Обрезаем только конечный счёт если общая длина больше 30 символов
+                                  const fullText = `${fromName} → ${toName}`;
+                                  if (fullText.length <= 30) return fullText;
+                                  const maxToLength = 30 - fromName.length - 3; // 3 для " → "
+                                  const truncatedTo = maxToLength > 5 ? toName.substring(0, maxToLength) + '...' : toName.substring(0, 8) + '...';
+                                  return `${fromName} → ${truncatedTo}`;
+                                })()
+                              : accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
+                          </span>
                         </Badge>
                       </div>
                     </div>
