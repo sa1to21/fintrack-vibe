@@ -481,8 +481,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     whileHover={{ x: 4 }}
                     onClick={() => onTransactionClick(transaction)}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3 min-w-0 flex-1">
                         <motion.div
                           className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${
                             transaction.type === 'transfer'
@@ -502,31 +502,18 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                             <TrendingDown className="w-5 h-5 text-red-600" />
                           )}
                         </motion.div>
-                        <div>
-                          <h3 className="font-medium text-sm">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-medium text-sm text-slate-800">
                             {transaction.type === 'transfer' ? 'Перевод' : transaction.categoryName}
                           </h3>
-                          {transaction.type === 'transfer' ? (
-                            transaction.description && transaction.description.trim() !== '' && (
-                              <p className="text-xs text-muted-foreground">
-                                {transaction.description.length > 20
-                                  ? transaction.description.substring(0, 20) + '...'
-                                  : transaction.description}
-                              </p>
-                            )
-                          ) : (
-                            <p className="text-xs text-muted-foreground">
-                              {transaction.description}
-                            </p>
-                          )}
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-slate-500 mt-0.5">
                             {new Date(transaction.date).toLocaleDateString('ru-RU')} в {transaction.time}
                           </p>
                         </div>
                       </div>
-                      <div className="text-right">
+                      <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
                         <motion.p
-                          className={`font-medium ${
+                          className={`font-semibold text-base ${
                             transaction.type === 'transfer'
                               ? 'text-purple-600'
                               : transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
@@ -543,26 +530,15 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         </motion.p>
                         <Badge
                           variant="outline"
-                          className={`text-xs px-2.5 py-1 max-w-[220px] ${
+                          className={`text-xs px-2 py-0.5 ${
                             transaction.type === 'transfer'
-                              ? 'border-purple-300 text-purple-700'
-                              : 'border-gray-300 text-gray-700'
+                              ? 'border-purple-200 bg-purple-50 text-purple-700'
+                              : 'border-slate-200 bg-slate-50 text-slate-700'
                           }`}
                         >
-                          <span className="truncate block">
-                            {transaction.type === 'transfer' && transaction.toAccountId
-                              ? (() => {
-                                  const fromName = accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?';
-                                  const toName = accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?';
-                                  // Обрезаем только конечный счёт если общая длина больше 30 символов
-                                  const fullText = `${fromName} → ${toName}`;
-                                  if (fullText.length <= 30) return fullText;
-                                  const maxToLength = 30 - fromName.length - 3; // 3 для " → "
-                                  const truncatedTo = maxToLength > 5 ? toName.substring(0, maxToLength) + '...' : toName.substring(0, 8) + '...';
-                                  return `${fromName} → ${truncatedTo}`;
-                                })()
-                              : accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
-                          </span>
+                          {transaction.type === 'transfer' && transaction.toAccountId
+                            ? accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'
+                            : accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
                         </Badge>
                       </div>
                     </div>
