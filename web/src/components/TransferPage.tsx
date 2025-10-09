@@ -207,8 +207,8 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
         transition={{ duration: 0.4, delay: 0.15 }}
       >
         <Card className="border-none shadow-xl bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm">
-          <CardContent className="p-6 space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <CardContent className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {/* From Account */}
               <motion.div
                 className="space-y-2"
@@ -246,7 +246,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
 
               {/* Swap Button */}
               <motion.div
-                className="flex justify-center"
+                className="flex justify-center py-2"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: 0.3 }}
