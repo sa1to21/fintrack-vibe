@@ -400,39 +400,52 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                   </div>
                 )}
 
-                {/* Account - for transfers show "from → to" */}
+                {/* Account - for transfers show "from → to" vertically */}
                 {transaction.type === 'transfer' && currentAccount && toAccount ? (
-                  <div className="flex items-center gap-2 p-3 bg-purple-50 rounded-lg">
-                    <div className="flex items-center gap-2 flex-1">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center">
+                  <div className="space-y-2">
+                    {/* From Account */}
+                    <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
+                      <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center flex-shrink-0">
                         {(() => {
                           const Icon = iconMap[currentAccount.account_type] || Wallet;
                           return <Icon className="w-5 h-5 text-purple-600" />;
                         })()}
                       </div>
-                      <p className="font-medium text-slate-800 truncate">{currentAccount.name}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-slate-800 truncate">{currentAccount.name}</p>
+                        <p className="text-xs text-purple-600">Откуда</p>
+                      </div>
                     </div>
-                    <ArrowRightLeft className="w-4 h-4 text-purple-600 flex-shrink-0" />
-                    <div className="flex items-center gap-2 flex-1">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center">
+
+                    {/* Arrow */}
+                    <div className="flex justify-center">
+                      <ArrowRightLeft className="w-5 h-5 text-purple-600" />
+                    </div>
+
+                    {/* To Account */}
+                    <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
+                      <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center flex-shrink-0">
                         {(() => {
                           const Icon = iconMap[toAccount.account_type] || Wallet;
                           return <Icon className="w-5 h-5 text-purple-600" />;
                         })()}
                       </div>
-                      <p className="font-medium text-slate-800 truncate">{toAccount.name}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-slate-800 truncate">{toAccount.name}</p>
+                        <p className="text-xs text-purple-600">Куда</p>
+                      </div>
                     </div>
                   </div>
                 ) : transaction.type !== 'transfer' && currentAccount ? (
                   <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                    <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center flex-shrink-0">
                       {(() => {
                         const Icon = iconMap[currentAccount.account_type] || Wallet;
                         return <Icon className="w-5 h-5 text-purple-600" />;
                       })()}
                     </div>
-                    <div>
-                      <p className="font-medium text-slate-800">{currentAccount.name}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-slate-800 truncate">{currentAccount.name}</p>
                       <p className="text-sm text-slate-600">Счёт</p>
                     </div>
                   </div>
