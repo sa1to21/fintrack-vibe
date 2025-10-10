@@ -133,12 +133,9 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
           };
         });
 
-        // Удаляем дубликаты по ID (переводы могут появиться дважды)
-        const uniqueTransactions = Array.from(
-          new Map(formattedTransactions.map(t => [t.id, t])).values()
-        );
-
-        setAllTransactions(uniqueTransactions);
+        // Переводы состоят из двух разных транзакций с разными ID
+        // Не удаляем дубликаты - каждая транзакция уникальна
+        setAllTransactions(formattedTransactions);
       } catch (error) {
         console.error('Failed to load data:', error);
         setAccounts([]);
