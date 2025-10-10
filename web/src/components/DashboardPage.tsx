@@ -27,6 +27,7 @@ interface Transaction {
   date: string;
   time: string;
   createdAt: string; // ISO timestamp для сортировки
+  transferId?: string; // Для дедупликации переводов
 }
 
 interface DashboardPageProps {
@@ -114,12 +115,11 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             toAccountId: t.paired_account_id,
             date: t.date,
             time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
-            createdAt: t.created_at
+            createdAt: t.created_at,
+            transferId: t.transfer_id
           };
         });
 
-        // Переводы состоят из двух разных транзакций с разными ID
-        // Не удаляем дубликаты - каждая транзакция уникальна
         setTransactions(formattedTransactions);
       } catch (error) {
         console.error('Failed to load transactions:', error);
@@ -134,7 +134,19 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
   // Recent transactions (показываем только последние 3) - memoized for performance
   const recentTransactions = useMemo(() => {
-    return transactions
+    // Дедупликация переводов: каждый перевод = 2 транзакции, показываем только одну
+    const seenTransferIds = new Set<string>();
+    const uniqueTransactions = transactions.filter(t => {
+      if (t.type === 'transfer' && t.transferId) {
+        if (seenTransferIds.has(t.transferId)) {
+          return false; // Пропускаем дубликат перевода
+        }
+        seenTransferIds.add(t.transferId);
+      }
+      return true;
+    });
+
+    return uniqueTransactions
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 3);
   }, [transactions]);
