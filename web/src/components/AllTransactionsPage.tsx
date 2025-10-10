@@ -94,6 +94,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
 
         // Загружаем счета
         const accountsData = await accountsService.getAll();
+        console.log('[AllTransactions] Loaded accounts:', accountsData.length, accountsData);
         const accountsWithIcons = accountsData.map(acc => ({
           id: acc.id,
           name: acc.name,
@@ -107,8 +108,10 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
         const allTransactionsPromises = accountsData.map(acc =>
           transactionsService.getAll(acc.id)
         );
+        console.log('[AllTransactions] Loading from', allTransactionsPromises.length, 'accounts');
         const transactionsArrays = await Promise.all(allTransactionsPromises);
         const allTransactionsData = transactionsArrays.flat();
+        console.log('[AllTransactions] Total transactions loaded:', allTransactionsData.length, allTransactionsData);
 
         // Преобразуем в формат компонента
         const formattedTransactions: Transaction[] = allTransactionsData.map(t => {
@@ -135,6 +138,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
 
         // Переводы состоят из двух разных транзакций с разными ID
         // Не удаляем дубликаты - каждая транзакция уникальна
+        console.log('[AllTransactions] Formatted transactions:', formattedTransactions.length, formattedTransactions);
         setAllTransactions(formattedTransactions);
       } catch (error) {
         console.error('Failed to load data:', error);
