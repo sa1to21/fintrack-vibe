@@ -478,12 +478,11 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: 0.55 + index * 0.05 }}
-                    whileHover={{ x: 4 }}
                     onClick={() => onTransactionClick(transaction)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <motion.div
+                        <div
                           className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm ${
                             transaction.type === 'transfer'
                               ? 'bg-gradient-to-br from-purple-100 to-purple-200'
@@ -491,8 +490,6 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                               ? 'bg-gradient-to-br from-emerald-100 to-emerald-200'
                               : 'bg-gradient-to-br from-red-100 to-red-200'
                           }`}
-                          whileHover={{ scale: 1.1, rotate: 5 }}
-                          transition={{ duration: 0.2 }}
                         >
                           {transaction.type === 'transfer' ? (
                             <ArrowRightLeft className="w-5 h-5 text-purple-600" />
@@ -501,7 +498,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                           ) : (
                             <TrendingDown className="w-5 h-5 text-red-600" />
                           )}
-                        </motion.div>
+                        </div>
                         <div>
                           <h3 className="font-medium text-sm">
                             {transaction.type === 'transfer' ? 'Перевод' : transaction.categoryName}
