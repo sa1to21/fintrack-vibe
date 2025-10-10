@@ -121,7 +121,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
           const isTransfer = !!t.transfer_id;
           const type = isTransfer ? 'transfer' : t.transaction_type;
 
-          return {
+          const formatted = {
             id: t.id,
             amount: parseFloat(t.amount.toString()),
             type: type as 'income' | 'expense' | 'transfer',
@@ -134,6 +134,19 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
             time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
             createdAt: t.created_at
           };
+
+          // Логируем переводы для отладки
+          if (isTransfer) {
+            console.log('[AllTransactions] Transfer found:', {
+              id: t.id,
+              rawDate: t.date,
+              dateType: typeof t.date,
+              parsedDate: new Date(t.date),
+              formattedDate: formatted.date
+            });
+          }
+
+          return formatted;
         });
 
         // Переводы состоят из двух разных транзакций с разными ID
@@ -222,7 +235,21 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
         const transactionDate = new Date(transaction.date);
         matchesDate = transactionDate >= dateRange.from && transactionDate <= dateRange.to;
 
-        if (!matchesDate) {
+        if (!matchesDate && transaction.type === 'transfer') {
+          console.log('[AllTransactions] TRANSFER filtered out by date:', {
+            id: transaction.id,
+            rawDate: transaction.date,
+            dateType: typeof transaction.date,
+            parsedDate: transactionDate,
+            parsedDateISO: transactionDate.toISOString(),
+            rangeFrom: dateRange.from,
+            rangeTo: dateRange.to,
+            comparison: {
+              greaterThanFrom: transactionDate >= dateRange.from,
+              lessThanTo: transactionDate <= dateRange.to
+            }
+          });
+        } else if (!matchesDate) {
           console.log('[AllTransactions] Filtered out by date:', transaction.id, transaction.date, 'not in range', dateRange.from, '-', dateRange.to);
         }
       }
