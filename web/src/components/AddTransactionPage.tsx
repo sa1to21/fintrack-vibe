@@ -64,6 +64,15 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
   const [apiAccounts, setApiAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('ru-RU', {
+      style: 'currency',
+      currency: 'RUB',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
   // Загрузить категории и счета из API
   useEffect(() => {
     const loadData = async () => {
@@ -426,11 +435,19 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                     <SelectContent>
                       {(apiAccounts.length > 0 ? apiAccounts : accounts).map((acc) => {
                         const Icon = 'account_type' in acc ? getAccountIconComponent(acc.account_type) : ('icon' in acc ? acc.icon : Wallet);
+                        const balance = 'balance' in acc ? parseFloat(acc.balance.toString()) : 0;
                         return (
                           <SelectItem key={acc.id} value={String(acc.id)}>
-                            <div className="flex items-center gap-2">
-                              <Icon className="w-4 h-4 text-blue-600" />
-                              <span>{acc.name}</span>
+                            <div className="flex items-center justify-between gap-4 w-full">
+                              <div className="flex items-center gap-2">
+                                <Icon className="w-4 h-4 text-blue-600" />
+                                <span>{acc.name}</span>
+                              </div>
+                              {'balance' in acc && (
+                                <span className="text-xs text-muted-foreground">
+                                  {formatCurrency(balance)}
+                                </span>
+                              )}
                             </div>
                           </SelectItem>
                         );
