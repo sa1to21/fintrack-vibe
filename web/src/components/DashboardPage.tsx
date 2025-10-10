@@ -544,11 +544,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         </motion.p>
                         <Badge
                           variant="outline"
-                          className={`text-xs max-w-full ${
-                            transaction.type === 'transfer'
-                              ? 'border-purple-300 text-purple-700'
-                              : 'border-blue-300 text-blue-700'
-                          }`}
+                          className="text-xs max-w-full border-blue-300 text-blue-700"
                         >
                           <span className="truncate block">
                             {transaction.type === 'transfer' && transaction.toAccountId
