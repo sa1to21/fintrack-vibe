@@ -480,10 +480,10 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     transition={{ duration: 0.3, delay: 0.55 + index * 0.05 }}
                     onClick={() => onTransactionClick(transaction)}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm ${
+                          className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${
                             transaction.type === 'transfer'
                               ? 'bg-gradient-to-br from-purple-100 to-purple-200'
                               : transaction.type === 'income'
@@ -499,21 +499,21 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                             <TrendingDown className="w-5 h-5 text-red-600" />
                           )}
                         </div>
-                        <div>
-                          <h3 className="font-medium text-sm">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-medium text-sm truncate">
                             {transaction.type === 'transfer' ? 'Перевод' : transaction.categoryName}
                           </h3>
                           {transaction.type !== 'transfer' && (
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-muted-foreground truncate">
                               {transaction.description}
                             </p>
                           )}
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-muted-foreground truncate">
                             {new Date(transaction.date).toLocaleDateString('ru-RU')} в {transaction.time}
                           </p>
                         </div>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right flex-shrink-0">
                         <motion.p
                           className={`font-medium ${
                             transaction.type === 'transfer'
@@ -532,15 +532,23 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         </motion.p>
                         <Badge
                           variant="outline"
-                          className={`text-xs ${
+                          className={`text-xs max-w-full ${
                             transaction.type === 'transfer'
                               ? 'border-purple-300 text-purple-700'
                               : 'border-blue-300 text-blue-700'
                           }`}
                         >
-                          {transaction.type === 'transfer' && transaction.toAccountId
-                            ? `${accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?'} → ${accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?'}`
-                            : accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
+                          <span className="truncate block">
+                            {transaction.type === 'transfer' && transaction.toAccountId
+                              ? (() => {
+                                  const fromAccount = accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || '?';
+                                  const toAccount = accounts.find(acc => String(acc.id) === String(transaction.toAccountId))?.name || '?';
+                                  const maxLength = 10;
+                                  const truncateText = (text: string) => text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+                                  return `${truncateText(fromAccount)} → ${truncateText(toAccount)}`;
+                                })()
+                              : accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
+                          </span>
                         </Badge>
                       </div>
                     </div>
