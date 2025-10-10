@@ -155,6 +155,8 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
     const currentDate = currentTime.toISOString().split('T')[0];
     const currentTimeStr = currentTime.toTimeString().slice(0, 5);
 
+    console.log('[AddTransaction] Creating transaction with date:', currentDate, 'time:', currentTimeStr);
+
     try {
       // Создать транзакцию через API (account_id передается в URL, не в теле)
       const newTransaction = await transactionsService.create(account, {
@@ -165,6 +167,8 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
         time: currentTimeStr,
         category_id: parseInt(category)
       });
+
+      console.log('[AddTransaction] Transaction created:', newTransaction);
 
       // Также вызвать старый callback для обновления UI (пока моки используются)
       const categoryName = currentCategories

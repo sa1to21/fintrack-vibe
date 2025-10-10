@@ -69,13 +69,16 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
 
     try {
       setSubmitting(true);
-      await transfersService.create({
+      console.log('[Transfer] Creating transfer from', fromAccountId, 'to', toAccountId, 'amount:', amountNum);
+
+      const result = await transfersService.create({
         from_account_id: fromAccountId,
         to_account_id: toAccountId,
         amount: amountNum,
         description: description || undefined
       });
 
+      console.log('[Transfer] Transfer created:', result);
       toast.success('Перевод выполнен успешно!');
       onSuccess();
     } catch (error: any) {
