@@ -27,20 +27,23 @@ import {
   DollarSign,
   Briefcase,
   Gift,
-  Plus
+  Plus,
+  ArrowRightLeft
 } from "lucide-react";
 import { motion } from "motion/react";
 
 interface Transaction {
   id: string;
   amount: number;
-  type: 'income' | 'expense';
+  type: 'income' | 'expense' | 'transfer';
   category: string;
   categoryName: string;
   description: string;
   accountId: string;
+  toAccountId?: string;
   date: string;
   time: string;
+  createdAt: string;
 }
 
 interface AllTransactionsPageProps {
@@ -72,7 +75,7 @@ const categoryIcons: { [key: string]: typeof Coffee } = {
 
 export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransactionsPageProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState<'all' | 'income' | 'expense'>('all');
+  const [selectedType, setSelectedType] = useState<'all' | 'income' | 'expense' | 'transfer'>('all');
   const [selectedAccount, setSelectedAccount] = useState<string>('all');
   const [selectedPeriod, setSelectedPeriod] = useState('month');
   const [customRange, setCustomRange] = useState<{
@@ -109,27 +112,33 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
 
         // Преобразуем в формат компонента
         const formattedTransactions: Transaction[] = allTransactionsData.map(t => {
-          // Форматируем время из поля time (которое приходит как datetime)
-          let timeStr = '00:00';
-          if (t.time) {
-            const timeDate = new Date(t.time);
-            timeStr = timeDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-          }
+          const createdDate = new Date(t.created_at);
+
+          // Определяем тип транзакции (перевод или обычная)
+          const isTransfer = !!t.transfer_id;
+          const type = isTransfer ? 'transfer' : t.transaction_type;
 
           return {
             id: t.id,
             amount: parseFloat(t.amount.toString()),
-            type: t.transaction_type,
+            type: type as 'income' | 'expense' | 'transfer',
             category: t.category_id,
             categoryName: t.category?.name || 'Без категории',
             description: t.description || '',
             accountId: t.account_id,
+            toAccountId: t.paired_account_id,
             date: t.date,
-            time: timeStr
+            time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+            createdAt: t.created_at
           };
         });
 
-        setAllTransactions(formattedTransactions);
+        // Удаляем дубликаты по ID (переводы могут появиться дважды)
+        const uniqueTransactions = Array.from(
+          new Map(formattedTransactions.map(t => [t.id, t])).values()
+        );
+
+        setAllTransactions(uniqueTransactions);
       } catch (error) {
         console.error('Failed to load data:', error);
         setAccounts([]);
@@ -217,6 +226,11 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
       groups[date].push(transaction);
       return groups;
     }, {} as { [key: string]: Transaction[] });
+
+    // Сортировка транзакций внутри каждой группы по createdAt
+    Object.keys(grouped).forEach(date => {
+      grouped[date].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    });
 
     // Сортировка дат по убыванию
     const sorted = Object.keys(grouped).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
@@ -348,7 +362,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
 
           {/* Filters */}
           <div className="grid grid-cols-2 gap-2">
-            <Select value={selectedType} onValueChange={(value: 'all' | 'income' | 'expense') => setSelectedType(value)}>
+            <Select value={selectedType} onValueChange={(value: 'all' | 'income' | 'expense' | 'transfer') => setSelectedType(value)}>
               <SelectTrigger className="border-blue-200 focus:border-blue-400 bg-white">
                 <SelectValue />
               </SelectTrigger>
@@ -356,6 +370,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
                 <SelectItem value="all">Все операции</SelectItem>
                 <SelectItem value="income">Только доходы</SelectItem>
                 <SelectItem value="expense">Только расходы</SelectItem>
+                <SelectItem value="transfer">Только переводы</SelectItem>
               </SelectContent>
             </Select>
 
@@ -426,7 +441,10 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
                     {groupedTransactions[date].map((transaction, transactionIndex) => {
                       const CategoryIcon = categoryIcons[transaction.category] || Coffee;
                       const account = accounts.find(acc => acc.id === transaction.accountId);
-                      
+                      const toAccount = transaction.toAccountId
+                        ? accounts.find(acc => acc.id === transaction.toAccountId)
+                        : undefined;
+
                       return (
                         <motion.div
                           key={transaction.id}
@@ -437,43 +455,65 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.3, delay: 0.45 + dateIndex * 0.05 + transactionIndex * 0.02 }}
-                          whileHover={{ x: 4, scale: 1.01 }}
-                          whileTap={{ scale: 0.99 }}
                         >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <motion.div 
-                                className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm ${
-                                  transaction.type === 'income' 
-                                    ? 'bg-gradient-to-br from-emerald-100 to-emerald-200' 
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                              <div
+                                className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${
+                                  transaction.type === 'transfer'
+                                    ? 'bg-gradient-to-br from-purple-100 to-purple-200'
+                                    : transaction.type === 'income'
+                                    ? 'bg-gradient-to-br from-emerald-100 to-emerald-200'
                                     : 'bg-gradient-to-br from-red-100 to-red-200'
                                 }`}
-                                whileHover={{ scale: 1.1, rotate: 5 }}
-                                transition={{ duration: 0.2 }}
                               >
-                                <CategoryIcon className={`w-5 h-5 ${
-                                  transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
-                                }`} />
-                              </motion.div>
-                              <div>
-                                <h4 className="font-medium text-sm">{transaction.categoryName}</h4>
-                                <p className="text-xs text-muted-foreground">
-                                  {transaction.description}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
+                                {transaction.type === 'transfer' ? (
+                                  <ArrowRightLeft className="w-5 h-5 text-purple-600" />
+                                ) : transaction.type === 'income' ? (
+                                  <TrendingUp className="w-5 h-5 text-emerald-600" />
+                                ) : (
+                                  <TrendingDown className="w-5 h-5 text-red-600" />
+                                )}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <h4 className="font-medium text-sm truncate">
+                                  {transaction.type === 'transfer' ? 'Перевод' : transaction.categoryName}
+                                </h4>
+                                {transaction.type !== 'transfer' && (
+                                  <p className="text-xs text-muted-foreground truncate">
+                                    {transaction.description}
+                                  </p>
+                                )}
+                                <p className="text-xs text-muted-foreground truncate">
                                   {transaction.time}
                                 </p>
                               </div>
                             </div>
-                            <div className="text-right">
+                            <div className="text-right flex-shrink-0">
                               <p className={`font-medium ${
-                                transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
+                                transaction.type === 'transfer'
+                                  ? 'text-purple-600'
+                                  : transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
                               }`}>
-                                {transaction.type === 'income' ? '+' : '-'}
+                                {transaction.type === 'income' ? '+' : transaction.type === 'transfer' ? '' : '-'}
                                 {formatCurrency(transaction.amount)}
                               </p>
-                              <Badge variant="outline" className="text-xs border-blue-300 text-blue-700">
-                                {account?.name || 'Неизвестно'}
+                              <Badge variant="outline" className="text-xs max-w-full border-blue-300 text-blue-700">
+                                <span className="truncate block">
+                                  {transaction.type === 'transfer' && toAccount
+                                    ? (() => {
+                                        const fromName = account?.name || '?';
+                                        const toName = toAccount.name || '?';
+                                        const maxLength = 10;
+                                        const truncateText = (text: string) => text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+                                        return `${truncateText(fromName)} → ${truncateText(toName)}`;
+                                      })()
+                                    : (() => {
+                                        const accountName = account?.name || 'Неизвестно';
+                                        const maxLength = 22;
+                                        return accountName.length > maxLength ? accountName.slice(0, maxLength) + '...' : accountName;
+                                      })()}
+                                </span>
                               </Badge>
                             </div>
                           </div>
