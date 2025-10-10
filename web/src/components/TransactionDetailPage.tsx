@@ -29,7 +29,8 @@ import {
   Briefcase,
   TrendingUp,
   TrendingDown,
-  Gift
+  Gift,
+  ArrowRightLeft
 } from "lucide-react";
 import { toast } from "sonner@2.0.3";
 import { motion } from "motion/react";
@@ -40,11 +41,12 @@ import transactionsService from "../services/transactions.service";
 interface Transaction {
   id: string;
   amount: number;
-  type: 'income' | 'expense';
+  type: 'income' | 'expense' | 'transfer';
   category: string;
   categoryName: string;
   description: string;
   accountId: string;
+  toAccountId?: string;
   date: string;
   time: string;
 }
@@ -116,7 +118,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
   };
 
   // Memoize category and account lookups for performance
-  const { currentCategories, currentCategory, currentAccount } = useMemo(() => {
+  const { currentCategories, currentCategory, currentAccount, toAccount } = useMemo(() => {
     // Используем категории из API, фильтруем по типу
     const apiCategories = categories.filter(cat =>
       editData.type === 'expense' ? cat.category_type === 'expense' : cat.category_type === 'income'
@@ -124,13 +126,17 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
 
     const category = apiCategories.find(cat => String(cat.id) === String(editData.category));
     const account = accounts.find(acc => String(acc.id) === String(editData.accountId));
+    const targetAccount = transaction.toAccountId
+      ? accounts.find(acc => String(acc.id) === String(transaction.toAccountId))
+      : undefined;
 
     return {
       currentCategories: apiCategories,
       currentCategory: category,
-      currentAccount: account
+      currentAccount: account,
+      toAccount: targetAccount
     };
-  }, [editData.type, editData.category, editData.accountId, categories, accounts]);
+  }, [editData.type, editData.category, editData.accountId, categories, accounts, transaction.toAccountId]);
 
   const handleSave = useCallback(async () => {
     if (!editData.amount || !editData.category || !editData.accountId) {
@@ -248,7 +254,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
           </motion.div>
           <h1 className="font-medium text-white">Детали операции</h1>
           <div className="flex items-center gap-2">
-            {!isEditing && (
+            {!isEditing && transaction.type !== 'transfer' && (
               <>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
@@ -284,7 +290,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                         <AlertDialogCancel className="border-red-300">
                           Отмена
                         </AlertDialogCancel>
-                        <AlertDialogAction 
+                        <AlertDialogAction
                           onClick={handleDelete}
                           className="bg-red-600 hover:bg-red-700"
                         >
@@ -353,56 +359,84 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                 {/* Amount */}
                 <div className="text-center py-4">
                   <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm mb-2 ${
-                    transaction.type === 'income' 
-                      ? 'bg-emerald-100 text-emerald-700' 
+                    transaction.type === 'transfer'
+                      ? 'bg-purple-100 text-purple-700'
+                      : transaction.type === 'income'
+                      ? 'bg-emerald-100 text-emerald-700'
                       : 'bg-red-100 text-red-700'
                   }`}>
-                    {transaction.type === 'income' ? (
+                    {transaction.type === 'transfer' ? (
+                      <ArrowRightLeft className="w-4 h-4" />
+                    ) : transaction.type === 'income' ? (
                       <TrendingUp className="w-4 h-4" />
                     ) : (
                       <TrendingDown className="w-4 h-4" />
                     )}
-                    {transaction.type === 'income' ? 'Доход' : 'Расход'}
+                    {transaction.type === 'transfer' ? 'Перевод' : transaction.type === 'income' ? 'Доход' : 'Расход'}
                   </div>
                   <p className={`text-3xl font-medium ${
-                    transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
+                    transaction.type === 'transfer'
+                      ? 'text-purple-600'
+                      : transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
                   }`}>
-                    {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                    {transaction.type === 'income' ? '+' : transaction.type === 'transfer' ? '' : '-'}{formatCurrency(transaction.amount)}
                   </p>
                 </div>
 
-                {/* Category */}
-                <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                  {currentCategory && (
-                    <>
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full flex items-center justify-center">
-                        <span className="text-xl">{currentCategory.icon}</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-slate-800">{currentCategory.name}</p>
-                        <p className="text-sm text-slate-600">Категория</p>
-                      </div>
-                    </>
-                  )}
-                </div>
+                {/* Category - only for non-transfers */}
+                {transaction.type !== 'transfer' && (
+                  <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                    {currentCategory && (
+                      <>
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full flex items-center justify-center">
+                          <span className="text-xl">{currentCategory.icon}</span>
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-800">{currentCategory.name}</p>
+                          <p className="text-sm text-slate-600">Категория</p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
 
-                {/* Account */}
-                <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                  {currentAccount && (
-                    <>
+                {/* Account - for transfers show "from → to" */}
+                {transaction.type === 'transfer' && currentAccount && toAccount ? (
+                  <div className="flex items-center gap-2 p-3 bg-purple-50 rounded-lg">
+                    <div className="flex items-center gap-2 flex-1">
                       <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center">
                         {(() => {
                           const Icon = iconMap[currentAccount.account_type] || Wallet;
                           return <Icon className="w-5 h-5 text-purple-600" />;
                         })()}
                       </div>
-                      <div>
-                        <p className="font-medium text-slate-800">{currentAccount.name}</p>
-                        <p className="text-sm text-slate-600">Счёт</p>
+                      <p className="font-medium text-slate-800 truncate">{currentAccount.name}</p>
+                    </div>
+                    <ArrowRightLeft className="w-4 h-4 text-purple-600 flex-shrink-0" />
+                    <div className="flex items-center gap-2 flex-1">
+                      <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center">
+                        {(() => {
+                          const Icon = iconMap[toAccount.account_type] || Wallet;
+                          return <Icon className="w-5 h-5 text-purple-600" />;
+                        })()}
                       </div>
-                    </>
-                  )}
-                </div>
+                      <p className="font-medium text-slate-800 truncate">{toAccount.name}</p>
+                    </div>
+                  </div>
+                ) : transaction.type !== 'transfer' && currentAccount ? (
+                  <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center">
+                      {(() => {
+                        const Icon = iconMap[currentAccount.account_type] || Wallet;
+                        return <Icon className="w-5 h-5 text-purple-600" />;
+                      })()}
+                    </div>
+                    <div>
+                      <p className="font-medium text-slate-800">{currentAccount.name}</p>
+                      <p className="text-sm text-slate-600">Счёт</p>
+                    </div>
+                  </div>
+                ) : null}
 
                 {/* Date & Time */}
                 <div className="grid grid-cols-2 gap-3">
