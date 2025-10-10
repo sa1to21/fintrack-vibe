@@ -203,6 +203,8 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
   // Memoized filtering and grouping for performance
   const { filteredTransactions, groupedTransactions, sortedDates, totalIncome, totalExpenses } = useMemo(() => {
     const dateRange = getDateRange();
+    console.log('[AllTransactions] Date range filter:', dateRange);
+    console.log('[AllTransactions] All transactions before filter:', allTransactions.length);
 
     // Фильтрация операций
     const filtered = allTransactions.filter(transaction => {
@@ -215,8 +217,14 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
       const transactionDate = new Date(transaction.date);
       const matchesDate = transactionDate >= dateRange.from && transactionDate <= dateRange.to;
 
+      if (!matchesDate) {
+        console.log('[AllTransactions] Filtered out by date:', transaction.id, transaction.date, 'not in range', dateRange.from, '-', dateRange.to);
+      }
+
       return matchesSearch && matchesType && matchesAccount && matchesDate;
     });
+
+    console.log('[AllTransactions] Filtered transactions:', filtered.length);
 
     // Группировка по дням
     const grouped = filtered.reduce((groups, transaction) => {
