@@ -77,7 +77,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<'all' | 'income' | 'expense' | 'transfer'>('all');
   const [selectedAccount, setSelectedAccount] = useState<string>('all');
-  const [selectedPeriod, setSelectedPeriod] = useState('month');
+  const [selectedPeriod, setSelectedPeriod] = useState('all');
   const [customRange, setCustomRange] = useState<{
     from: Date | undefined;
     to: Date | undefined;
@@ -175,6 +175,9 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
     let to: Date = now;
 
     switch (selectedPeriod) {
+      case 'all':
+        // Без фильтрации по дате
+        return null;
       case 'week':
         from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
         break;
@@ -191,10 +194,9 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
         if (customRange.from && customRange.to) {
           return { from: customRange.from, to: customRange.to };
         }
-        from = new Date(now.getFullYear(), now.getMonth(), 1);
-        break;
+        return null;
       default:
-        from = new Date(now.getFullYear(), now.getMonth(), 1);
+        return null;
     }
 
     return { from, to };
@@ -203,6 +205,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
   // Memoized filtering and grouping for performance
   const { filteredTransactions, groupedTransactions, sortedDates, totalIncome, totalExpenses } = useMemo(() => {
     const dateRange = getDateRange();
+    console.log('[AllTransactions] Selected period:', selectedPeriod);
     console.log('[AllTransactions] Date range filter:', dateRange);
     console.log('[AllTransactions] All transactions before filter:', allTransactions.length);
 
@@ -213,12 +216,15 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
       const matchesType = selectedType === 'all' || transaction.type === selectedType;
       const matchesAccount = selectedAccount === 'all' || transaction.accountId === selectedAccount;
 
-      // Фильтр по дате
-      const transactionDate = new Date(transaction.date);
-      const matchesDate = transactionDate >= dateRange.from && transactionDate <= dateRange.to;
+      // Фильтр по дате (только если dateRange не null)
+      let matchesDate = true;
+      if (dateRange) {
+        const transactionDate = new Date(transaction.date);
+        matchesDate = transactionDate >= dateRange.from && transactionDate <= dateRange.to;
 
-      if (!matchesDate) {
-        console.log('[AllTransactions] Filtered out by date:', transaction.id, transaction.date, 'not in range', dateRange.from, '-', dateRange.to);
+        if (!matchesDate) {
+          console.log('[AllTransactions] Filtered out by date:', transaction.id, transaction.date, 'not in range', dateRange.from, '-', dateRange.to);
+        }
       }
 
       return matchesSearch && matchesType && matchesAccount && matchesDate;

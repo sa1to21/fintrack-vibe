@@ -26,6 +26,7 @@ export function DateRangePicker({
   const [tempRange, setTempRange] = useState(customRange);
 
   const predefinedPeriods = [
+    { id: 'all', label: 'Всё время', shortLabel: 'Всё' },
     { id: 'week', label: 'Неделя', shortLabel: '7 дн' },
     { id: 'month', label: 'Месяц', shortLabel: '30 дн' },
     { id: '3months', label: '3 месяца', shortLabel: '90 дн' },
