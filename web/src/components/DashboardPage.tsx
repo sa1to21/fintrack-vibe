@@ -26,6 +26,7 @@ interface Transaction {
   toAccountId?: string;
   date: string;
   time: string;
+  createdAt: string; // ISO timestamp для сортировки
 }
 
 interface DashboardPageProps {
@@ -112,7 +113,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             accountId: t.account_id,
             toAccountId: t.paired_account_id,
             date: t.date,
-            time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+            time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+            createdAt: t.created_at
           };
         });
 
@@ -136,7 +138,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   // Recent transactions (показываем только последние 3) - memoized for performance
   const recentTransactions = useMemo(() => {
     return transactions
-      .sort((a, b) => new Date(b.date + ' ' + b.time).getTime() - new Date(a.date + ' ' + a.time).getTime())
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 3);
   }, [transactions]);
 
@@ -557,7 +559,11 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                                   const truncateText = (text: string) => text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
                                   return `${truncateText(fromAccount)} → ${truncateText(toAccount)}`;
                                 })()
-                              : accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно'}
+                              : (() => {
+                                  const accountName = accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно';
+                                  const maxLength = 22; // Максимальная длина для одного счета
+                                  return accountName.length > maxLength ? accountName.slice(0, maxLength) + '...' : accountName;
+                                })()}
                           </span>
                         </Badge>
                       </div>
