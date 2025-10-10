@@ -86,11 +86,16 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
     const loadTransactions = async () => {
       try {
-        const accountId = accounts[0].id;
-        const data = await transactionsService.getAll(accountId);
+        // Загружаем транзакции для ВСЕХ счетов
+        const allTransactionsPromises = accounts.map(account =>
+          transactionsService.getAll(account.id)
+        );
+
+        const allTransactionsArrays = await Promise.all(allTransactionsPromises);
+        const allTransactions = allTransactionsArrays.flat();
 
         // Преобразуем API транзакции в формат компонента
-        const formattedTransactions: Transaction[] = data.map(t => {
+        const formattedTransactions: Transaction[] = allTransactions.map(t => {
           const createdDate = new Date(t.created_at);
 
           // Определяем тип транзакции (перевод или обычная)
@@ -111,7 +116,12 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           };
         });
 
-        setTransactions(formattedTransactions);
+        // Удаляем дубликаты по ID (переводы могут появиться дважды)
+        const uniqueTransactions = Array.from(
+          new Map(formattedTransactions.map(t => [t.id, t])).values()
+        );
+
+        setTransactions(uniqueTransactions);
       } catch (error) {
         console.error('Failed to load transactions:', error);
         setTransactions([]);
