@@ -37,6 +37,8 @@ Rails.application.routes.draw do
 
       # Transfers
       post '/transfers', to: 'transfers#create'
+      put '/transfers/:transfer_id', to: 'transfers#update'
+      delete '/transfers/:transfer_id', to: 'transfers#destroy'
     end
   end
 end

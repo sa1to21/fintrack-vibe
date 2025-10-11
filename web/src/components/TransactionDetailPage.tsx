@@ -37,6 +37,7 @@ import { motion } from "motion/react";
 import categoriesService, { Category } from "../services/categories.service";
 import accountsService, { Account as APIAccount } from "../services/accounts.service";
 import transactionsService from "../services/transactions.service";
+import transfersService from "../services/transfers.service";
 
 interface Transaction {
   id: string;
@@ -49,6 +50,7 @@ interface Transaction {
   toAccountId?: string;
   date: string;
   time: string;
+  transferId?: string; // Для редактирования переводов
 }
 
 interface TransactionDetailPageProps {
@@ -74,6 +76,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
     type: transaction.type,
     category: transaction.category,
     accountId: transaction.accountId,
+    toAccountId: transaction.toAccountId || '',
     description: transaction.description,
     date: transaction.date,
     time: transaction.time
@@ -139,38 +142,77 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
   }, [editData.type, editData.category, editData.accountId, categories, accounts, transaction.toAccountId]);
 
   const handleSave = useCallback(async () => {
-    if (!editData.amount || !editData.category || !editData.accountId) {
-      toast.error("Заполните все обязательные поля");
-      return;
+    // Проверка для переводов
+    if (transaction.type === 'transfer') {
+      if (!editData.amount || !editData.accountId || !editData.toAccountId) {
+        toast.error("Заполните все обязательные поля");
+        return;
+      }
+      if (editData.accountId === editData.toAccountId) {
+        toast.error("Нельзя перевести на тот же счет");
+        return;
+      }
+    } else {
+      // Проверка для обычных транзакций
+      if (!editData.amount || !editData.category || !editData.accountId) {
+        toast.error("Заполните все обязательные поля");
+        return;
+      }
     }
 
     try {
-      // Обновляем через API
-      await transactionsService.update(transaction.id, {
-        amount: parseFloat(editData.amount),
-        transaction_type: editData.type as 'income' | 'expense',
-        description: editData.description,
-        date: editData.date,
-        account_id: editData.accountId,
-        category_id: parseInt(editData.category)
-      });
+      if (transaction.type === 'transfer' && transaction.transferId) {
+        // Обновляем перевод через transfers API
+        await transfersService.update(transaction.transferId, {
+          amount: parseFloat(editData.amount),
+          from_account_id: editData.accountId,
+          to_account_id: editData.toAccountId,
+          description: editData.description,
+          date: editData.date
+        });
 
-      // Обновляем локальное состояние
-      const updatedTransaction: Transaction = {
-        ...transaction,
-        amount: parseFloat(editData.amount),
-        type: editData.type as 'income' | 'expense',
-        category: editData.category,
-        categoryName: currentCategory?.name || '',
-        accountId: editData.accountId,
-        description: editData.description,
-        date: editData.date,
-        time: editData.time
-      };
+        // Обновляем локальное состояние
+        const updatedTransaction: Transaction = {
+          ...transaction,
+          amount: parseFloat(editData.amount),
+          accountId: editData.accountId,
+          toAccountId: editData.toAccountId,
+          description: editData.description,
+          date: editData.date,
+          time: editData.time
+        };
 
-      onUpdate(updatedTransaction);
-      setIsEditing(false);
-      toast.success("Операция обновлена!");
+        onUpdate(updatedTransaction);
+        setIsEditing(false);
+        toast.success("Перевод обновлен!");
+      } else {
+        // Обновляем обычную транзакцию через transactions API
+        await transactionsService.update(transaction.id, {
+          amount: parseFloat(editData.amount),
+          transaction_type: editData.type as 'income' | 'expense',
+          description: editData.description,
+          date: editData.date,
+          account_id: editData.accountId,
+          category_id: parseInt(editData.category)
+        });
+
+        // Обновляем локальное состояние
+        const updatedTransaction: Transaction = {
+          ...transaction,
+          amount: parseFloat(editData.amount),
+          type: editData.type as 'income' | 'expense' | 'transfer',
+          category: editData.category,
+          categoryName: currentCategory?.name || '',
+          accountId: editData.accountId,
+          description: editData.description,
+          date: editData.date,
+          time: editData.time
+        };
+
+        onUpdate(updatedTransaction);
+        setIsEditing(false);
+        toast.success("Операция обновлена!");
+      }
     } catch (error: any) {
       console.error('Failed to update transaction:', error);
 
@@ -178,24 +220,30 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
       if (error.response?.data?.error === 'Недостаточно средств') {
         toast.error('Недостаточно средств на счете');
       } else {
-        toast.error('Не удалось обновить операцию');
+        toast.error('Не удалось обновить ' + (transaction.type === 'transfer' ? 'перевод' : 'операцию'));
       }
     }
   }, [editData, transaction, currentCategory, onUpdate]);
 
   const handleDelete = useCallback(async () => {
     try {
-      // Удаляем через API
-      await transactionsService.delete(transaction.id);
+      if (transaction.type === 'transfer' && transaction.transferId) {
+        // Удаляем перевод через transfers API
+        await transfersService.delete(transaction.transferId);
+        toast.success("Перевод удален!");
+      } else {
+        // Удаляем обычную транзакцию через transactions API
+        await transactionsService.delete(transaction.id);
+        toast.success("Операция удалена!");
+      }
 
       // Обновляем локальное состояние
       onDelete(transaction.id);
-      toast.success("Операция удалена!");
     } catch (error) {
       console.error('Failed to delete transaction:', error);
-      toast.error('Не удалось удалить операцию');
+      toast.error('Не удалось удалить ' + (transaction.type === 'transfer' ? 'перевод' : 'операцию'));
     }
-  }, [transaction.id, onDelete]);
+  }, [transaction.id, transaction.type, transaction.transferId, onDelete]);
 
   const handleTypeChange = useCallback((newType: 'income' | 'expense') => {
     setEditData(prev => ({
@@ -254,7 +302,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
           </motion.div>
           <h1 className="font-medium text-white">Детали операции</h1>
           <div className="flex items-center gap-2">
-            {!isEditing && transaction.type !== 'transfer' && (
+            {!isEditing && (
               <>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
@@ -280,10 +328,10 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                     <AlertDialogContent className="border-red-200 bg-gradient-to-br from-white to-red-50/30">
                       <AlertDialogHeader>
                         <AlertDialogTitle className="text-red-700">
-                          Удалить операцию?
+                          Удалить {transaction.type === 'transfer' ? 'перевод' : 'операцию'}?
                         </AlertDialogTitle>
                         <AlertDialogDescription className="text-red-600">
-                          Это действие нельзя отменить. Операция будет удалена навсегда.
+                          Это действие нельзя отменить. {transaction.type === 'transfer' ? 'Перевод' : 'Операция'} будет {transaction.type === 'transfer' ? 'удален' : 'удалена'} навсегда.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -325,6 +373,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                         type: transaction.type,
                         category: transaction.category,
                         accountId: transaction.accountId,
+                        toAccountId: transaction.toAccountId || '',
                         description: transaction.description,
                         date: transaction.date,
                         time: transaction.time
@@ -489,41 +538,43 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
             <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-lg">
               <CardHeader>
                 <CardTitle className="text-center bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Редактировать операцию
+                  Редактировать {transaction.type === 'transfer' ? 'перевод' : 'операцию'}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Type Selection */}
-                <div className="flex gap-2">
-                  <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Button
-                      type="button"
-                      variant={editData.type === 'expense' ? 'default' : 'outline'}
-                      className={`w-full transition-all duration-300 ${editData.type === 'expense' 
-                        ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg' 
-                        : 'border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400'
-                      }`}
-                      onClick={() => handleTypeChange('expense')}
-                    >
-                      <Minus className="w-4 h-4 mr-2" />
-                      Расход
-                    </Button>
-                  </motion.div>
-                  <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Button
-                      type="button"
-                      variant={editData.type === 'income' ? 'default' : 'outline'}
-                      className={`w-full transition-all duration-300 ${editData.type === 'income' 
-                        ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg' 
-                        : 'border-emerald-300 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-400'
-                      }`}
-                      onClick={() => handleTypeChange('income')}
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Доход
-                    </Button>
-                  </motion.div>
-                </div>
+                {/* Type Selection - только для обычных операций */}
+                {transaction.type !== 'transfer' && (
+                  <div className="flex gap-2">
+                    <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <Button
+                        type="button"
+                        variant={editData.type === 'expense' ? 'default' : 'outline'}
+                        className={`w-full transition-all duration-300 ${editData.type === 'expense'
+                          ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg'
+                          : 'border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400'
+                        }`}
+                        onClick={() => handleTypeChange('expense')}
+                      >
+                        <Minus className="w-4 h-4 mr-2" />
+                        Расход
+                      </Button>
+                    </motion.div>
+                    <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <Button
+                        type="button"
+                        variant={editData.type === 'income' ? 'default' : 'outline'}
+                        className={`w-full transition-all duration-300 ${editData.type === 'income'
+                          ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg'
+                          : 'border-emerald-300 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-400'
+                        }`}
+                        onClick={() => handleTypeChange('income')}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Доход
+                      </Button>
+                    </motion.div>
+                  </div>
+                )}
 
                 {/* Amount */}
                 <div className="space-y-2">
@@ -545,56 +596,112 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                   </div>
                 </div>
 
-                {/* Category */}
-                <div className="space-y-2">
-                  <Label>Категория *</Label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {currentCategories.map((cat) => {
-                      return (
-                        <motion.button
-                          key={cat.id}
-                          type="button"
-                          className={`p-3 rounded-lg border text-center transition-all duration-200 ${
-                            String(editData.category) === String(cat.id)
-                              ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
-                              : 'border-blue-200 hover:border-blue-400 hover:bg-blue-50/30'
-                          }`}
-                          onClick={() => setEditData(prev => ({ ...prev, category: String(cat.id) }))}
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
-                        >
-                          <div className="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 bg-gradient-to-br from-blue-100 to-indigo-200">
-                            <span className="text-lg">{cat.icon}</span>
-                          </div>
-                          <span className="text-xs">{cat.name}</span>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Account */}
-                <div className="space-y-2">
-                  <Label>Счёт *</Label>
-                  <Select value={String(editData.accountId)} onValueChange={(value) => setEditData(prev => ({ ...prev, accountId: value }))}>
-                    <SelectTrigger className="border-blue-200 focus:border-blue-400">
-                      <SelectValue placeholder="Выберите счёт" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {accounts.map((acc) => {
-                        const Icon = iconMap[acc.account_type] || Wallet;
+                {/* Category - только для обычных операций */}
+                {transaction.type !== 'transfer' && (
+                  <div className="space-y-2">
+                    <Label>Категория *</Label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {currentCategories.map((cat) => {
                         return (
-                          <SelectItem key={acc.id} value={String(acc.id)}>
-                            <div className="flex items-center gap-2">
-                              <Icon className="w-4 h-4 text-blue-600" />
-                              <span>{acc.name}</span>
+                          <motion.button
+                            key={cat.id}
+                            type="button"
+                            className={`p-3 rounded-lg border text-center transition-all duration-200 ${
+                              String(editData.category) === String(cat.id)
+                                ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
+                                : 'border-blue-200 hover:border-blue-400 hover:bg-blue-50/30'
+                            }`}
+                            onClick={() => setEditData(prev => ({ ...prev, category: String(cat.id) }))}
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                          >
+                            <div className="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 bg-gradient-to-br from-blue-100 to-indigo-200">
+                              <span className="text-lg">{cat.icon}</span>
                             </div>
-                          </SelectItem>
+                            <span className="text-xs">{cat.name}</span>
+                          </motion.button>
                         );
                       })}
-                    </SelectContent>
-                  </Select>
-                </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Account(s) */}
+                {transaction.type === 'transfer' ? (
+                  // Для переводов: два селекта (откуда → куда)
+                  <>
+                    <div className="space-y-2">
+                      <Label>Откуда *</Label>
+                      <Select value={String(editData.accountId)} onValueChange={(value) => setEditData(prev => ({ ...prev, accountId: value }))}>
+                        <SelectTrigger className="border-purple-200 focus:border-purple-400">
+                          <SelectValue placeholder="Выберите счёт" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {accounts.filter(acc => String(acc.id) !== String(editData.toAccountId)).map((acc) => {
+                            const Icon = iconMap[acc.account_type] || Wallet;
+                            return (
+                              <SelectItem key={acc.id} value={String(acc.id)}>
+                                <div className="flex items-center gap-2">
+                                  <Icon className="w-4 h-4 text-purple-600" />
+                                  <span>{acc.name} ({acc.balance.toFixed(0)} ₽)</span>
+                                </div>
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="flex justify-center">
+                      <ArrowRightLeft className="w-5 h-5 text-purple-600" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Куда *</Label>
+                      <Select value={String(editData.toAccountId)} onValueChange={(value) => setEditData(prev => ({ ...prev, toAccountId: value }))}>
+                        <SelectTrigger className="border-purple-200 focus:border-purple-400">
+                          <SelectValue placeholder="Выберите счёт" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {accounts.filter(acc => String(acc.id) !== String(editData.accountId)).map((acc) => {
+                            const Icon = iconMap[acc.account_type] || Wallet;
+                            return (
+                              <SelectItem key={acc.id} value={String(acc.id)}>
+                                <div className="flex items-center gap-2">
+                                  <Icon className="w-4 h-4 text-purple-600" />
+                                  <span>{acc.name} ({acc.balance.toFixed(0)} ₽)</span>
+                                </div>
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                ) : (
+                  // Для обычных операций: один селект
+                  <div className="space-y-2">
+                    <Label>Счёт *</Label>
+                    <Select value={String(editData.accountId)} onValueChange={(value) => setEditData(prev => ({ ...prev, accountId: value }))}>
+                      <SelectTrigger className="border-blue-200 focus:border-blue-400">
+                        <SelectValue placeholder="Выберите счёт" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {accounts.map((acc) => {
+                          const Icon = iconMap[acc.account_type] || Wallet;
+                          return (
+                            <SelectItem key={acc.id} value={String(acc.id)}>
+                              <div className="flex items-center gap-2">
+                                <Icon className="w-4 h-4 text-blue-600" />
+                                <span>{acc.name}</span>
+                              </div>
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 {/* Date & Time */}
                 <div className="grid grid-cols-2 gap-3">

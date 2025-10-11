@@ -39,7 +39,9 @@
       "Bash(del tmppidsserver.pid)",
       "Bash(del apitmppidsserver.pid)",
       "Bash(npx netlify-cli deploy:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(del nul)",
+      "Bash(del webnul)"
     ],
     "deny": [],
     "ask": []

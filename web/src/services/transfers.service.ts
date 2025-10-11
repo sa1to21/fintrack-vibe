@@ -7,6 +7,14 @@ export interface CreateTransferData {
   description?: string;
 }
 
+export interface UpdateTransferData {
+  from_account_id?: string | number;
+  to_account_id?: string | number;
+  amount?: number;
+  description?: string;
+  date?: string;
+}
+
 export interface Transfer {
   success: boolean;
   from_transaction: any;
@@ -24,6 +32,16 @@ export interface Transfer {
 class TransfersService {
   async create(data: CreateTransferData): Promise<Transfer> {
     const response = await api.post('/transfers', { transfer: data });
+    return response.data;
+  }
+
+  async update(transferId: string, data: UpdateTransferData): Promise<Transfer> {
+    const response = await api.put(`/transfers/${transferId}`, { transfer: data });
+    return response.data;
+  }
+
+  async delete(transferId: string): Promise<{ success: boolean; message: string }> {
+    const response = await api.delete(`/transfers/${transferId}`);
     return response.data;
   }
 }
