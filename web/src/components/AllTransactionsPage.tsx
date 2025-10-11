@@ -44,6 +44,7 @@ interface Transaction {
   date: string;
   time: string;
   createdAt: string;
+  transferId?: string; // Для дедупликации переводов
 }
 
 interface AllTransactionsPageProps {
@@ -132,7 +133,8 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
             toAccountId: t.paired_account_id,
             date: t.date,
             time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
-            createdAt: t.created_at
+            createdAt: t.created_at,
+            transferId: t.transfer_id
           };
 
           // Логируем переводы для отладки
@@ -149,10 +151,21 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
           return formatted;
         });
 
-        // Переводы состоят из двух разных транзакций с разными ID
-        // Не удаляем дубликаты - каждая транзакция уникальна
-        console.log('[AllTransactions] Formatted transactions:', formattedTransactions.length, formattedTransactions);
-        setAllTransactions(formattedTransactions);
+        // Дедупликация переводов: каждый перевод = 2 транзакции, показываем только одну
+        const seenTransferIds = new Set<string>();
+        const uniqueTransactions = formattedTransactions.filter(t => {
+          if (t.type === 'transfer' && t.transferId) {
+            if (seenTransferIds.has(t.transferId)) {
+              console.log('[AllTransactions] Skipping duplicate transfer:', t.id, 'transferId:', t.transferId);
+              return false; // Пропускаем дубликат перевода
+            }
+            seenTransferIds.add(t.transferId);
+          }
+          return true;
+        });
+
+        console.log('[AllTransactions] Formatted transactions:', formattedTransactions.length, 'Unique:', uniqueTransactions.length);
+        setAllTransactions(uniqueTransactions);
       } catch (error) {
         console.error('Failed to load data:', error);
         setAccounts([]);
