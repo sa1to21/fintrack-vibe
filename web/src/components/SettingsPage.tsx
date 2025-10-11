@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Switch } from "./ui/switch";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "./ui/alert-dialog";
-import { Trash2, LogOut, Sparkles } from "./icons";
+import { Trash2, LogOut, Sparkles, User, Shield, Tags, DollarSign, Bell, Moon, Globe, Palette, Upload, Download } from "./icons";
 import { motion } from "motion/react";
 import { useTelegramAuth } from "../contexts/TelegramAuthContext";
 import { toast } from "sonner";

@@ -57,5 +57,15 @@ export {
   Info,
   LogOut,
   Trash,
-  UserCircle
+  UserCircle,
+
+  // Settings page icons
+  User,
+  Bell,
+  Moon,
+  Globe,
+  Palette,
+  Upload,
+  Download,
+  Tags
 } from "lucide-react";
