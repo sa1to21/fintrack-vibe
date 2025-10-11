@@ -643,7 +643,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                               <SelectItem key={acc.id} value={String(acc.id)}>
                                 <div className="flex items-center gap-2">
                                   <Icon className="w-4 h-4 text-purple-600" />
-                                  <span>{acc.name} ({acc.balance.toFixed(0)} ₽)</span>
+                                  <span>{acc.name} ({parseFloat(acc.balance.toString()).toFixed(0)} ₽)</span>
                                 </div>
                               </SelectItem>
                             );
@@ -669,7 +669,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                               <SelectItem key={acc.id} value={String(acc.id)}>
                                 <div className="flex items-center gap-2">
                                   <Icon className="w-4 h-4 text-purple-600" />
-                                  <span>{acc.name} ({acc.balance.toFixed(0)} ₽)</span>
+                                  <span>{acc.name} ({parseFloat(acc.balance.toString()).toFixed(0)} ₽)</span>
                                 </div>
                               </SelectItem>
                             );
