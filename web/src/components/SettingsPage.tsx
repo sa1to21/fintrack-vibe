@@ -3,23 +3,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Switch } from "./ui/switch";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "./ui/alert-dialog";
-import {
-  User,
-  Bell,
-  Shield,
-  Palette,
-  Download,
-  Upload,
-  Trash2,
-  Tags,
-  DollarSign,
-  ChevronRight,
-  Moon,
-  Globe,
-  Settings as SettingsIcon,
-  Sparkles,
-  LogOut
-} from "lucide-react";
+import { Trash2, LogOut, Sparkles } from "./icons";
 import { motion } from "motion/react";
 import { useTelegramAuth } from "../contexts/TelegramAuthContext";
 import { toast } from "sonner";

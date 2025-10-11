@@ -1,6 +1,6 @@
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
-import { Wallet, TrendingUp, PieChart, Sparkles, Shield, Target } from "lucide-react";
+import { Wallet, TrendingUp, PieChart, Sparkles, Shield, Target } from "./icons";
 import { motion } from "motion/react";
 
 interface WelcomePageProps {

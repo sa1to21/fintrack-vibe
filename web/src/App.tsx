@@ -1,17 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { TelegramAuthProvider, useTelegramAuth } from "./contexts/TelegramAuthContext";
-import { WelcomePage } from "./components/WelcomePage";
-import { DashboardPage } from "./components/DashboardPage";
-import { AddTransactionPage } from "./components/AddTransactionPage";
-import { ManageAccountsPage } from "./components/ManageAccountsPage";
-import { AllTransactionsPage } from "./components/AllTransactionsPage";
-import { TransactionDetailPage } from "./components/TransactionDetailPage";
-import { TransferPage } from "./components/TransferPage";
-import { AnalyticsPage } from "./components/AnalyticsPage";
-import { EducationPage } from "./components/EducationPage";
-import { SettingsPage } from "./components/SettingsPage";
-import { BottomNavigation } from "./components/BottomNavigation";
 import { Toaster } from "./components/ui/sonner";
+
+// Lazy load all page components for code splitting
+const WelcomePage = lazy(() => import("./components/WelcomePage").then(m => ({ default: m.WelcomePage })));
+const DashboardPage = lazy(() => import("./components/DashboardPage").then(m => ({ default: m.DashboardPage })));
+const AddTransactionPage = lazy(() => import("./components/AddTransactionPage").then(m => ({ default: m.AddTransactionPage })));
+const ManageAccountsPage = lazy(() => import("./components/ManageAccountsPage").then(m => ({ default: m.ManageAccountsPage })));
+const AllTransactionsPage = lazy(() => import("./components/AllTransactionsPage").then(m => ({ default: m.AllTransactionsPage })));
+const TransactionDetailPage = lazy(() => import("./components/TransactionDetailPage").then(m => ({ default: m.TransactionDetailPage })));
+const TransferPage = lazy(() => import("./components/TransferPage").then(m => ({ default: m.TransferPage })));
+const AnalyticsPage = lazy(() => import("./components/AnalyticsPage").then(m => ({ default: m.AnalyticsPage })));
+const EducationPage = lazy(() => import("./components/EducationPage").then(m => ({ default: m.EducationPage })));
+const SettingsPage = lazy(() => import("./components/SettingsPage").then(m => ({ default: m.SettingsPage })));
+const BottomNavigation = lazy(() => import("./components/BottomNavigation").then(m => ({ default: m.BottomNavigation })));
 
 interface Transaction {
   id: string;
@@ -137,60 +139,73 @@ function AppContent() {
     <>
       <div className="h-screen w-full bg-background overflow-hidden flex flex-col">
         <div className="flex-1 overflow-y-auto">
-          {currentScreen === 'welcome' && (
-            <WelcomePage onGetStarted={handleGetStarted} />
-          )}
-          {currentScreen === 'dashboard' && (
-            <DashboardPage
-              onAddTransaction={handleAddTransaction}
-              onManageAccounts={handleManageAccounts}
-              onViewAllTransactions={handleViewAllTransactions}
-              onTransactionClick={handleTransactionClick}
-              onTransfer={() => setCurrentScreen('transfer')}
-            />
-          )}
-          {currentScreen === 'analytics' && <AnalyticsPage />}
-          {currentScreen === 'education' && <EducationPage />}
-          {currentScreen === 'settings' && <SettingsPage />}
-          {currentScreen === 'add-transaction' && (
-            <AddTransactionPage 
-              onBack={handleBack} 
-              onAddTransaction={handleAddNewTransaction}
-            />
-          )}
-          {currentScreen === 'manage-accounts' && (
-            <ManageAccountsPage onBack={handleBack} />
-          )}
-          {currentScreen === 'all-transactions' && (
-            <AllTransactionsPage 
-              onBack={handleBack}
-              onTransactionClick={handleTransactionClick}
-            />
-          )}
-          {currentScreen === 'transaction-detail' && selectedTransaction && (
-            <TransactionDetailPage
-              transaction={selectedTransaction}
-              onBack={handleBack}
-              onUpdate={handleUpdateTransaction}
-              onDelete={handleDeleteTransaction}
-            />
-          )}
-          {currentScreen === 'transfer' && (
-            <TransferPage
-              onBack={handleBack}
-              onSuccess={() => {
-                handleBack();
-                // Можно добавить перезагрузку данных если нужно
-              }}
-            />
-          )}
+          <Suspense fallback={
+            <div className="h-screen w-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center animate-pulse">
+                  <span className="text-2xl">💰</span>
+                </div>
+                <p className="text-lg font-medium text-slate-700">Загрузка...</p>
+              </div>
+            </div>
+          }>
+            {currentScreen === 'welcome' && (
+              <WelcomePage onGetStarted={handleGetStarted} />
+            )}
+            {currentScreen === 'dashboard' && (
+              <DashboardPage
+                onAddTransaction={handleAddTransaction}
+                onManageAccounts={handleManageAccounts}
+                onViewAllTransactions={handleViewAllTransactions}
+                onTransactionClick={handleTransactionClick}
+                onTransfer={() => setCurrentScreen('transfer')}
+              />
+            )}
+            {currentScreen === 'analytics' && <AnalyticsPage />}
+            {currentScreen === 'education' && <EducationPage />}
+            {currentScreen === 'settings' && <SettingsPage />}
+            {currentScreen === 'add-transaction' && (
+              <AddTransactionPage
+                onBack={handleBack}
+                onAddTransaction={handleAddNewTransaction}
+              />
+            )}
+            {currentScreen === 'manage-accounts' && (
+              <ManageAccountsPage onBack={handleBack} />
+            )}
+            {currentScreen === 'all-transactions' && (
+              <AllTransactionsPage
+                onBack={handleBack}
+                onTransactionClick={handleTransactionClick}
+              />
+            )}
+            {currentScreen === 'transaction-detail' && selectedTransaction && (
+              <TransactionDetailPage
+                transaction={selectedTransaction}
+                onBack={handleBack}
+                onUpdate={handleUpdateTransaction}
+                onDelete={handleDeleteTransaction}
+              />
+            )}
+            {currentScreen === 'transfer' && (
+              <TransferPage
+                onBack={handleBack}
+                onSuccess={() => {
+                  handleBack();
+                  // Можно добавить перезагрузку данных если нужно
+                }}
+              />
+            )}
+          </Suspense>
         </div>
-        
+
         {showBottomNav && (
-          <BottomNavigation 
-            currentPage={currentScreen} 
-            onNavigate={handleNavigate}
-          />
+          <Suspense fallback={<div className="h-16" />}>
+            <BottomNavigation
+              currentPage={currentScreen}
+              onNavigate={handleNavigate}
+            />
+          </Suspense>
         )}
       </div>
       <Toaster />

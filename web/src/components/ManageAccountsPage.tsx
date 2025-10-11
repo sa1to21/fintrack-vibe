@@ -13,14 +13,13 @@ import {
   Wallet,
   CreditCard,
   PiggyBank,
-  Banknote,
   DollarSign,
   TrendingUp,
   TrendingDown,
   Settings,
   Sparkles,
   Loader2
-} from "lucide-react";
+} from "./icons";
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import accountsService from "../services/accounts.service";

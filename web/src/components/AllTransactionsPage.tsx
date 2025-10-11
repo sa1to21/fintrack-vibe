@@ -7,14 +7,13 @@ import { Badge } from "./ui/badge";
 import { DateRangePicker } from "./DateRangePicker";
 import accountsService from "../services/accounts.service";
 import transactionsService, { Transaction as APITransaction } from "../services/transactions.service";
-import { Loader2 } from "lucide-react";
 import {
   ArrowLeft,
   Search,
   Filter,
   TrendingUp,
   TrendingDown,
-  Calendar,
+  CalendarIcon as Calendar,
   Wallet,
   CreditCard,
   PiggyBank,
@@ -28,8 +27,9 @@ import {
   Briefcase,
   Gift,
   Plus,
-  ArrowRightLeft
-} from "lucide-react";
+  ArrowRightLeft,
+  Loader2
+} from "./icons";
 import { motion } from "motion/react";
 
 interface Transaction {
@@ -95,7 +95,6 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
 
         // Загружаем счета
         const accountsData = await accountsService.getAll();
-        console.log('[AllTransactions] Loaded accounts:', accountsData.length, accountsData);
         const accountsWithIcons = accountsData.map(acc => ({
           id: acc.id,
           name: acc.name,
@@ -109,10 +108,8 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
         const allTransactionsPromises = accountsData.map(acc =>
           transactionsService.getAll(acc.id)
         );
-        console.log('[AllTransactions] Loading from', allTransactionsPromises.length, 'accounts');
         const transactionsArrays = await Promise.all(allTransactionsPromises);
         const allTransactionsData = transactionsArrays.flat();
-        console.log('[AllTransactions] Total transactions loaded:', allTransactionsData.length, allTransactionsData);
 
         // Преобразуем в формат компонента
         const formattedTransactions: Transaction[] = allTransactionsData.map(t => {
@@ -122,7 +119,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
           const isTransfer = !!t.transfer_id;
           const type = isTransfer ? 'transfer' : t.transaction_type;
 
-          const formatted = {
+          return {
             id: t.id,
             amount: parseFloat(t.amount.toString()),
             type: type as 'income' | 'expense' | 'transfer',
@@ -136,19 +133,6 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
             createdAt: t.created_at,
             transferId: t.transfer_id
           };
-
-          // Логируем переводы для отладки
-          if (isTransfer) {
-            console.log('[AllTransactions] Transfer found:', {
-              id: t.id,
-              rawDate: t.date,
-              dateType: typeof t.date,
-              parsedDate: new Date(t.date),
-              formattedDate: formatted.date
-            });
-          }
-
-          return formatted;
         });
 
         // Дедупликация переводов: каждый перевод = 2 транзакции, показываем только одну
@@ -156,7 +140,6 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
         const uniqueTransactions = formattedTransactions.filter(t => {
           if (t.type === 'transfer' && t.transferId) {
             if (seenTransferIds.has(t.transferId)) {
-              console.log('[AllTransactions] Skipping duplicate transfer:', t.id, 'transferId:', t.transferId);
               return false; // Пропускаем дубликат перевода
             }
             seenTransferIds.add(t.transferId);
@@ -164,7 +147,6 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
           return true;
         });
 
-        console.log('[AllTransactions] Formatted transactions:', formattedTransactions.length, 'Unique:', uniqueTransactions.length);
         setAllTransactions(uniqueTransactions);
       } catch (error) {
         console.error('Failed to load data:', error);
@@ -231,9 +213,6 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
   // Memoized filtering and grouping for performance
   const { filteredTransactions, groupedTransactions, sortedDates, totalIncome, totalExpenses } = useMemo(() => {
     const dateRange = getDateRange();
-    console.log('[AllTransactions] Selected period:', selectedPeriod);
-    console.log('[AllTransactions] Date range filter:', dateRange);
-    console.log('[AllTransactions] All transactions before filter:', allTransactions.length);
 
     // Фильтрация операций
     const filtered = allTransactions.filter(transaction => {
@@ -247,30 +226,10 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
       if (dateRange) {
         const transactionDate = new Date(transaction.date);
         matchesDate = transactionDate >= dateRange.from && transactionDate <= dateRange.to;
-
-        if (!matchesDate && transaction.type === 'transfer') {
-          console.log('[AllTransactions] TRANSFER filtered out by date:', {
-            id: transaction.id,
-            rawDate: transaction.date,
-            dateType: typeof transaction.date,
-            parsedDate: transactionDate,
-            parsedDateISO: transactionDate.toISOString(),
-            rangeFrom: dateRange.from,
-            rangeTo: dateRange.to,
-            comparison: {
-              greaterThanFrom: transactionDate >= dateRange.from,
-              lessThanTo: transactionDate <= dateRange.to
-            }
-          });
-        } else if (!matchesDate) {
-          console.log('[AllTransactions] Filtered out by date:', transaction.id, transaction.date, 'not in range', dateRange.from, '-', dateRange.to);
-        }
       }
 
       return matchesSearch && matchesType && matchesAccount && matchesDate;
     });
-
-    console.log('[AllTransactions] Filtered transactions:', filtered.length);
 
     // Группировка по дням
     const grouped = filtered.reduce((groups, transaction) => {

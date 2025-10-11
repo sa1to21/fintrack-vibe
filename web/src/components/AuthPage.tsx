@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Label } from './ui/label';
 import { useAuth } from '../contexts/AuthContext';
-import { Wallet, Loader2 } from 'lucide-react';
+import { Wallet, Loader2 } from './icons';
 import { toast } from 'sonner';
 
 export function AuthPage() {

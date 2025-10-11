@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { BookOpen, Clock, Award, TrendingUp, PiggyBank, Shield, Target, GraduationCap, Sparkles } from "lucide-react";
+import { BookOpen, Clock, Award, TrendingUp, PiggyBank, Shield, Target, GraduationCap, Sparkles } from "./icons";
 import { motion } from "motion/react";
 
 export function EducationPage() {

@@ -12,7 +12,7 @@ import {
   Edit,
   Trash2,
   Save,
-  Calendar,
+  CalendarIcon as Calendar,
   Clock,
   Wallet,
   CreditCard,
@@ -31,7 +31,7 @@ import {
   TrendingDown,
   Gift,
   ArrowRightLeft
-} from "lucide-react";
+} from "./icons";
 import { toast } from "sonner@2.0.3";
 import { motion } from "motion/react";
 import categoriesService, { Category } from "../services/categories.service";

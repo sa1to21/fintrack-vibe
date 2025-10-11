@@ -51,6 +51,29 @@
     build: {
       target: 'esnext',
       outDir: 'dist',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+            'motion': ['motion'],
+            'ui-radix': [
+              '@radix-ui/react-dialog',
+              '@radix-ui/react-select',
+              '@radix-ui/react-popover',
+              '@radix-ui/react-alert-dialog'
+            ],
+            'charts': ['recharts'],
+            'date': ['react-day-picker']
+          }
+        }
+      },
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+        }
+      }
     },
     server: {
       port: 3000,

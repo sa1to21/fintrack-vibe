@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Badge } from "./ui/badge";
-import { Calendar as CalendarIcon, ChevronDown } from "lucide-react";
+import { CalendarIcon, ChevronDown } from "./icons";
 
 interface DateRangePickerProps {
   selectedPeriod: string;

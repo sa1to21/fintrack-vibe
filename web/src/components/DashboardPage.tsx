@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingDown, Calendar, Filter, Sparkles, ArrowRightLeft } from "lucide-react";
+import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingDown, CalendarIcon, Filter, Sparkles, ArrowRightLeft } from "./icons";
 import { motion } from "motion/react";
 import accountsService from "../services/accounts.service";
 import transactionsService, { Transaction as APITransaction } from "../services/transactions.service";
@@ -405,7 +405,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             <h2 className="font-medium text-foreground">Этот месяц</h2>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200">
-                <Calendar className="w-4 h-4 mr-1" />
+                <CalendarIcon className="w-4 h-4 mr-1" />
                 {currentMonthName}
               </Button>
             </motion.div>

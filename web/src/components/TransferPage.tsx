@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { ArrowLeft, ArrowRightLeft } from "lucide-react";
+import { ArrowLeft, ArrowRightLeft } from "./icons";
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import accountsService, { Account } from "../services/accounts.service";
@@ -69,7 +69,6 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
 
     try {
       setSubmitting(true);
-      console.log('[Transfer] Creating transfer from', fromAccountId, 'to', toAccountId, 'amount:', amountNum);
 
       const result = await transfersService.create({
         from_account_id: fromAccountId,
@@ -78,7 +77,6 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
         description: description || undefined
       });
 
-      console.log('[Transfer] Transfer created:', result);
       toast.success('Перевод выполнен успешно!');
       onSuccess();
     } catch (error: any) {

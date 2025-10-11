@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { ArrowLeft, Plus, Minus, Home, Car, ShoppingBag, Coffee, Zap, Heart, Wallet, CreditCard, PiggyBank, DollarSign, Briefcase, TrendingUp, Gift } from "lucide-react";
+import { ArrowLeft, Plus, Minus, Home, Car, ShoppingBag, Coffee, Zap, Heart, Wallet, CreditCard, PiggyBank, DollarSign, Briefcase, TrendingUp, Gift } from "./icons";
 import { toast } from "sonner@2.0.3";
 import { motion } from "motion/react";
 import categoriesService, { Category } from "../services/categories.service";
@@ -77,21 +77,14 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
   useEffect(() => {
     const loadData = async () => {
       try {
-        console.log('[AddTransaction] Starting data load...');
-        console.log('[AddTransaction] Auth token:', localStorage.getItem('authToken') ? 'exists' : 'missing');
-
         const [categories, accounts] = await Promise.all([
           categoriesService.getAll(),
           accountsService.getAll()
         ]);
 
-        console.log('[AddTransaction] Loaded categories:', categories);
-        console.log('[AddTransaction] Loaded accounts:', accounts);
-
         // Проверяем что данные - массивы
         if (Array.isArray(categories) && categories.length > 0) {
           setApiCategories(categories);
-          console.log('[AddTransaction] Categories set successfully');
         } else {
           console.error('[AddTransaction] Categories is not an array or empty:', categories);
           toast.error('Не удалось загрузить категории. Попробуйте перезапустить приложение.');
@@ -100,15 +93,12 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
         if (Array.isArray(accounts) && accounts.length > 0) {
           setApiAccounts(accounts);
           setAccount(accounts[0].id.toString());
-          console.log('[AddTransaction] Accounts set successfully, default:', accounts[0].id);
         } else {
           console.error('[AddTransaction] Accounts is not an array or empty:', accounts);
           toast.error('Не удалось загрузить счета. Попробуйте перезапустить приложение.');
         }
       } catch (error: any) {
         console.error('[AddTransaction] Failed to load data:', error);
-        console.error('[AddTransaction] Error response:', error.response);
-        console.error('[AddTransaction] Error message:', error.message);
 
         if (error.response?.status === 401) {
           toast.error('Ошибка авторизации. Перезапустите приложение.');
@@ -155,8 +145,6 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
     const currentDate = currentTime.toISOString().split('T')[0];
     const currentTimeStr = currentTime.toTimeString().slice(0, 5);
 
-    console.log('[AddTransaction] Creating transaction with date:', currentDate, 'time:', currentTimeStr);
-
     try {
       // Создать транзакцию через API (account_id передается в URL, не в теле)
       const newTransaction = await transactionsService.create(account, {
@@ -167,8 +155,6 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
         time: currentTimeStr,
         category_id: parseInt(category)
       });
-
-      console.log('[AddTransaction] Transaction created:', newTransaction);
 
       // Также вызвать старый callback для обновления UI (пока моки используются)
       const categoryName = currentCategories
