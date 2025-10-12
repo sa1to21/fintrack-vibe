@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_09_185914) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_12_215247) do
   create_table "accounts", force: :cascade do |t|
     t.string "name", null: false
     t.string "account_type", null: false
@@ -46,10 +46,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_09_185914) do
     t.datetime "updated_at", null: false
     t.string "transfer_id"
     t.integer "paired_transaction_id"
+    t.index ["account_id", "created_at"], name: "index_transactions_on_account_id_and_created_at"
     t.index ["account_id", "date"], name: "index_transactions_on_account_id_and_date"
     t.index ["account_id"], name: "index_transactions_on_account_id"
     t.index ["category_id", "transaction_type"], name: "index_transactions_on_category_id_and_transaction_type"
     t.index ["category_id"], name: "index_transactions_on_category_id"
+    t.index ["paired_transaction_id"], name: "index_transactions_on_paired_transaction_id"
+    t.index ["transfer_id"], name: "index_transactions_on_transfer_id"
   end
 
   create_table "users", force: :cascade do |t|

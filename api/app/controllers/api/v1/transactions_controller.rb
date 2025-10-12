@@ -3,7 +3,9 @@ class Api::V1::TransactionsController < Api::V1::BaseController
   before_action :set_transaction, only: [:show, :update, :destroy]
 
   def index
-    transactions = @account.transactions.includes(:category).order(date: :desc, time: :desc)
+    transactions = @account.transactions
+      .includes(:category, :paired_transaction)
+      .order(date: :desc, time: :desc)
     render json: transactions, each_serializer: TransactionSerializer
   end
 
