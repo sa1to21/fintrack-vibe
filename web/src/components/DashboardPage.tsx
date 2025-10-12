@@ -48,11 +48,44 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   useEffect(() => {
     const loadDashboard = async () => {
       try {
-        // Проверяем кеш - если есть, показываем мгновенно
-        const cached = cache.get<{accounts: Account[], transactions: Transaction[]}>('dashboard');
-        if (cached) {
-          setAccounts(cached.accounts);
-          setTransactions(cached.transactions);
+        // Проверяем кеш RAW данных из API (без иконок)
+        const cachedRaw = cache.get<ReturnType<typeof dashboardService.getData> extends Promise<infer T> ? T : never>('dashboard-raw');
+        if (cachedRaw) {
+          // Преобразуем кешированные данные с иконками
+          const accountsWithIcons = cachedRaw.accounts.map(acc => ({
+            id: String(acc.id),
+            name: acc.name,
+            balance: parseFloat(acc.balance.toString()) || 0,
+            icon: acc.account_type === 'savings' ? PiggyBank :
+                  acc.account_type === 'card' ? CreditCard : Wallet,
+            color: acc.account_type === 'savings' ? "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700" :
+                   acc.account_type === 'card' ? "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700" :
+                   "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700"
+          }));
+
+          const formattedTransactions: Transaction[] = cachedRaw.transactions.map(t => {
+            const createdDate = new Date(t.created_at);
+            const isTransfer = !!t.transfer_id;
+            const type = isTransfer ? 'transfer' : t.transaction_type;
+
+            return {
+              id: String(t.id),
+              amount: parseFloat(t.amount.toString()),
+              type: type as 'income' | 'expense' | 'transfer',
+              category: String(t.category_id),
+              categoryName: t.category?.name || 'Без категории',
+              description: t.description || '',
+              accountId: String(t.account_id),
+              toAccountId: t.paired_account_id ? String(t.paired_account_id) : undefined,
+              date: t.date,
+              time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+              createdAt: t.created_at,
+              transferId: t.transfer_id || undefined
+            };
+          });
+
+          setAccounts(accountsWithIcons);
+          setTransactions(formattedTransactions);
           setLoading(false);
         }
 
@@ -98,11 +131,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         setAccounts(accountsWithIcons);
         setTransactions(formattedTransactions);
 
-        // Сохраняем в кеш для следующего раза
-        cache.set('dashboard', {
-          accounts: accountsWithIcons,
-          transactions: formattedTransactions
-        });
+        // Сохраняем RAW данные в кеш (без иконок, только сериализуемые данные)
+        cache.set('dashboard-raw', data);
       } catch (error) {
         console.error('Failed to load dashboard:', error);
         // Fallback на пустые данные при ошибке
