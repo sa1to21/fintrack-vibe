@@ -27,6 +27,9 @@ Rails.application.routes.draw do
       # Categories
       resources :categories, only: [:index, :show]
 
+      # Dashboard - unified endpoint for accounts + recent transactions
+      get '/dashboard', to: 'dashboard#index'
+
       # Analytics
       get '/analytics/summary', to: 'analytics#summary'
       get '/analytics/monthly', to: 'analytics#monthly'

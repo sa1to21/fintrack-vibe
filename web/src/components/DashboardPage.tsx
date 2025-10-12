@@ -4,8 +4,8 @@ import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingDown, CalendarIcon, Filter, Sparkles, ArrowRightLeft } from "./icons";
 import { motion } from "motion/react";
-import accountsService from "../services/accounts.service";
-import transactionsService, { Transaction as APITransaction } from "../services/transactions.service";
+import dashboardService from "../services/dashboard.service";
+import { cache } from "../utils/cache";
 
 interface Account {
   id: string;
@@ -41,18 +41,27 @@ interface DashboardPageProps {
 export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTransactions, onTransactionClick, onTransfer }: DashboardPageProps) {
   const [showBalance, setShowBalance] = useState(true);
   const [accounts, setAccounts] = useState<Account[]>([]);
-  const [loadingAccounts, setLoadingAccounts] = useState(true);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loadingTransactions, setLoadingTransactions] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  // Загрузить счета из API
+  // Загрузить данные дашборда одним запросом (счета + транзакции)
   useEffect(() => {
-    const loadAccounts = async () => {
+    const loadDashboard = async () => {
       try {
-        const data = await accountsService.getAll();
-        // Преобразуем в формат компонента с иконками
-        const accountsWithIcons = data.map(acc => ({
-          id: acc.id,
+        // Проверяем кеш - если есть, показываем мгновенно
+        const cached = cache.get<{accounts: Account[], transactions: Transaction[]}>('dashboard');
+        if (cached) {
+          setAccounts(cached.accounts);
+          setTransactions(cached.transactions);
+          setLoading(false);
+        }
+
+        // Загружаем свежие данные с API (в фоне если есть кеш)
+        const data = await dashboardService.getData();
+
+        // Преобразуем счета в формат компонента с иконками
+        const accountsWithIcons = data.accounts.map(acc => ({
+          id: String(acc.id),
           name: acc.name,
           balance: parseFloat(acc.balance.toString()) || 0,
           icon: acc.account_type === 'savings' ? PiggyBank :
@@ -61,10 +70,42 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                  acc.account_type === 'card' ? "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700" :
                  "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700"
         }));
+
+        // Преобразуем транзакции в формат компонента
+        const formattedTransactions: Transaction[] = data.transactions.map(t => {
+          const createdDate = new Date(t.created_at);
+
+          // Определяем тип транзакции (перевод или обычная)
+          const isTransfer = !!t.transfer_id;
+          const type = isTransfer ? 'transfer' : t.transaction_type;
+
+          return {
+            id: String(t.id),
+            amount: parseFloat(t.amount.toString()),
+            type: type as 'income' | 'expense' | 'transfer',
+            category: String(t.category_id),
+            categoryName: t.category?.name || 'Без категории',
+            description: t.description || '',
+            accountId: String(t.account_id),
+            toAccountId: t.paired_account_id ? String(t.paired_account_id) : undefined,
+            date: t.date,
+            time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+            createdAt: t.created_at,
+            transferId: t.transfer_id || undefined
+          };
+        });
+
         setAccounts(accountsWithIcons);
+        setTransactions(formattedTransactions);
+
+        // Сохраняем в кеш для следующего раза
+        cache.set('dashboard', {
+          accounts: accountsWithIcons,
+          transactions: formattedTransactions
+        });
       } catch (error) {
-        console.error('Failed to load accounts:', error);
-        // Fallback на моки при ошибке
+        console.error('Failed to load dashboard:', error);
+        // Fallback на пустые данные при ошибке
         setAccounts([
           {
             id: "1",
@@ -74,63 +115,14 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             color: "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700"
           }
         ]);
-      } finally {
-        setLoadingAccounts(false);
-      }
-    };
-
-    loadAccounts();
-  }, []);
-
-  // Загрузить транзакции из API после загрузки счетов
-  useEffect(() => {
-    if (accounts.length === 0) return;
-
-    const loadTransactions = async () => {
-      try {
-        // Загружаем транзакции для ВСЕХ счетов
-        const allTransactionsPromises = accounts.map(account =>
-          transactionsService.getAll(account.id)
-        );
-
-        const allTransactionsArrays = await Promise.all(allTransactionsPromises);
-        const allTransactions = allTransactionsArrays.flat();
-
-        // Преобразуем API транзакции в формат компонента
-        const formattedTransactions: Transaction[] = allTransactions.map(t => {
-          const createdDate = new Date(t.created_at);
-
-          // Определяем тип транзакции (перевод или обычная)
-          const isTransfer = !!t.transfer_id;
-          const type = isTransfer ? 'transfer' : t.transaction_type;
-
-          return {
-            id: t.id,
-            amount: parseFloat(t.amount.toString()),
-            type: type as 'income' | 'expense' | 'transfer',
-            category: t.category_id,
-            categoryName: t.category?.name || 'Без категории',
-            description: t.description || '',
-            accountId: t.account_id,
-            toAccountId: t.paired_account_id,
-            date: t.date,
-            time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
-            createdAt: t.created_at,
-            transferId: t.transfer_id
-          };
-        });
-
-        setTransactions(formattedTransactions);
-      } catch (error) {
-        console.error('Failed to load transactions:', error);
         setTransactions([]);
       } finally {
-        setLoadingTransactions(false);
+        setLoading(false);
       }
     };
 
-    loadTransactions();
-  }, [accounts]);
+    loadDashboard();
+  }, []);
 
   // Recent transactions (показываем только последние 3) - memoized for performance
   const recentTransactions = useMemo(() => {
