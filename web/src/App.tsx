@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { TelegramAuthProvider, useTelegramAuth } from "./contexts/TelegramAuthContext";
 import { Toaster } from "./components/ui/sonner";
 
@@ -31,7 +31,7 @@ type AppScreen = 'welcome' | 'dashboard' | 'analytics' | 'education' | 'settings
 
 function AppContent() {
   const { isAuthenticated, loading, error, isNewUser } = useTelegramAuth();
-  const [currentScreen, setCurrentScreen] = useState<AppScreen>('welcome');
+  const [currentScreen, setCurrentScreen] = useState<AppScreen | null>(null);
   const [hasSeenWelcome, setHasSeenWelcome] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
@@ -139,60 +139,64 @@ function AppContent() {
     <>
       <div className="h-screen w-full bg-background overflow-hidden flex flex-col">
         <div className="flex-1 overflow-y-auto">
-          {currentScreen === 'welcome' && (
-            <WelcomePage onGetStarted={handleGetStarted} />
-          )}
-          {currentScreen === 'dashboard' && (
-            <DashboardPage
-              onAddTransaction={handleAddTransaction}
-              onManageAccounts={handleManageAccounts}
-              onViewAllTransactions={handleViewAllTransactions}
-              onTransactionClick={handleTransactionClick}
-              onTransfer={() => setCurrentScreen('transfer')}
-            />
-          )}
-          {currentScreen === 'analytics' && <AnalyticsPage />}
-          {currentScreen === 'education' && <EducationPage />}
-          {currentScreen === 'settings' && <SettingsPage />}
-          {currentScreen === 'add-transaction' && (
-            <AddTransactionPage
-              onBack={handleBack}
-              onAddTransaction={handleAddNewTransaction}
-            />
-          )}
-          {currentScreen === 'manage-accounts' && (
-            <ManageAccountsPage onBack={handleBack} />
-          )}
-          {currentScreen === 'all-transactions' && (
-            <AllTransactionsPage
-              onBack={handleBack}
-              onTransactionClick={handleTransactionClick}
-            />
-          )}
-          {currentScreen === 'transaction-detail' && selectedTransaction && (
-            <TransactionDetailPage
-              transaction={selectedTransaction}
-              onBack={handleBack}
-              onUpdate={handleUpdateTransaction}
-              onDelete={handleDeleteTransaction}
-            />
-          )}
-          {currentScreen === 'transfer' && (
-            <TransferPage
-              onBack={handleBack}
-              onSuccess={() => {
-                handleBack();
-                // Можно добавить перезагрузку данных если нужно
-              }}
-            />
-          )}
+          <Suspense fallback={null}>
+            {currentScreen === 'welcome' && (
+              <WelcomePage onGetStarted={handleGetStarted} />
+            )}
+            {currentScreen === 'dashboard' && (
+              <DashboardPage
+                onAddTransaction={handleAddTransaction}
+                onManageAccounts={handleManageAccounts}
+                onViewAllTransactions={handleViewAllTransactions}
+                onTransactionClick={handleTransactionClick}
+                onTransfer={() => setCurrentScreen('transfer')}
+              />
+            )}
+            {currentScreen === 'analytics' && <AnalyticsPage />}
+            {currentScreen === 'education' && <EducationPage />}
+            {currentScreen === 'settings' && <SettingsPage />}
+            {currentScreen === 'add-transaction' && (
+              <AddTransactionPage
+                onBack={handleBack}
+                onAddTransaction={handleAddNewTransaction}
+              />
+            )}
+            {currentScreen === 'manage-accounts' && (
+              <ManageAccountsPage onBack={handleBack} />
+            )}
+            {currentScreen === 'all-transactions' && (
+              <AllTransactionsPage
+                onBack={handleBack}
+                onTransactionClick={handleTransactionClick}
+              />
+            )}
+            {currentScreen === 'transaction-detail' && selectedTransaction && (
+              <TransactionDetailPage
+                transaction={selectedTransaction}
+                onBack={handleBack}
+                onUpdate={handleUpdateTransaction}
+                onDelete={handleDeleteTransaction}
+              />
+            )}
+            {currentScreen === 'transfer' && (
+              <TransferPage
+                onBack={handleBack}
+                onSuccess={() => {
+                  handleBack();
+                  // Можно добавить перезагрузку данных если нужно
+                }}
+              />
+            )}
+          </Suspense>
         </div>
 
         {showBottomNav && (
-          <BottomNavigation
-            currentPage={currentScreen}
-            onNavigate={handleNavigate}
-          />
+          <Suspense fallback={null}>
+            <BottomNavigation
+              currentPage={currentScreen}
+              onNavigate={handleNavigate}
+            />
+          </Suspense>
         )}
       </div>
       <Toaster />
