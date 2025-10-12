@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Switch } from "./ui/switch";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "./ui/alert-dialog";
-import { Trash2, LogOut, Sparkles, User, Shield, Tags, DollarSign, Bell, Moon, Globe, Palette, Upload, Download } from "./icons";
+import { Trash2, LogOut, Sparkles, User, Shield, Tags, DollarSign, Bell, Moon, Globe, Palette, Upload, Download, Settings, ChevronRight } from "./icons";
 import { motion } from "motion/react";
 import { useTelegramAuth } from "../contexts/TelegramAuthContext";
 import { toast } from "sonner";
@@ -171,7 +171,7 @@ export function SettingsPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, delay: 0.1 }}
           >
-            <SettingsIcon className="w-6 h-6 text-yellow-300" />
+            <Settings className="w-6 h-6 text-yellow-300" />
             <h1 className="text-white font-medium">Настройки</h1>
             <Sparkles className="w-5 h-5 text-yellow-300" />
           </motion.div>

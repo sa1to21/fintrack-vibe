@@ -9,6 +9,7 @@ export {
   BookOpen,
   ArrowLeft,
   ChevronDown,
+  ChevronRight,
   Eye,
   EyeOff,
   Filter,
