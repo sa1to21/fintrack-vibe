@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { ArrowLeft, Plus, Minus, Home, Car, ShoppingBag, Coffee, Zap, Heart, Wallet, CreditCard, PiggyBank, DollarSign, Briefcase, TrendingUp, Gift } from "./icons";
+import { ArrowLeft, Plus, Minus, Home, Car, ShoppingBag, Coffee, Zap, Heart, Wallet, CreditCard, PiggyBank, DollarSign, Briefcase, TrendingUp, Gift, Loader2 } from "./icons";
 import { toast } from "sonner@2.0.3";
 import { motion } from "motion/react";
 import categoriesService, { Category } from "../services/categories.service";
@@ -200,8 +200,8 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
   if (loading) {
     return (
       <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <div className="text-center space-y-4">
+          <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
           <p className="text-slate-600">Загрузка...</p>
         </div>
       </div>

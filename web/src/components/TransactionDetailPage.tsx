@@ -30,7 +30,8 @@ import {
   TrendingUp,
   TrendingDown,
   Gift,
-  ArrowRightLeft
+  ArrowRightLeft,
+  Loader2
 } from "./icons";
 import { toast } from "sonner@2.0.3";
 import { motion } from "motion/react";
@@ -256,9 +257,9 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
   if (loading) {
     return (
       <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-blue-600">Загрузка...</p>
+        <div className="text-center space-y-4">
+          <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
+          <p className="text-slate-600">Загрузка...</p>
         </div>
       </div>
     );

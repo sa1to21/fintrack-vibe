@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { ArrowLeft, ArrowRightLeft } from "./icons";
+import { ArrowLeft, ArrowRightLeft, Loader2 } from "./icons";
 import { toast } from "sonner";
 import { motion } from "motion/react";
 import accountsService, { Account } from "../services/accounts.service";
@@ -109,9 +109,9 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
   if (loading) {
     return (
       <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-blue-600">Загрузка...</p>
+        <div className="text-center space-y-4">
+          <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
+          <p className="text-slate-600">Загрузка...</p>
         </div>
       </div>
     );
