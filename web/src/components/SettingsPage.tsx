@@ -36,12 +36,21 @@ export function SettingsPage() {
   };
 
   const handleBaseCurrencyChange = async (newCurrency: string) => {
+    console.log('handleBaseCurrencyChange called with:', newCurrency);
+    const previousCurrency = baseCurrency;
+
+    // Optimistically update UI
+    setBaseCurrency(newCurrency);
+
     try {
-      await usersService.update({ base_currency: newCurrency });
-      setBaseCurrency(newCurrency);
+      console.log('Sending API request to update base_currency to:', newCurrency);
+      const updatedUser = await usersService.update({ base_currency: newCurrency });
+      console.log('API response:', updatedUser);
       toast.success('Основная валюта обновлена');
     } catch (error) {
       console.error('Failed to update base currency:', error);
+      // Revert to previous currency on error
+      setBaseCurrency(previousCurrency);
       toast.error('Не удалось обновить валюту');
     }
   };
