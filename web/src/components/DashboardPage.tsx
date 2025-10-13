@@ -292,32 +292,18 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           >
             <p className="text-white/80 text-sm mb-1">Общий баланс</p>
             {showBalance ? (
-              Object.keys(balancesByCurrency).length === 1 ? (
-                // Single currency - show as before
-                <motion.p
-                  className="text-white text-3xl font-medium mb-2"
-                  key={Object.values(balancesByCurrency)[0]}
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {formatCurrency(Object.values(balancesByCurrency)[0], Object.keys(balancesByCurrency)[0])}
-                </motion.p>
-              ) : (
-                // Multiple currencies - show separately
-                <motion.div
-                  className="space-y-1 mb-2"
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {Object.entries(balancesByCurrency).map(([currency, balance]) => (
-                    <p key={currency} className="text-white text-2xl font-medium">
-                      {formatCurrency(balance, currency)}
-                    </p>
-                  ))}
-                </motion.div>
-              )
+              <motion.div
+                className="space-y-1 mb-2"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                {Object.entries(balancesByCurrency).slice(0, 2).map(([currency, balance]) => (
+                  <p key={currency} className="text-white text-2xl font-medium">
+                    {formatCurrency(balance, currency)}
+                  </p>
+                ))}
+              </motion.div>
             ) : (
               <motion.p
                 className="text-white text-3xl font-medium mb-2"
