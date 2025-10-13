@@ -6,6 +6,7 @@ export interface DashboardData {
     name: string;
     balance: string;
     account_type: string;
+    currency: string;
     user_id: number;
     created_at: string;
     updated_at: string;

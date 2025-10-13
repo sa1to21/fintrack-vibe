@@ -39,6 +39,7 @@ import categoriesService, { Category } from "../services/categories.service";
 import accountsService, { Account as APIAccount } from "../services/accounts.service";
 import transactionsService from "../services/transactions.service";
 import transfersService from "../services/transfers.service";
+import { getCurrencySymbol, DEFAULT_CURRENCY } from "../constants/currencies";
 
 interface Transaction {
   id: string;
@@ -48,6 +49,7 @@ interface Transaction {
   categoryName: string;
   description: string;
   accountId: string;
+  accountCurrency?: string;
   toAccountId?: string;
   date: string;
   time: string;
@@ -104,13 +106,12 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
     loadData();
   }, []);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
+  const formatCurrency = (amount: number, currency: string = 'RUB') => {
+    const symbol = getCurrencySymbol(currency);
+    return `${amount.toLocaleString('ru-RU', {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+      maximumFractionDigits: 0
+    })} ${symbol}`;
   };
 
   const formatDate = (dateStr: string) => {
@@ -429,7 +430,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                       ? 'text-purple-600'
                       : transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
                   }`}>
-                    {transaction.type === 'income' ? '+' : transaction.type === 'transfer' ? '' : '-'}{formatCurrency(transaction.amount)}
+                    {transaction.type === 'income' ? '+' : transaction.type === 'transfer' ? '' : '-'}{formatCurrency(transaction.amount, transaction.accountCurrency || DEFAULT_CURRENCY)}
                   </p>
                 </div>
 

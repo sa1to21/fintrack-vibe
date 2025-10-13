@@ -26,6 +26,7 @@ interface Transaction {
   categoryName: string;
   description: string;
   accountId: string;
+  accountCurrency?: string;
   toAccountId?: string;
   date: string;
   time: string;
@@ -77,6 +78,9 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             const isTransfer = !!t.transfer_id;
             const type = isTransfer ? 'transfer' : t.transaction_type;
 
+            // Находим счет для получения валюты
+            const account = cachedRaw.accounts.find(acc => acc.id === t.account_id);
+
             return {
               id: String(t.id),
               amount: parseFloat(t.amount.toString()),
@@ -85,6 +89,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
               categoryName: t.category?.name || 'Без категории',
               description: t.description || '',
               accountId: String(t.account_id),
+              accountCurrency: account?.currency || DEFAULT_CURRENCY,
               toAccountId: t.paired_account_id ? String(t.paired_account_id) : undefined,
               date: t.date,
               time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
@@ -122,6 +127,9 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           const isTransfer = !!t.transfer_id;
           const type = isTransfer ? 'transfer' : t.transaction_type;
 
+          // Находим счет для получения валюты
+          const account = data.accounts.find(acc => acc.id === t.account_id);
+
           return {
             id: String(t.id),
             amount: parseFloat(t.amount.toString()),
@@ -130,6 +138,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             categoryName: t.category?.name || 'Без категории',
             description: t.description || '',
             accountId: String(t.account_id),
+            accountCurrency: account?.currency || DEFAULT_CURRENCY,
             toAccountId: t.paired_account_id ? String(t.paired_account_id) : undefined,
             date: t.date,
             time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
@@ -610,7 +619,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                           {transaction.type === 'transfer'
                             ? ''
                             : transaction.type === 'income' ? '+' : '-'}
-                          {showBalance ? formatCurrency(transaction.amount) : "• • •"}
+                          {showBalance ? formatCurrency(transaction.amount, transaction.accountCurrency || DEFAULT_CURRENCY) : "• • •"}
                         </motion.p>
                         <Badge
                           variant="outline"
