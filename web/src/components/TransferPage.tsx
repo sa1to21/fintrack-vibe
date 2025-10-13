@@ -99,6 +99,9 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
         toast.error('Недостаточно средств на счете');
       } else if (error.response?.data?.error === 'Нельзя перевести на тот же счет') {
         toast.error('Нельзя перевести на тот же счет');
+      } else if (error.response?.data?.error === 'Перевод между разными валютами невозможен') {
+        const details = error.response?.data?.details?.[0] || 'Счета используют разные валюты';
+        toast.error(details, { duration: 5000 });
       } else {
         toast.error('Не удалось выполнить перевод');
       }

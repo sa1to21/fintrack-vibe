@@ -14,6 +14,14 @@ module Api
           return render json: { error: 'Нельзя перевести на тот же счет' }, status: :unprocessable_entity
         end
 
+        # Level 2: Check currency match
+        if from_account.currency != to_account.currency
+          return render json: {
+            error: 'Перевод между разными валютами невозможен',
+            details: ["Счета используют разные валюты: #{from_account.currency} и #{to_account.currency}"]
+          }, status: :unprocessable_entity
+        end
+
         amount = transfer_params[:amount].to_f
 
         if amount <= 0
@@ -105,6 +113,14 @@ module Api
 
         if new_from_account.id == new_to_account.id
           return render json: { error: 'Нельзя перевести на тот же счет' }, status: :unprocessable_entity
+        end
+
+        # Level 2: Check currency match
+        if new_from_account.currency != new_to_account.currency
+          return render json: {
+            error: 'Перевод между разными валютами невозможен',
+            details: ["Счета используют разные валюты: #{new_from_account.currency} и #{new_to_account.currency}"]
+          }, status: :unprocessable_entity
         end
 
         new_amount = params[:transfer][:amount].present? ? params[:transfer][:amount].to_f : expense_transaction.amount
