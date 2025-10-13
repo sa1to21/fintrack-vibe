@@ -31,6 +31,7 @@ import {
   Loader2
 } from "./icons";
 import { motion } from "motion/react";
+import { getCurrencySymbol } from "../constants/currencies";
 
 interface Transaction {
   id: string;
@@ -40,6 +41,7 @@ interface Transaction {
   categoryName: string;
   description: string;
   accountId: string;
+  accountCurrency?: string;
   toAccountId?: string;
   date: string;
   time: string;
@@ -56,6 +58,7 @@ interface Account {
   id: string;
   name: string;
   balance: number;
+  currency: string;
   icon: typeof Wallet;
 }
 
@@ -99,6 +102,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
           id: acc.id,
           name: acc.name,
           balance: parseFloat(acc.balance.toString()),
+          currency: acc.currency || 'RUB',
           icon: acc.account_type === 'savings' ? PiggyBank :
                 acc.account_type === 'card' ? CreditCard : Wallet
         }));
@@ -119,6 +123,9 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
           const isTransfer = !!t.transfer_id;
           const type = isTransfer ? 'transfer' : t.transaction_type;
 
+          // Находим счет для получения валюты
+          const account = accountsData.find(acc => acc.id === t.account_id);
+
           return {
             id: t.id,
             amount: parseFloat(t.amount.toString()),
@@ -127,6 +134,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
             categoryName: t.category?.name || 'Без категории',
             description: t.description || '',
             accountId: t.account_id,
+            accountCurrency: account?.currency || 'RUB',
             toAccountId: t.paired_account_id,
             date: t.date,
             time: createdDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
@@ -160,13 +168,12 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
     loadData();
   }, []);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
+  const formatCurrency = (amount: number, currency: string = 'RUB') => {
+    const symbol = getCurrencySymbol(currency);
+    return `${amount.toLocaleString('ru-RU', {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+      maximumFractionDigits: 0
+    })} ${symbol}`;
   };
 
   const formatDate = (dateStr: string) => {
@@ -510,7 +517,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
                                   : transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
                               }`}>
                                 {transaction.type === 'income' ? '+' : transaction.type === 'transfer' ? '' : '-'}
-                                {formatCurrency(transaction.amount)}
+                                {formatCurrency(transaction.amount, transaction.accountCurrency)}
                               </p>
                               <Badge variant="outline" className="text-xs max-w-full border-blue-300 text-blue-700">
                                 <span className="truncate block">

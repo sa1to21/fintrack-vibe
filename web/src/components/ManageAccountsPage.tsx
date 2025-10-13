@@ -25,6 +25,8 @@ import { motion } from "motion/react";
 import accountsService from "../services/accounts.service";
 import transactionsService from "../services/transactions.service";
 import categoriesService from "../services/categories.service";
+import { CURRENCIES, DEFAULT_CURRENCY, getCurrencySymbol } from "../constants/currencies";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 interface ManageAccountsPageProps {
   onBack: () => void;
@@ -34,6 +36,7 @@ interface Account {
   id: string;
   name: string;
   balance: number;
+  currency: string;
   icon: typeof Wallet;
   color: string;
   account_type: string;
@@ -51,6 +54,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const [loading, setLoading] = useState(true);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   const [newAccountName, setNewAccountName] = useState("");
+  const [selectedCurrency, setSelectedCurrency] = useState(DEFAULT_CURRENCY);
   const [selectedIcon, setSelectedIcon] = useState(accountIcons[0]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -75,6 +79,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
         id: acc.id,
         name: acc.name,
         balance: parseFloat(acc.balance.toString()),
+        currency: acc.currency || DEFAULT_CURRENCY,
         account_type: acc.account_type,
         icon: acc.account_type === 'savings' ? PiggyBank :
               acc.account_type === 'card' ? CreditCard : Wallet,
@@ -101,13 +106,12 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
+  const formatCurrency = (amount: number, currency: string = 'RUB') => {
+    const symbol = getCurrencySymbol(currency);
+    return `${amount.toLocaleString('ru-RU', {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+      maximumFractionDigits: 0
+    })} ${symbol}`;
   };
 
   const handleAddAccount = async () => {
@@ -121,13 +125,14 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       await accountsService.create({
         name: newAccountName.trim(),
         balance: 0,
-        currency: 'RUB',
+        currency: selectedCurrency,
         account_type: selectedIcon.type
       });
 
       // Перезагружаем счета
       await loadAccounts();
       setNewAccountName("");
+      setSelectedCurrency(DEFAULT_CURRENCY);
       setSelectedIcon(accountIcons[0]);
       setIsAddDialogOpen(false);
       toast.success("Счёт создан!");
@@ -149,6 +154,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       setActionLoading(true);
       await accountsService.update(editingAccount.id, {
         name: newAccountName.trim(),
+        currency: selectedCurrency,
         account_type: selectedIcon.type
       });
 
@@ -156,6 +162,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       await loadAccounts();
       setEditingAccount(null);
       setNewAccountName("");
+      setSelectedCurrency(DEFAULT_CURRENCY);
       setSelectedIcon(accountIcons[0]);
       setIsEditDialogOpen(false);
       toast.success("Счёт обновлён!");
@@ -233,6 +240,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const openEditDialog = (account: Account) => {
     setEditingAccount(account);
     setNewAccountName(account.name);
+    setSelectedCurrency(account.currency || DEFAULT_CURRENCY);
     const iconData = accountIcons.find(item => item.type === account.account_type) || accountIcons[0];
     setSelectedIcon(iconData);
     setIsEditDialogOpen(true);
@@ -343,6 +351,25 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label htmlFor="account-currency">Валюта</Label>
+                  <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
+                    <SelectTrigger className="border-blue-200 focus:border-blue-400">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CURRENCIES.map((currency) => (
+                        <SelectItem key={currency.code} value={currency.code}>
+                          <div className="flex items-center gap-2">
+                            <span>{currency.flag}</span>
+                            <span>{currency.code}</span>
+                            <span className="text-slate-500">({currency.symbol})</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
                   <Label>Выберите иконку</Label>
                   <div className="grid grid-cols-3 gap-2">
                     {accountIcons.map((iconData, index) => {
@@ -415,7 +442,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                         <div className="min-w-0 flex-1">
                           <h3 className="font-medium text-slate-800 truncate">{account.name}</h3>
                           <p className="text-lg font-medium text-slate-700">
-                            {formatCurrency(account.balance)}
+                            {formatCurrency(account.balance, account.currency)}
                           </p>
                         </div>
                       </div>
@@ -514,6 +541,25 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 />
               </div>
               <div className="space-y-2">
+                <Label htmlFor="edit-account-currency">Валюта</Label>
+                <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
+                  <SelectTrigger className="border-blue-200 focus:border-blue-400">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CURRENCIES.map((currency) => (
+                      <SelectItem key={currency.code} value={currency.code}>
+                        <div className="flex items-center gap-2">
+                          <span>{currency.flag}</span>
+                          <span>{currency.code}</span>
+                          <span className="text-slate-500">({currency.symbol})</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
                 <Label>Выберите иконку</Label>
                 <div className="grid grid-cols-3 gap-2">
                   {accountIcons.map((iconData, index) => {
@@ -575,7 +621,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 <div className="text-center p-3 bg-blue-50 rounded-lg border border-blue-200">
                   <p className="text-sm text-blue-600">Текущий баланс</p>
                   <p className="text-xl font-medium text-blue-700">
-                    {formatCurrency(editingAccount.balance)}
+                    {formatCurrency(editingAccount.balance, editingAccount.currency)}
                   </p>
                 </div>
               )}
@@ -633,7 +679,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     min="0"
                   />
                   <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-green-600 font-medium">
-                    ₽
+                    {editingAccount ? getCurrencySymbol(editingAccount.currency) : '₽'}
                   </span>
                 </div>
               </div>

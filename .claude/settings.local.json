@@ -41,7 +41,11 @@
       "Bash(npx netlify-cli deploy:*)",
       "Bash(git rm:*)",
       "Bash(del nul)",
-      "Bash(del webnul)"
+      "Bash(del webnul)",
+      "Bash(for file in AddTransactionPage.tsx ManageAccountsPage.tsx TransactionDetailPage.tsx TransferPage.tsx)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(done)",
+      "Bash(git restore:*)"
     ],
     "deny": [],
     "ask": []

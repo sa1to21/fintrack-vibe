@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { DateRangePicker } from "./DateRangePicker";
 import { TrendingUp, TrendingDown, DollarSign, Target, Filter, BarChart3, Sparkles } from "./icons";
 import { motion } from "motion/react";
+import { getCurrencySymbol } from "../constants/currencies";
 
 export function AnalyticsPage() {
   const [selectedPeriod, setSelectedPeriod] = useState('month');
@@ -47,13 +48,12 @@ export function AnalyticsPage() {
 
   const categoryExpenses = getCategoryExpenses(selectedPeriod);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
+  const formatCurrency = (amount: number, currency: string = 'RUB') => {
+    const symbol = getCurrencySymbol(currency);
+    return `${amount.toLocaleString('ru-RU', {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+      maximumFractionDigits: 0
+    })} ${symbol}`;
   };
 
   const getPeriodLabel = (period: string) => {

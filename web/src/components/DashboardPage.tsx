@@ -6,11 +6,13 @@ import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingD
 import { motion } from "motion/react";
 import dashboardService from "../services/dashboard.service";
 import { cache } from "../utils/cache";
+import { getCurrencySymbol, DEFAULT_CURRENCY } from "../constants/currencies";
 
 interface Account {
   id: string;
   name: string;
   balance: number;
+  currency: string;
   icon: typeof Wallet;
   color: string;
 }
@@ -56,6 +58,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             id: String(acc.id),
             name: acc.name,
             balance: parseFloat(acc.balance.toString()) || 0,
+            currency: acc.currency || DEFAULT_CURRENCY,
             icon: acc.account_type === 'savings' ? PiggyBank :
                   acc.account_type === 'card' ? CreditCard : Wallet,
             color: acc.account_type === 'savings' ? "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700" :
@@ -97,6 +100,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           id: String(acc.id),
           name: acc.name,
           balance: parseFloat(acc.balance.toString()) || 0,
+          currency: acc.currency || DEFAULT_CURRENCY,
           icon: acc.account_type === 'savings' ? PiggyBank :
                 acc.account_type === 'card' ? CreditCard : Wallet,
           color: acc.account_type === 'savings' ? "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700" :
@@ -141,6 +145,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             id: "1",
             name: "Основной счёт",
             balance: 0,
+            currency: DEFAULT_CURRENCY,
             icon: Wallet,
             color: "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700"
           }
@@ -174,8 +179,15 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   }, [transactions]);
 
   // Memoize calculations for performance
-  const { totalBalance, monthlyIncome, monthlyExpenses, monthlyChange, currentMonthName } = useMemo(() => {
-    const balance = accounts.reduce((sum, account) => sum + account.balance, 0);
+  const { balancesByCurrency, monthlyIncome, monthlyExpenses, monthlyChange, currentMonthName } = useMemo(() => {
+    // Level 2: Group balances by currency (no conversion)
+    const balances: Record<string, number> = {};
+    accounts.forEach(account => {
+      if (!balances[account.currency]) {
+        balances[account.currency] = 0;
+      }
+      balances[account.currency] += account.balance;
+    });
 
     // Calculate actual monthly stats from transactions
     const currentDate = new Date();
@@ -201,7 +213,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
       .reduce((sum, t) => sum + t.amount, 0);
 
     return {
-      totalBalance: balance,
+      balancesByCurrency: balances,
       monthlyIncome: income,
       monthlyExpenses: expenses,
       monthlyChange: income - expenses,
@@ -209,13 +221,12 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
     };
   }, [accounts, transactions]);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
+  const formatCurrency = (amount: number, currency: string = 'RUB') => {
+    const symbol = getCurrencySymbol(currency);
+    return `${amount.toLocaleString('ru-RU', {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+      maximumFractionDigits: 0
+    })} ${symbol}`;
   };
 
   return (
@@ -259,22 +270,50 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           </motion.div>
 
           {/* Total Balance */}
-          <motion.div 
+          <motion.div
             className="text-center mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.15 }}
           >
             <p className="text-white/80 text-sm mb-1">Общий баланс</p>
-            <motion.p 
-              className="text-white text-3xl font-medium mb-2"
-              key={showBalance ? totalBalance : 'hidden'}
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              {showBalance ? formatCurrency(totalBalance) : "• • •"}
-            </motion.p>
+            {showBalance ? (
+              Object.keys(balancesByCurrency).length === 1 ? (
+                // Single currency - show as before
+                <motion.p
+                  className="text-white text-3xl font-medium mb-2"
+                  key={Object.values(balancesByCurrency)[0]}
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {formatCurrency(Object.values(balancesByCurrency)[0], Object.keys(balancesByCurrency)[0])}
+                </motion.p>
+              ) : (
+                // Multiple currencies - show separately
+                <motion.div
+                  className="space-y-1 mb-2"
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {Object.entries(balancesByCurrency).map(([currency, balance]) => (
+                    <p key={currency} className="text-white text-2xl font-medium">
+                      {formatCurrency(balance, currency)}
+                    </p>
+                  ))}
+                </motion.div>
+              )
+            ) : (
+              <motion.p
+                className="text-white text-3xl font-medium mb-2"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                • • •
+              </motion.p>
+            )}
             <div className="flex items-center justify-center gap-2">
               <motion.div 
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs backdrop-blur-sm ${
@@ -337,7 +376,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                             </span>
                           </div>
                           <p className="text-white font-medium">
-                            {showBalance ? formatCurrency(account.balance) : "• • •"}
+                            {showBalance ? formatCurrency(account.balance, account.currency) : "• • •"}
                           </p>
                         </CardContent>
                       </Card>

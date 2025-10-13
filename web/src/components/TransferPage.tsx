@@ -11,6 +11,7 @@ import { motion } from "motion/react";
 import accountsService, { Account } from "../services/accounts.service";
 import transfersService from "../services/transfers.service";
 import { getAccountIconComponent } from "../utils/accountIcons";
+import { getCurrencySymbol } from "../constants/currencies";
 
 interface TransferPageProps {
   onBack: () => void;
@@ -67,6 +68,18 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
       return;
     }
 
+    // Level 2: Check if currencies match
+    const fromAccount = accounts.find(a => a.id === fromAccountId);
+    const toAccount = accounts.find(a => a.id === toAccountId);
+
+    if (fromAccount && toAccount && fromAccount.currency !== toAccount.currency) {
+      toast.error(
+        `Перевод между разными валютами невозможен. Счета используют ${fromAccount.currency} и ${toAccount.currency}.`,
+        { duration: 5000 }
+      );
+      return;
+    }
+
     try {
       setSubmitting(true);
 
@@ -94,13 +107,12 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
+  const formatCurrency = (amount: number, currency: string = 'RUB') => {
+    const symbol = getCurrencySymbol(currency);
+    return `${amount.toLocaleString('ru-RU', {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+      maximumFractionDigits: 0
+    })} ${symbol}`;
   };
 
   const fromAccount = accounts.find(acc => String(acc.id) === fromAccountId);
@@ -224,7 +236,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                                 <span>{account.name}</span>
                               </div>
                               <span className="text-xs text-muted-foreground">
-                                {formatCurrency(parseFloat(account.balance.toString()))}
+                                {formatCurrency(parseFloat(account.balance.toString()), account.currency)}
                               </span>
                             </div>
                           </SelectItem>
@@ -286,7 +298,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                                   <span>{account.name}</span>
                                 </div>
                                 <span className="text-xs text-muted-foreground">
-                                  {formatCurrency(parseFloat(account.balance.toString()))}
+                                  {formatCurrency(parseFloat(account.balance.toString()), account.currency)}
                                 </span>
                               </div>
                             </SelectItem>

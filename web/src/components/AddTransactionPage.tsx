@@ -12,6 +12,7 @@ import categoriesService, { Category } from "../services/categories.service";
 import transactionsService from "../services/transactions.service";
 import accountsService, { Account } from "../services/accounts.service";
 import { getAccountIconComponent } from "../utils/accountIcons";
+import { getCurrencySymbol } from "../constants/currencies";
 
 interface Transaction {
   id: string;
@@ -64,13 +65,12 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
   const [apiAccounts, setApiAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
+  const formatCurrency = (amount: number, currency: string = 'RUB') => {
+    const symbol = getCurrencySymbol(currency);
+    return `${amount.toLocaleString('ru-RU', {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+      maximumFractionDigits: 0
+    })} ${symbol}`;
   };
 
   // Загрузить категории и счета из API
@@ -426,6 +426,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                       {(apiAccounts.length > 0 ? apiAccounts : accounts).map((acc) => {
                         const Icon = 'account_type' in acc ? getAccountIconComponent(acc.account_type) : ('icon' in acc ? acc.icon : Wallet);
                         const balance = 'balance' in acc ? parseFloat(acc.balance.toString()) : 0;
+                        const currency = 'currency' in acc ? acc.currency : 'RUB';
                         return (
                           <SelectItem key={acc.id} value={String(acc.id)}>
                             <div className="flex items-center justify-between gap-4 w-full">
@@ -435,7 +436,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                               </div>
                               {'balance' in acc && (
                                 <span className="text-xs text-muted-foreground">
-                                  {formatCurrency(balance)}
+                                  {formatCurrency(balance, currency)}
                                 </span>
                               )}
                             </div>
