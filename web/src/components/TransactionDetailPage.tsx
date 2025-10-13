@@ -588,10 +588,15 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                       placeholder="0"
                       value={editData.amount}
                       onChange={(e) => setEditData(prev => ({ ...prev, amount: e.target.value }))}
-                      className="text-xl font-medium text-center py-4 border-blue-200 focus:border-blue-400 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
+                      className="text-xl font-medium text-center py-4 pr-16 border-blue-200 focus:border-blue-400 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                       step="0.01"
                       min="0"
                     />
+                    {currentAccount && (
+                      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-blue-600 font-medium text-lg">
+                        {getCurrencySymbol(currentAccount.currency)}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -636,7 +641,10 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                           <SelectValue placeholder="Выберите счёт" />
                         </SelectTrigger>
                         <SelectContent>
-                          {accounts.filter(acc => String(acc.id) !== String(editData.toAccountId)).map((acc) => {
+                          {accounts
+                            .filter(acc => String(acc.id) !== String(editData.toAccountId))
+                            .filter(acc => !currentAccount || acc.currency === currentAccount.currency)
+                            .map((acc) => {
                             const Icon = iconMap[acc.account_type] || Wallet;
                             return (
                               <SelectItem key={acc.id} value={String(acc.id)}>
@@ -662,7 +670,10 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                           <SelectValue placeholder="Выберите счёт" />
                         </SelectTrigger>
                         <SelectContent>
-                          {accounts.filter(acc => String(acc.id) !== String(editData.accountId)).map((acc) => {
+                          {accounts
+                            .filter(acc => String(acc.id) !== String(editData.accountId))
+                            .filter(acc => !currentAccount || acc.currency === currentAccount.currency)
+                            .map((acc) => {
                             const Icon = iconMap[acc.account_type] || Wallet;
                             return (
                               <SelectItem key={acc.id} value={String(acc.id)}>
@@ -675,10 +686,15 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                           })}
                         </SelectContent>
                       </Select>
+                      {currentAccount && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          💡 Переводы возможны только между счетами в {currentAccount.currency}
+                        </p>
+                      )}
                     </div>
                   </>
                 ) : (
-                  // Для обычных операций: один селект
+                  // Для обычных операций: один селект (только счета с той же валютой)
                   <div className="space-y-2">
                     <Label>Счёт *</Label>
                     <Select value={String(editData.accountId)} onValueChange={(value) => setEditData(prev => ({ ...prev, accountId: value }))}>
@@ -686,7 +702,9 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                         <SelectValue placeholder="Выберите счёт" />
                       </SelectTrigger>
                       <SelectContent>
-                        {accounts.map((acc) => {
+                        {accounts
+                          .filter(acc => !currentAccount || acc.currency === currentAccount.currency)
+                          .map((acc) => {
                           const Icon = iconMap[acc.account_type] || Wallet;
                           return (
                             <SelectItem key={acc.id} value={String(acc.id)}>
@@ -699,6 +717,11 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                         })}
                       </SelectContent>
                     </Select>
+                    {currentAccount && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        💡 Можно выбрать только счета в {currentAccount.currency}. Для изменения валюты удалите и создайте новую операцию.
+                      </p>
+                    )}
                   </div>
                 )}
 
