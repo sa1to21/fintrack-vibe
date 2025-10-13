@@ -23,6 +23,7 @@ export const authApi = axios.create({
 // Interceptor для добавления токена авторизации
 api.interceptors.request.use(
   (config) => {
+    console.log(`[API REQUEST] ${config.method?.toUpperCase()} ${config.url}`, config.data);
     const token = localStorage.getItem('authToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -30,6 +31,7 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.error('[API REQUEST ERROR]', error);
     return Promise.reject(error);
   }
 );
@@ -50,8 +52,12 @@ authApi.interceptors.request.use(
 
 // Interceptor для обработки ошибок
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(`[API RESPONSE] ${response.config.method?.toUpperCase()} ${response.config.url}`, response.data);
+    return response;
+  },
   (error) => {
+    console.error(`[API ERROR] ${error.config?.method?.toUpperCase()} ${error.config?.url}`, error.response?.data || error.message);
     if (error.response?.status === 401) {
       // Очистить токен и перенаправить на страницу входа
       localStorage.removeItem('authToken');
