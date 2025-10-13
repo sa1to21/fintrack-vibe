@@ -592,9 +592,6 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                       step="0.01"
                       min="0"
                     />
-                    <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-blue-600 font-medium">
-                      ₽
-                    </span>
                   </div>
                 </div>
 
@@ -645,7 +642,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                               <SelectItem key={acc.id} value={String(acc.id)}>
                                 <div className="flex items-center gap-2">
                                   <Icon className="w-4 h-4 text-purple-600" />
-                                  <span>{acc.name} ({parseFloat(acc.balance.toString()).toFixed(0)} ₽)</span>
+                                  <span>{acc.name} ({parseFloat(acc.balance.toString()).toFixed(0)} {getCurrencySymbol(acc.currency)})</span>
                                 </div>
                               </SelectItem>
                             );
@@ -671,7 +668,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                               <SelectItem key={acc.id} value={String(acc.id)}>
                                 <div className="flex items-center gap-2">
                                   <Icon className="w-4 h-4 text-purple-600" />
-                                  <span>{acc.name} ({parseFloat(acc.balance.toString()).toFixed(0)} ₽)</span>
+                                  <span>{acc.name} ({parseFloat(acc.balance.toString()).toFixed(0)} {getCurrencySymbol(acc.currency)})</span>
                                 </div>
                               </SelectItem>
                             );
