@@ -11,6 +11,7 @@ class User < ApplicationRecord
   # Валидация для Telegram пользователей
   validates :telegram_id, uniqueness: true, allow_nil: true
   validates :name, presence: true, length: { minimum: 2 }
+  validates :base_currency, presence: true
 
   # Пользователь должен иметь либо email, либо telegram_id
   validate :must_have_email_or_telegram_id

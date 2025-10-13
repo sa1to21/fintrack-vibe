@@ -8,11 +8,43 @@ import { motion } from "motion/react";
 import { useTelegramAuth } from "../contexts/TelegramAuthContext";
 import { toast } from "sonner";
 import userDataService from "../services/userData.service";
+import usersService from "../services/users.service";
+import { CURRENCIES, getCurrency } from "../constants/currencies";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { useEffect } from "react";
 
 export function SettingsPage() {
   const { logout, user, telegramUser } = useTelegramAuth();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [baseCurrency, setBaseCurrency] = useState<string>('RUB');
+  const [isLoadingCurrency, setIsLoadingCurrency] = useState(true);
+
+  useEffect(() => {
+    loadBaseCurrency();
+  }, []);
+
+  const loadBaseCurrency = async () => {
+    try {
+      const userData = await usersService.getCurrent();
+      setBaseCurrency(userData.base_currency);
+    } catch (error) {
+      console.error('Failed to load base currency:', error);
+    } finally {
+      setIsLoadingCurrency(false);
+    }
+  };
+
+  const handleBaseCurrencyChange = async (newCurrency: string) => {
+    try {
+      await usersService.update({ base_currency: newCurrency });
+      setBaseCurrency(newCurrency);
+      toast.success('Основная валюта обновлена');
+    } catch (error) {
+      console.error('Failed to update base currency:', error);
+      toast.error('Не удалось обновить валюту');
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -178,12 +210,66 @@ export function SettingsPage() {
         </div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         className="px-4 py-6 max-w-md mx-auto space-y-6 relative z-10"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.15 }}
       >
+        {/* Base Currency Selector */}
+        <motion.div
+          className="space-y-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
+          <h2 className="font-medium text-sm uppercase tracking-wide bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            Основная валюта
+          </h2>
+          <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 flex-1">
+                  <motion.div
+                    className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-gradient-to-br from-emerald-100 to-teal-200"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Globe className="w-5 h-5 text-emerald-600" />
+                  </motion.div>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-slate-800">Валюта для статистики</h3>
+                    <p className="text-sm text-slate-600">
+                      Доходы и расходы будут считаться в этой валюте
+                    </p>
+                  </div>
+                </div>
+                <div className="w-32">
+                  {isLoadingCurrency ? (
+                    <div className="text-sm text-slate-500">Загрузка...</div>
+                  ) : (
+                    <Select value={baseCurrency} onValueChange={handleBaseCurrencyChange}>
+                      <SelectTrigger className="border-blue-200 focus:border-blue-400">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CURRENCIES.map((currency) => (
+                          <SelectItem key={currency.code} value={currency.code}>
+                            <div className="flex items-center gap-2">
+                              <span>{currency.flag}</span>
+                              <span>{currency.code}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
         {settingsGroups.map((group, groupIndex) => (
           <motion.div 
             key={group.title} 

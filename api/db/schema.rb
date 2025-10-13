@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_12_215247) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_13_132934) do
   create_table "accounts", force: :cascade do |t|
     t.string "name", null: false
     t.string "account_type", null: false
@@ -64,6 +64,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_12_215247) do
     t.bigint "telegram_id"
     t.string "username"
     t.string "language_code"
+    t.string "base_currency", default: "RUB", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["telegram_id"], name: "index_users_on_telegram_id", unique: true
   end

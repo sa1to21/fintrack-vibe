@@ -7,6 +7,7 @@ import { motion } from "motion/react";
 import dashboardService from "../services/dashboard.service";
 import { cache } from "../utils/cache";
 import { getCurrencySymbol, DEFAULT_CURRENCY } from "../constants/currencies";
+import usersService from "../services/users.service";
 
 interface Account {
   id: string;
@@ -45,11 +46,16 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [baseCurrency, setBaseCurrency] = useState<string>(DEFAULT_CURRENCY);
 
   // Загрузить данные дашборда одним запросом (счета + транзакции)
   useEffect(() => {
     const loadDashboard = async () => {
       try {
+        // Загружаем базовую валюту пользователя
+        const userData = await usersService.getCurrent();
+        setBaseCurrency(userData.base_currency);
+
         // Проверяем кеш RAW данных из API (без иконок)
         const cachedRaw = cache.get<ReturnType<typeof dashboardService.getData> extends Promise<infer T> ? T : never>('dashboard-raw');
         if (cachedRaw) {
@@ -189,7 +195,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
       balances[account.currency] += account.balance;
     });
 
-    // Calculate actual monthly stats from transactions
+    // Calculate actual monthly stats from transactions ONLY in base currency
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
@@ -198,10 +204,18 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
     const monthName = currentDate.toLocaleDateString('ru-RU', { month: 'long' });
     const capitalizedMonthName = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
+    // Filter by base currency accounts only
+    const baseCurrencyAccountIds = accounts
+      .filter(acc => acc.currency === baseCurrency)
+      .map(acc => acc.id);
+
     const monthlyTransactions = transactions.filter(t => {
       const transactionDate = new Date(t.date);
-      return transactionDate.getMonth() + 1 === currentMonth &&
-             transactionDate.getFullYear() === currentYear;
+      const isCurrentMonth = transactionDate.getMonth() + 1 === currentMonth &&
+                             transactionDate.getFullYear() === currentYear;
+      const isBaseCurrencyAccount = baseCurrencyAccountIds.includes(t.accountId);
+
+      return isCurrentMonth && isBaseCurrencyAccount;
     });
 
     const income = monthlyTransactions
@@ -219,7 +233,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
       monthlyChange: income - expenses,
       currentMonthName: capitalizedMonthName
     };
-  }, [accounts, transactions]);
+  }, [accounts, transactions, baseCurrency]);
 
   const formatCurrency = (amount: number, currency: string = 'RUB') => {
     const symbol = getCurrencySymbol(currency);
@@ -329,7 +343,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   <TrendingDown className="w-3 h-3" />
                 )}
                 <span>
-                  {showBalance ? formatCurrency(Math.abs(monthlyChange)) : "• • •"}
+                  {showBalance ? formatCurrency(Math.abs(monthlyChange), baseCurrency) : "• • •"}
                 </span>
               </motion.div>
               <span className="text-white/60 text-xs">за месяц</span>

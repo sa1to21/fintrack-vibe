@@ -14,7 +14,12 @@ Rails.application.routes.draw do
       get '/auth/me', to: 'auth#me'
 
       # Users
-      resources :users, only: [:show, :update, :destroy]
+      resources :users, only: [:show, :update, :destroy] do
+        collection do
+          get :current
+          put :current, action: :update_current
+        end
+      end
 
       # Accounts
       resources :accounts do
