@@ -36,34 +36,19 @@ export function SettingsPage() {
   };
 
   const handleBaseCurrencyChange = async (newCurrency: string) => {
-    console.log('=== BASE CURRENCY CHANGE START ===');
-    console.log('Old currency:', baseCurrency);
-    console.log('New currency:', newCurrency);
-
     const previousCurrency = baseCurrency;
 
     // Optimistically update UI
     setBaseCurrency(newCurrency);
 
-    toast.info(`Сохранение валюты: ${newCurrency}...`);
-
     try {
-      console.log('Sending API PUT request to /users/current');
-      const updatedUser = await usersService.update({ base_currency: newCurrency });
-      console.log('API SUCCESS! Response:', updatedUser);
-      console.log('Updated base_currency in DB:', updatedUser.base_currency);
+      await usersService.update({ base_currency: newCurrency });
       toast.success(`Основная валюта изменена на ${newCurrency}`);
     } catch (error: any) {
-      console.error('=== API ERROR ===');
-      console.error('Error object:', error);
-      console.error('Error response:', error?.response);
-      console.error('Error message:', error?.message);
       // Revert to previous currency on error
       setBaseCurrency(previousCurrency);
       toast.error(`Ошибка: ${error?.response?.data?.errors || error?.message || 'Не удалось обновить валюту'}`);
     }
-
-    console.log('=== BASE CURRENCY CHANGE END ===');
   };
 
   const handleLogout = async () => {
