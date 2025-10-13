@@ -17,6 +17,7 @@ export const CURRENCIES: Currency[] = [
   { code: 'KZT', symbol: '₸', name: 'Казахстанский тенге', flag: '🇰🇿' },
   { code: 'UAH', symbol: '₴', name: 'Украинская гривна', flag: '🇺🇦' },
   { code: 'BYN', symbol: 'Br', name: 'Белорусский рубль', flag: '🇧🇾' },
+  { code: 'GEL', symbol: '₾', name: 'Грузинский лари', flag: '🇬🇪' },
   { code: 'TRY', symbol: '₺', name: 'Турецкая лира', flag: '🇹🇷' },
   { code: 'AED', symbol: 'د.إ', name: 'Дирхам ОАЭ', flag: '🇦🇪' },
   { code: 'THB', symbol: '฿', name: 'Тайский бат', flag: '🇹🇭' },
