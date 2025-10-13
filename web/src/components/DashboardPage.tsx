@@ -505,7 +505,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.3 }}
                       >
-                        {showBalance ? formatCurrency(monthlyIncome) : "• • •"}
+                        {showBalance ? formatCurrency(monthlyIncome, baseCurrency) : "• • •"}
                       </motion.p>
                     </div>
                   </div>
@@ -531,7 +531,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.3 }}
                       >
-                        {showBalance ? formatCurrency(monthlyExpenses) : "• • •"}
+                        {showBalance ? formatCurrency(monthlyExpenses, baseCurrency) : "• • •"}
                       </motion.p>
                     </div>
                   </div>
