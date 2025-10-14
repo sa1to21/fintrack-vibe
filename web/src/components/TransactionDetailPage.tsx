@@ -268,20 +268,17 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
 
   return (
     <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute top-10 left-10 w-32 h-32 bg-blue-200/30 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-20 right-10 w-24 h-24 bg-indigo-200/30 rounded-full blur-2xl"></div>
+      {/* Background decorations removed for performance */}
       
       {/* Header */}
-      <motion.div 
-        className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-4 pb-6 relative overflow-hidden"
+      <motion.div
+        className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 pb-6 relative overflow-hidden"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        {/* Background decorations */}
+        {/* Background decorations - simplified for performance */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-y-12"></div>
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
         
         <motion.div 
           className="flex items-center justify-between relative z-10"
@@ -297,7 +294,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
               variant="ghost" 
               size="sm" 
               onClick={onBack}
-              className="text-white hover:bg-white/20 backdrop-blur-sm transition-all duration-200"
+              className="text-white hover:bg-white/20 transition-all duration-200"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
@@ -311,7 +308,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                     variant="ghost"
                     size="sm"
                     onClick={() => setIsEditing(true)}
-                    className="text-white hover:bg-white/20 backdrop-blur-sm transition-all duration-200"
+                    className="text-white hover:bg-white/20 transition-all duration-200"
                   >
                     <Edit className="w-4 h-4" />
                   </Button>
@@ -322,7 +319,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-white hover:bg-red-500/20 backdrop-blur-sm transition-all duration-200"
+                        className="text-white hover:bg-red-500/20 transition-all duration-200"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -359,7 +356,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                     variant="ghost"
                     size="sm"
                     onClick={handleSave}
-                    className="text-white hover:bg-green-500/20 backdrop-blur-sm transition-all duration-200"
+                    className="text-white hover:bg-green-500/20 transition-all duration-200"
                   >
                     <Save className="w-4 h-4" />
                   </Button>
@@ -381,7 +378,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                         time: transaction.time
                       });
                     }}
-                    className="text-white hover:bg-white/20 backdrop-blur-sm transition-all duration-200"
+                    className="text-white hover:bg-white/20 transition-all duration-200"
                   >
                     Отмена
                   </Button>
