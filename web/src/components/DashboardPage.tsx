@@ -256,15 +256,13 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
     <div className="min-h-full bg-background">
       {/* Header */}
       <motion.div
-        className="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 px-4 py-6 relative overflow-hidden"
+        className="bg-gradient-to-br from-blue-500 to-indigo-700 px-4 py-6 relative overflow-hidden"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        {/* Background decorations */}
+        {/* Background decorations - simplified for performance */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-y-12 translate-y-8"></div>
-        <div className="absolute top-4 right-8 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
-        <div className="absolute bottom-4 left-8 w-24 h-24 bg-white/5 rounded-full blur-2xl"></div>
         
         <div className="max-w-md mx-auto relative">
           <motion.div 
@@ -285,7 +283,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowBalance(!showBalance)}
-                className="text-white hover:bg-white/20 transition-all duration-200 backdrop-blur-sm"
+                className="text-white hover:bg-white/20 transition-all duration-200"
               >
                 {showBalance ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </Button>
