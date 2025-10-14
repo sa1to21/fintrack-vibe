@@ -184,22 +184,17 @@ export function SettingsPage() {
 
   return (
     <div className="min-h-full bg-gradient-to-br from-purple-50 via-white to-blue-50 relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute top-10 left-10 w-32 h-32 bg-blue-200/30 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-20 right-10 w-24 h-24 bg-purple-200/30 rounded-full blur-2xl"></div>
-      <div className="absolute top-1/3 right-0 w-16 h-16 bg-indigo-200/20 rounded-full blur-xl"></div>
+      {/* Background decorations removed for performance */}
       
       {/* Header */}
-      <motion.div 
-        className="bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700 px-4 py-6 relative overflow-hidden"
+      <motion.div
+        className="bg-gradient-to-br from-blue-500 to-purple-700 px-4 py-6 relative overflow-hidden"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        {/* Background decorations */}
+        {/* Background decorations - simplified for performance */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-y-12 translate-y-8"></div>
-        <div className="absolute top-4 right-8 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
-        <div className="absolute bottom-4 left-8 w-24 h-24 bg-white/5 rounded-full blur-2xl"></div>
         
         <div className="max-w-md mx-auto relative">
           <motion.div 
