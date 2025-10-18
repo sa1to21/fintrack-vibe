@@ -311,13 +311,12 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
               </OptimizedMotion>
             )}
             <div className="flex items-center justify-center gap-2">
-              <OptimizedMotion
+              <div
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs backdrop-blur-sm ${
-                  monthlyChange >= 0 
-                    ? 'bg-emerald-500/30 text-emerald-100 border border-emerald-400/30' 
+                  monthlyChange >= 0
+                    ? 'bg-emerald-500/30 text-emerald-100 border border-emerald-400/30'
                     : 'bg-red-500/30 text-red-100 border border-red-400/30'
                 }`}
-                whileHover={{ scale: 1.05 }}
               >
                 {monthlyChange >= 0 ? (
                   <TrendingUp className="w-3 h-3" />
@@ -327,7 +326,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 <span>
                   {showBalance ? formatCurrency(Math.abs(monthlyChange), baseCurrency) : "• • •"}
                 </span>
-              </OptimizedMotion>
+              </div>
               <span className="text-white/60 text-xs">за месяц</span>
             </div>
           </OptimizedMotion>
@@ -401,10 +400,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         >
           <h2 className="font-medium mb-3 text-foreground">Быстрые действия</h2>
           <div className="space-y-3">
-            <OptimizedMotion
-              whileHover={{ scale: 1.03, y: -3 }}
+            <LightMotion
               whileTap={{ scale: 0.97 }}
-              transition={{ duration: 0.2 }}
             >
               <Button
                 onClick={onAddTransaction}
@@ -414,13 +411,11 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 <Plus className="w-5 h-5 relative z-10" />
                 <span className="text-sm relative z-10">Добавить операцию</span>
               </Button>
-            </OptimizedMotion>
+            </LightMotion>
             <div className="grid grid-cols-2 gap-3">
               {onTransfer && (
-                <OptimizedMotion
-                  whileHover={accounts.length >= 2 ? { scale: 1.03, y: -3 } : {}}
+                <LightMotion
                   whileTap={accounts.length >= 2 ? { scale: 0.97 } : {}}
-                  transition={{ duration: 0.2 }}
                 >
                   <Button
                     onClick={onTransfer}
@@ -431,12 +426,10 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     <ArrowRightLeft className="w-5 h-5" />
                     <span className="text-sm">Перевод</span>
                   </Button>
-                </OptimizedMotion>
+                </LightMotion>
               )}
-              <OptimizedMotion
-                whileHover={{ scale: 1.03, y: -3 }}
+              <LightMotion
                 whileTap={{ scale: 0.97 }}
-                transition={{ duration: 0.2 }}
               >
                 <Button
                   onClick={onManageAccounts}
@@ -446,7 +439,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   <Wallet className="w-5 h-5" />
                   <span className="text-sm">Счета</span>
                 </Button>
-              </OptimizedMotion>
+              </LightMotion>
             </div>
           </div>
         </OptimizedMotion>
@@ -460,19 +453,15 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         >
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-medium text-foreground">Этот месяц</h2>
-            <OptimizedMotion whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <LightMotion whileTap={{ scale: 0.95 }}>
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200">
                 <CalendarIcon className="w-4 h-4 mr-1" />
                 {currentMonthName}
               </Button>
-            </OptimizedMotion>
+            </LightMotion>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <OptimizedMotion
-              whileHover={{ scale: 1.02, y: -2 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 hover:shadow-md transition-all duration-300">
+            <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 hover:shadow-md transition-all duration-300">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center shadow-sm">
@@ -493,12 +482,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   </div>
                 </CardContent>
               </Card>
-            </OptimizedMotion>
-            <OptimizedMotion
-              whileHover={{ scale: 1.02, y: -2 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Card className="border-red-200 bg-gradient-to-br from-red-50 to-rose-50 hover:shadow-md transition-all duration-300">
+            <Card className="border-red-200 bg-gradient-to-br from-red-50 to-rose-50 hover:shadow-md transition-all duration-300">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center shadow-sm">
@@ -519,7 +503,6 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   </div>
                 </CardContent>
               </Card>
-            </OptimizedMotion>
           </div>
         </OptimizedMotion>
 
@@ -531,7 +514,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         >
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-medium text-foreground">Последние операции</h2>
-            <OptimizedMotion whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <LightMotion whileTap={{ scale: 0.95 }}>
               <Button
                 onClick={onViewAllTransactions}
                 variant="ghost"
@@ -541,7 +524,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 <Filter className="w-4 h-4 mr-1" />
                 Все
               </Button>
-            </OptimizedMotion>
+            </LightMotion>
           </div>
           
           {recentTransactions.length > 0 ? (
@@ -633,18 +616,17 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   </OptimizedMotion>
                 ))}
                 <div className="p-4 border-t border-blue-100">
-                  <OptimizedMotion
-                    whileHover={{ scale: 1.02 }}
+                  <LightMotion
                     whileTap={{ scale: 0.98 }}
                   >
-                    <Button 
+                    <Button
                       onClick={onViewAllTransactions}
-                      variant="outline" 
+                      variant="outline"
                       className="w-full border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-all duration-300"
                     >
                       Показать все операции
                     </Button>
-                  </OptimizedMotion>
+                  </LightMotion>
                 </div>
               </CardContent>
             </Card>
@@ -657,29 +639,24 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4 }}
                 >
-                  <OptimizedMotion 
-                    className="w-12 h-12 mx-auto bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mb-3 shadow-sm"
-                    whileHover={{ scale: 1.1, rotate: 10 }}
-                    transition={{ duration: 0.3 }}
-                  >
+                  <div className="w-12 h-12 mx-auto bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mb-3 shadow-sm">
                     <Wallet className="w-6 h-6 text-blue-600" />
-                  </OptimizedMotion>
+                  </div>
                   <p className="text-muted-foreground text-sm mb-3">
                     Операций пока нет
                   </p>
-                  <OptimizedMotion
-                    whileHover={{ scale: 1.05 }}
+                  <LightMotion
                     whileTap={{ scale: 0.95 }}
                   >
-                    <Button 
+                    <Button
                       onClick={onAddTransaction}
-                      variant="outline" 
+                      variant="outline"
                       size="sm"
                       className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-all duration-300"
                     >
                       Добавить первую операцию
                     </Button>
-                  </OptimizedMotion>
+                  </LightMotion>
                 </OptimizedMotion>
               </CardContent>
             </Card>
