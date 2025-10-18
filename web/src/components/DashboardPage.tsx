@@ -3,7 +3,8 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingDown, CalendarIcon, Filter, Sparkles, ArrowRightLeft } from "./icons";
-import { motion } from "motion/react";
+import { OptimizedMotion } from "./ui/OptimizedMotion";
+import { LightMotion } from "./ui/LightMotion";
 import dashboardService from "../services/dashboard.service";
 import { cache } from "../utils/cache";
 import { getCurrencySymbol, DEFAULT_CURRENCY } from "../constants/currencies";
@@ -255,30 +256,17 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   return (
     <div className="min-h-full bg-background">
       {/* Header */}
-      <motion.div
-        className="bg-gradient-to-br from-blue-500 to-indigo-700 px-4 py-6 relative overflow-hidden"
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
+      <OptimizedMotion className="bg-gradient-to-br from-blue-500 to-indigo-700 px-4 py-6 relative overflow-hidden">
         {/* Background decorations - simplified for performance */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-y-12 translate-y-8"></div>
-        
+
         <div className="max-w-md mx-auto relative">
-          <motion.div 
-            className="flex items-center justify-between mb-6"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
+          <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <Sparkles className="w-6 h-6 text-yellow-300" />
               <h1 className="text-white font-medium">FinanceTracker</h1>
             </div>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
+            <LightMotion whileTap={{ scale: 0.95 }}>
               <Button
                 variant="ghost"
                 size="sm"
@@ -287,8 +275,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
               >
                 {showBalance ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </Button>
-            </motion.div>
-          </motion.div>
+            </LightMotion>
+          </div>
 
           {/* Total Balance */}
           <motion.div
