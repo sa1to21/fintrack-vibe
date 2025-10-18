@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { BookOpen, Clock, Award, TrendingUp, PiggyBank, Shield, Target, GraduationCap, Sparkles } from "./icons";
+import { OptimizedMotion } from "./ui/OptimizedMotion";
+import { LightMotion } from "./ui/LightMotion";
 import { motion } from "motion/react";
 
 export function EducationPage() {
@@ -83,114 +85,67 @@ export function EducationPage() {
       {/* Background decorations removed for performance */}
       
       {/* Header */}
-      <motion.div
-        className="bg-gradient-to-br from-indigo-500 to-pink-700 px-4 py-6 relative overflow-hidden"
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
+      <OptimizedMotion className="bg-gradient-to-br from-indigo-500 to-pink-700 px-4 py-6 relative overflow-hidden">
         {/* Background decorations - simplified for performance */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-y-12 translate-y-8"></div>
-        
+
         <div className="max-w-md mx-auto relative">
-          <motion.div 
-            className="flex items-center justify-center gap-2"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
+          <div className="flex items-center justify-center gap-2">
             <GraduationCap className="w-6 h-6 text-yellow-300" />
             <h1 className="text-white font-medium">Финансовая грамотность</h1>
             <Sparkles className="w-5 h-5 text-yellow-300" />
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </OptimizedMotion>
 
-      <motion.div 
-        className="px-4 py-6 max-w-md mx-auto space-y-6 relative z-10"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.15 }}
-      >
+      <div className="px-4 py-6 max-w-md mx-auto space-y-6 relative z-10">
         {/* Progress Overview */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-          whileHover={{ scale: 1.02, y: -2 }}
-        >
+        <OptimizedMotion>
           <Card className="border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-sm hover:shadow-lg transition-all duration-300">
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <motion.div 
-                  className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-sm"
-                  whileHover={{ scale: 1.1, rotate: 10 }}
-                  transition={{ duration: 0.3 }}
-                >
+                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-sm">
                   <Award className="w-6 h-6 text-white" />
-                </motion.div>
+                </div>
                 <div className="flex-1">
                   <h3 className="font-medium text-indigo-700">Ваш прогресс</h3>
                   <p className="text-sm text-indigo-600/70">0 из 4 курсов завершено</p>
                   <div className="w-full bg-indigo-200 rounded-full h-2 mt-2 overflow-hidden">
-                    <motion.div 
-                      className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full"
-                      initial={{ width: 0 }}
-                      animate={{ width: '0%' }}
-                      transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-                    />
+                    <div className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full" style={{width: '0%'}} />
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </OptimizedMotion>
 
         {/* Courses */}
-        <motion.div 
-          className="space-y-4"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: 0.25 }}
-        >
+        <div className="space-y-4">
           <h2 className="font-medium text-foreground bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Курсы</h2>
           {courses.map((course, index) => {
             const Icon = course.icon;
             return (
-              <motion.div
-                key={course.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.3 + index * 0.06 }}
-                whileHover={{ scale: 1.02, y: -3 }}
-                whileTap={{ scale: 0.98 }}
-              >
+              <LightMotion key={course.id} whileTap={{ scale: 0.98 }}>
                 <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
-                      <motion.div 
-                        className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-gradient-to-br ${
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-gradient-to-br ${
                           index === 0 ? 'from-blue-500 to-indigo-600' :
                           index === 1 ? 'from-green-500 to-emerald-600' :
                           index === 2 ? 'from-purple-500 to-pink-600' :
                           'from-orange-500 to-red-600'
-                        }`}
-                        whileHover={{ scale: 1.1, rotate: 5 }}
-                        transition={{ duration: 0.2 }}
-                      >
+                        }`}>
                         <Icon className="w-5 h-5 text-white" />
-                      </motion.div>
+                      </div>
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-2">
                           <h3 className="font-medium text-slate-800">{course.title}</h3>
-                          <motion.div whileHover={{ scale: 1.05 }}>
-                            <Badge 
-                              variant="secondary" 
-                              className={`${getLevelColor(course.level)} border shadow-sm`}
-                            >
-                              {course.level}
-                            </Badge>
-                          </motion.div>
+                          <Badge
+                            variant="secondary"
+                            className={`${getLevelColor(course.level)} border shadow-sm`}
+                          >
+                            {course.level}
+                          </Badge>
                         </div>
                         <p className="text-sm text-slate-600 mb-3">
                           {course.description}
@@ -209,59 +164,42 @@ export function EducationPage() {
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </LightMotion>
             );
           })}
-        </motion.div>
+        </div>
 
         {/* Daily Tips */}
-        <motion.div 
-          className="space-y-4"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: 0.5 }}
-        >
+        <div className="space-y-4">
           <h2 className="font-medium text-foreground bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Советы дня</h2>
           {tips.map((tip, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.55 + index * 0.06 }}
-              whileHover={{ scale: 1.02, x: 4 }}
-            >
+            <OptimizedMotion key={index}>
               <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50 hover:shadow-md transition-all duration-300">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-medium text-slate-800">{tip.title}</h3>
-                    <motion.div whileHover={{ scale: 1.05 }}>
-                      <Badge 
-                        variant="outline" 
-                        className={`text-xs border-purple-300 ${
-                          index === 0 ? 'text-blue-700 bg-blue-50' :
-                          index === 1 ? 'text-green-700 bg-green-50' :
-                          'text-purple-700 bg-purple-50'
-                        }`}
-                      >
-                        {tip.category}
-                      </Badge>
-                    </motion.div>
+                    <Badge
+                      variant="outline"
+                      className={`text-xs border-purple-300 ${
+                        index === 0 ? 'text-blue-700 bg-blue-50' :
+                        index === 1 ? 'text-green-700 bg-green-50' :
+                        'text-purple-700 bg-purple-50'
+                      }`}
+                    >
+                      {tip.category}
+                    </Badge>
                   </div>
                   <p className="text-sm text-slate-600">
                     {tip.description}
                   </p>
                 </CardContent>
               </Card>
-            </motion.div>
+            </OptimizedMotion>
           ))}
-        </motion.div>
+        </div>
 
         {/* Coming Soon */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.7 }}
-        >
+        <OptimizedMotion>
           <Card className="border-indigo-200 bg-gradient-to-br from-indigo-50 to-blue-50 shadow-sm hover:shadow-lg transition-all duration-300">
             <CardHeader>
               <CardTitle className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
@@ -269,27 +207,18 @@ export function EducationPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <motion.div 
-                className="text-center py-4"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.75 }}
-              >
-                <motion.div 
-                  className="w-12 h-12 mx-auto bg-gradient-to-br from-indigo-100 to-blue-200 rounded-full flex items-center justify-center mb-3 shadow-sm"
-                  whileHover={{ scale: 1.1, rotate: 10 }}
-                  transition={{ duration: 0.3 }}
-                >
+              <div className="text-center py-4">
+                <div className="w-12 h-12 mx-auto bg-gradient-to-br from-indigo-100 to-blue-200 rounded-full flex items-center justify-center mb-3 shadow-sm">
                   <BookOpen className="w-6 h-6 text-indigo-600" />
-                </motion.div>
+                </div>
                 <p className="text-indigo-600/70 text-sm mb-2">
                   Интерактивные тесты
                 </p>
                 <motion.div
-                  animate={{ 
+                  animate={{
                     opacity: [0.5, 1, 0.5],
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 2,
                     repeat: Infinity,
                     ease: "easeInOut"
@@ -299,11 +228,11 @@ export function EducationPage() {
                     Проверьте свои знания
                   </p>
                 </motion.div>
-              </motion.div>
+              </div>
             </CardContent>
           </Card>
-        </motion.div>
-      </motion.div>
+        </OptimizedMotion>
+      </div>
     </div>
   );
 }
