@@ -382,7 +382,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             )}
           </div>
         </div>
-      </motion.div>
+      </OptimizedMotion>
 
       {/* Content */}
       <motion.div
