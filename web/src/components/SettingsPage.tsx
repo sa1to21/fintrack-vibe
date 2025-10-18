@@ -4,7 +4,8 @@ import { Card, CardContent } from "./ui/card";
 import { Switch } from "./ui/switch";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "./ui/alert-dialog";
 import { Trash2, LogOut, Sparkles, User, Shield, Tags, DollarSign, Bell, Moon, Globe, Palette, Upload, Download, Settings, ChevronRight } from "./icons";
-import { motion } from "motion/react";
+import { OptimizedMotion } from "./ui/OptimizedMotion";
+import { LightMotion } from "./ui/LightMotion";
 import { useTelegramAuth } from "../contexts/TelegramAuthContext";
 import { toast } from "sonner";
 import userDataService from "../services/userData.service";
@@ -187,42 +188,22 @@ export function SettingsPage() {
       {/* Background decorations removed for performance */}
       
       {/* Header */}
-      <motion.div
-        className="bg-gradient-to-br from-blue-500 to-purple-700 px-4 py-6 relative overflow-hidden"
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
+      <OptimizedMotion className="bg-gradient-to-br from-blue-500 to-purple-700 px-4 py-6 relative overflow-hidden">
         {/* Background decorations - simplified for performance */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-y-12 translate-y-8"></div>
-        
+
         <div className="max-w-md mx-auto relative">
-          <motion.div 
-            className="flex items-center justify-center gap-2"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
+          <div className="flex items-center justify-center gap-2">
             <Settings className="w-6 h-6 text-yellow-300" />
             <h1 className="text-white font-medium">Настройки</h1>
             <Sparkles className="w-5 h-5 text-yellow-300" />
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </OptimizedMotion>
 
-      <motion.div
-        className="px-4 py-6 max-w-md mx-auto space-y-6 relative z-10"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.15 }}
-      >
+      <div className="px-4 py-6 max-w-md mx-auto space-y-6 relative z-10">
         {/* Base Currency Selector */}
-        <motion.div
-          className="space-y-3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-        >
+        <div className="space-y-3">
           <h2 className="font-medium text-sm uppercase tracking-wide bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
             Основная валюта
           </h2>
@@ -230,13 +211,9 @@ export function SettingsPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 flex-1">
-                  <motion.div
-                    className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-gradient-to-br from-emerald-100 to-teal-200"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-gradient-to-br from-emerald-100 to-teal-200">
                     <Globe className="w-5 h-5 text-emerald-600" />
-                  </motion.div>
+                  </div>
                   <div className="flex-1">
                     <h3 className="font-medium text-slate-800">Валюта для статистики</h3>
                     <p className="text-sm text-slate-600">
@@ -268,193 +245,129 @@ export function SettingsPage() {
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
         {settingsGroups.map((group, groupIndex) => (
-          <motion.div 
-            key={group.title} 
-            className="space-y-3"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 + groupIndex * 0.06 }}
-          >
+          <div key={group.title} className="space-y-3">
             <h2 className="font-medium text-sm uppercase tracking-wide bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               {group.title}
             </h2>
-            <motion.div
-              whileHover={{ scale: 1.01 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm hover:shadow-lg transition-all duration-300">
-                <CardContent className="p-0">
-                  {group.items.map((item, index) => {
-                    const Icon = item.icon;
-                    return (
-                      <motion.div
-                        key={item.label}
-                        className={`flex items-center justify-between p-4 hover:bg-blue-50/50 transition-colors duration-200 cursor-pointer ${
-                          index !== group.items.length - 1 ? 'border-b border-blue-100' : ''
-                        }`}
-                        whileHover={{ x: 4 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="flex items-center gap-3">
-                          <motion.div 
-                            className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-gradient-to-br from-blue-100 to-indigo-200"
-                            whileHover={{ scale: 1.1, rotate: 5 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <Icon className={`w-5 h-5 ${
-                              groupIndex === 0 ? 'text-blue-600' :
-                              groupIndex === 1 ? 'text-purple-600' :
-                              groupIndex === 2 ? 'text-indigo-600' :
-                              'text-teal-600'
-                            }`} />
-                          </motion.div>
-                          <div>
-                            <h3 className="font-medium text-slate-800">{item.label}</h3>
-                            <p className="text-sm text-slate-600">
-                              {item.description}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center">
-                          {item.action === 'toggle' && (
-                            <motion.div whileHover={{ scale: 1.05 }}>
-                              <Switch checked={item.value} />
-                            </motion.div>
-                          )}
-                          {item.action === 'navigate' && (
-                            <motion.div
-                              whileHover={{ x: 2 }}
-                              transition={{ duration: 0.2 }}
-                            >
-                              <ChevronRight className="w-5 h-5 text-slate-500" />
-                            </motion.div>
-                          )}
-                          {item.action === 'button' && (
-                            <motion.div
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              <Button variant="outline" size="sm" className="border-blue-300 text-blue-600 hover:bg-blue-50">
-                                Открыть
-                              </Button>
-                            </motion.div>
-                          )}
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </CardContent>
-              </Card>
-            </motion.div>
-          </motion.div>
-        ))}
-
-        {/* Logout Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.45 }}
-        >
-          <Card className="border-slate-200 bg-white shadow-sm hover:shadow-lg transition-all duration-300">
-            <CardContent className="p-4">
-              <motion.div
-                className="flex items-center justify-between cursor-pointer"
-                whileHover={{ x: 4 }}
-                transition={{ duration: 0.2 }}
-                onClick={handleLogout}
-              >
-                <div className="flex items-center gap-3">
-                  <motion.div
-                    className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 shadow-sm"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <LogOut className="w-5 h-5 text-slate-600" />
-                  </motion.div>
-                  <div>
-                    <h3 className="font-medium text-slate-800">Выйти</h3>
-                    <p className="text-sm text-slate-600">
-                      {user?.email || 'Выйти из аккаунта'}
-                    </p>
-                  </div>
-                </div>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button variant="outline" size="sm" className="border-slate-300 text-slate-600 hover:bg-slate-50">
-                    Выйти
-                  </Button>
-                </motion.div>
-              </motion.div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Dangerous Actions */}
-        <motion.div
-          className="space-y-3"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.5 }}
-        >
-          <h2 className="font-medium text-sm uppercase tracking-wide bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-            Осторожно
-          </h2>
-          <motion.div
-            whileHover={{ scale: 1.01 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Card className="border-red-200 bg-gradient-to-br from-red-50 to-pink-50 shadow-sm hover:shadow-lg transition-all duration-300">
+            <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm hover:shadow-lg transition-all duration-300">
               <CardContent className="p-0">
-                {dangerousActions.map((item) => {
+                {group.items.map((item, index) => {
                   const Icon = item.icon;
                   return (
-                    <motion.div
+                    <div
                       key={item.label}
-                      className="flex items-center justify-between p-4 hover:bg-red-50/70 transition-colors duration-200"
-                      whileHover={{ x: 4 }}
-                      transition={{ duration: 0.2 }}
+                      className={`flex items-center justify-between p-4 hover:bg-blue-50/50 transition-colors duration-200 cursor-pointer ${
+                        index !== group.items.length - 1 ? 'border-b border-blue-100' : ''
+                      }`}
                     >
                       <div className="flex items-center gap-3">
-                        <motion.div
-                          className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-red-500 to-pink-600 shadow-sm"
-                          whileHover={{ scale: 1.1, rotate: 5 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <Icon className="w-5 h-5 text-white" />
-                        </motion.div>
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-gradient-to-br from-blue-100 to-indigo-200">
+                          <Icon className={`w-5 h-5 ${
+                            groupIndex === 0 ? 'text-blue-600' :
+                            groupIndex === 1 ? 'text-purple-600' :
+                            groupIndex === 2 ? 'text-indigo-600' :
+                            'text-teal-600'
+                          }`} />
+                        </div>
                         <div>
-                          <h3 className="font-medium text-red-700">{item.label}</h3>
-                          <p className="text-sm text-red-600">
+                          <h3 className="font-medium text-slate-800">{item.label}</h3>
+                          <p className="text-sm text-slate-600">
                             {item.description}
                           </p>
                         </div>
                       </div>
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => setIsDeleteDialogOpen(true)}
-                          disabled={isDeleting}
-                          className="shadow-sm hover:shadow-md transition-all duration-200"
-                        >
-                          {isDeleting ? 'Удаление...' : 'Удалить'}
-                        </Button>
-                      </motion.div>
-                    </motion.div>
+                      <div className="flex items-center">
+                        {item.action === 'toggle' && (
+                          <Switch checked={item.value} />
+                        )}
+                        {item.action === 'navigate' && (
+                          <ChevronRight className="w-5 h-5 text-slate-500" />
+                        )}
+                        {item.action === 'button' && (
+                          <LightMotion whileTap={{ scale: 0.95 }}>
+                            <Button variant="outline" size="sm" className="border-blue-300 text-blue-600 hover:bg-blue-50">
+                              Открыть
+                            </Button>
+                          </LightMotion>
+                        )}
+                      </div>
+                    </div>
                   );
                 })}
               </CardContent>
             </Card>
-          </motion.div>
-        </motion.div>
+          </div>
+        ))}
+
+        {/* Logout Button */}
+        <Card className="border-slate-200 bg-white shadow-sm hover:shadow-lg transition-all duration-300">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between cursor-pointer" onClick={handleLogout}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 shadow-sm">
+                  <LogOut className="w-5 h-5 text-slate-600" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-slate-800">Выйти</h3>
+                  <p className="text-sm text-slate-600">
+                    {user?.email || 'Выйти из аккаунта'}
+                  </p>
+                </div>
+              </div>
+              <LightMotion whileTap={{ scale: 0.95 }}>
+                <Button variant="outline" size="sm" className="border-slate-300 text-slate-600 hover:bg-slate-50">
+                  Выйти
+                </Button>
+              </LightMotion>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Dangerous Actions */}
+        <div className="space-y-3">
+          <h2 className="font-medium text-sm uppercase tracking-wide bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+            Осторожно
+          </h2>
+          <Card className="border-red-200 bg-gradient-to-br from-red-50 to-pink-50 shadow-sm hover:shadow-lg transition-all duration-300">
+            <CardContent className="p-0">
+              {dangerousActions.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div
+                    key={item.label}
+                    className="flex items-center justify-between p-4 hover:bg-red-50/70 transition-colors duration-200"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-red-500 to-pink-600 shadow-sm">
+                        <Icon className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-red-700">{item.label}</h3>
+                        <p className="text-sm text-red-600">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
+                    <LightMotion whileTap={{ scale: 0.95 }}>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => setIsDeleteDialogOpen(true)}
+                        disabled={isDeleting}
+                        className="shadow-sm hover:shadow-md transition-all duration-200"
+                      >
+                        {isDeleting ? 'Удаление...' : 'Удалить'}
+                      </Button>
+                    </LightMotion>
+                  </div>
+                );
+              })}
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Delete Confirmation Dialog */}
         <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
@@ -492,26 +405,15 @@ export function SettingsPage() {
         </AlertDialog>
 
         {/* App Info */}
-        <motion.div 
-          className="text-center pt-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.55 }}
-        >
-          <motion.p 
-            className="text-xs text-slate-500"
-            whileHover={{ scale: 1.05 }}
-          >
+        <div className="text-center pt-4">
+          <p className="text-xs text-slate-500">
             FinanceTracker v1.0.0
-          </motion.p>
-          <motion.p 
-            className="text-xs text-slate-500 mt-1"
-            whileHover={{ scale: 1.05 }}
-          >
+          </p>
+          <p className="text-xs text-slate-500 mt-1">
             Сделано с ❤️ для вашего финансового благополучия
-          </motion.p>
-        </motion.div>
-      </motion.div>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
