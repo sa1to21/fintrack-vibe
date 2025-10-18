@@ -21,7 +21,8 @@ import {
   Loader2
 } from "./icons";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
+import { OptimizedMotion } from "./ui/OptimizedMotion";
+import { LightMotion } from "./ui/LightMotion";
 import accountsService from "../services/accounts.service";
 import transactionsService from "../services/transactions.service";
 import categoriesService from "../services/categories.service";
@@ -270,7 +271,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       <div className="absolute top-1/3 right-0 w-16 h-16 bg-indigo-200/20 rounded-full blur-xl"></div>
       
       {/* Header */}
-      <motion.div 
+      <OptimizedMotion 
         className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-4 pb-6 relative overflow-hidden"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -280,46 +281,41 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-y-12"></div>
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
         
-        <motion.div 
+        <OptimizedMotion 
           className="flex items-center justify-between relative z-10"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
+          <LightMotion
             whileTap={{ scale: 0.95 }}
           >
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={onBack}
               className="text-white hover:bg-white/20 backdrop-blur-sm transition-all duration-200"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-          </motion.div>
+          </LightMotion>
           <div className="flex items-center gap-2">
             <Settings className="w-5 h-5 text-yellow-300" />
             <h1 className="font-medium text-white">Управление счетами</h1>
             <Sparkles className="w-4 h-4 text-yellow-300" />
           </div>
           <div className="w-8" />
-        </motion.div>
-      </motion.div>
+        </OptimizedMotion>
+      </OptimizedMotion>
 
-      <motion.div 
+      <OptimizedMotion 
         className="p-4 -mt-2 space-y-4 relative z-10"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.15 }}
       >
         {/* Add Account Button */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-          whileHover={{ scale: 1.02 }}
+        <LightMotion
           whileTap={{ scale: 0.98 }}
         >
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -375,7 +371,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     {accountIcons.map((iconData, index) => {
                       const Icon = iconData.icon;
                       return (
-                        <motion.button
+                        <OptimizedMotion as="button"
                           key={index}
                           type="button"
                           className={`p-3 rounded-lg border text-center transition-all duration-200 ${
@@ -383,15 +379,20 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                               ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
                               : 'border-blue-200 hover:border-blue-400 hover:bg-blue-50/30'
                           }`}
-                          onClick={() => setSelectedIcon(iconData)}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
                         >
-                          <div className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 ${iconData.color}`}>
-                            <Icon className="w-4 h-4" />
-                          </div>
-                          <span className="text-xs">{iconData.name}</span>
-                        </motion.button>
+                          <LightMotion whileTap={{ scale: 0.95 }}>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedIcon(iconData)}
+                              className="w-full"
+                            >
+                              <div className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 ${iconData.color}`}>
+                                <Icon className="w-4 h-4" />
+                              </div>
+                              <span className="text-xs">{iconData.name}</span>
+                            </button>
+                          </LightMotion>
+                        </OptimizedMotion>
                       );
                     })}
                   </div>
@@ -414,14 +415,14 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </motion.div>
+        </LightMotion>
 
         {/* Accounts List */}
         <div className="space-y-3">
           {accounts.map((account, index) => {
             const Icon = account.icon;
             return (
-              <motion.div
+              <OptimizedMotion
                 key={account.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -432,13 +433,13 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <motion.div
+                        <OptimizedMotion
                           className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${account.color}`}
                           whileHover={{ scale: 1.1, rotate: 5 }}
                           transition={{ duration: 0.2 }}
                         >
                           <Icon className="w-6 h-6" />
-                        </motion.div>
+                        </OptimizedMotion>
                         <div className="min-w-0 flex-1">
                           <h3 className="font-medium text-slate-800 truncate">{account.name}</h3>
                           <p className="text-lg font-medium text-slate-700">
@@ -449,7 +450,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                       
                       <div className="flex items-center gap-2">
                         {/* Balance Change Button */}
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <LightMotion whileTap={{ scale: 0.95 }}>
                           <Button
                             variant="outline"
                             size="sm"
@@ -458,10 +459,10 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                           >
                             <DollarSign className="w-4 h-4" />
                           </Button>
-                        </motion.div>
-                        
+                        </LightMotion>
+
                         {/* Edit Button */}
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <LightMotion whileTap={{ scale: 0.95 }}>
                           <Button
                             variant="outline"
                             size="sm"
@@ -470,11 +471,11 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
-                        </motion.div>
-                        
+                        </LightMotion>
+
                         {/* Delete Button */}
                         {accounts.length > 1 && (
-                          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                          <LightMotion whileTap={{ scale: 0.95 }}>
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
                                 <Button
@@ -507,13 +508,13 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                                 </AlertDialogFooter>
                               </AlertDialogContent>
                             </AlertDialog>
-                          </motion.div>
+                          </LightMotion>
                         )}
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </OptimizedMotion>
             );
           })}
         </div>
@@ -565,7 +566,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   {accountIcons.map((iconData, index) => {
                     const Icon = iconData.icon;
                     return (
-                      <motion.button
+                      <OptimizedMotion as="button"
                         key={index}
                         type="button"
                         className={`p-3 rounded-lg border text-center transition-all duration-200 ${
@@ -581,7 +582,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                           <Icon className="w-4 h-4" />
                         </div>
                         <span className="text-xs">{iconData.name}</span>
-                      </motion.button>
+                      </OptimizedMotion>
                     );
                   })}
                 </div>
@@ -627,7 +628,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
               )}
               
               <div className="flex gap-2">
-                <motion.div
+                <OptimizedMotion
                   className="flex-1"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -644,8 +645,8 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     <TrendingUp className="w-4 h-4 mr-2" />
                     Пополнить
                   </Button>
-                </motion.div>
-                <motion.div
+                </OptimizedMotion>
+                <OptimizedMotion
                   className="flex-1"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -662,7 +663,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     <TrendingDown className="w-4 h-4 mr-2" />
                     Снять
                   </Button>
-                </motion.div>
+                </OptimizedMotion>
               </div>
 
               <div className="space-y-2">
@@ -704,7 +705,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </motion.div>
+      </OptimizedMotion>
     </div>
   );
 }
