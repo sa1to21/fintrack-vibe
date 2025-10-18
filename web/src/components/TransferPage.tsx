@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Textarea } from "./ui/textarea";
 import { ArrowLeft, ArrowRightLeft, Loader2 } from "./icons";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
+import { OptimizedMotion } from "./ui/OptimizedMotion";
+import { LightMotion } from "./ui/LightMotion";
 import accountsService, { Account } from "../services/accounts.service";
 import transfersService from "../services/transfers.service";
 import { getAccountIconComponent } from "../utils/accountIcons";
@@ -135,7 +136,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
   if (accounts.length < 2) {
     return (
       <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-        <motion.div
+        <OptimizedMotion
           className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-4 relative overflow-hidden"
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -152,7 +153,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
             <h1 className="font-medium text-white">Перевод между счетами</h1>
             <div className="w-8" />
           </div>
-        </motion.div>
+        </OptimizedMotion>
 
         <div className="p-4 max-w-md mx-auto mt-8 text-center">
           <ArrowRightLeft className="w-16 h-16 mx-auto mb-4 text-gray-400" />
@@ -171,7 +172,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
   return (
     <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Header */}
-      <motion.div
+      <OptimizedMotion
         className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-4 pb-6 relative overflow-hidden"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -181,13 +182,13 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-y-12"></div>
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
 
-        <motion.div
+        <OptimizedMotion
           className="flex items-center justify-between relative z-10"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
-          <motion.div
+          <OptimizedMotion
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -199,14 +200,14 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-          </motion.div>
+          </OptimizedMotion>
           <h1 className="text-lg font-medium text-white">Перевод между счетами</h1>
           <div className="w-8" />
-        </motion.div>
-      </motion.div>
+        </OptimizedMotion>
+      </OptimizedMotion>
 
       {/* Form */}
-      <motion.div
+      <OptimizedMotion
         className="p-4 -mt-2"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -216,14 +217,14 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
           <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* From Account */}
-              <motion.div
+              <OptimizedMotion
                 className="space-y-2"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.25 }}
               >
                 <Label htmlFor="fromAccount" className="text-slate-700">Откуда *</Label>
-                <motion.div whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+                <OptimizedMotion whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                   <Select value={fromAccountId} onValueChange={setFromAccountId}>
                     <SelectTrigger className="border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 bg-gradient-to-br from-white to-blue-50/30">
                       <SelectValue placeholder="Выберите счёт списания" />
@@ -247,17 +248,17 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                       })}
                     </SelectContent>
                   </Select>
-                </motion.div>
-              </motion.div>
+                </OptimizedMotion>
+              </OptimizedMotion>
 
               {/* Swap Button */}
-              <motion.div
+              <OptimizedMotion
                 className="flex justify-center py-2"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: 0.3 }}
               >
-                <motion.div
+                <OptimizedMotion
                   whileHover={{ scale: 1.1, rotate: 180 }}
                   whileTap={{ scale: 0.9 }}
                   transition={{ duration: 0.3 }}
@@ -272,18 +273,18 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                   >
                     <ArrowRightLeft className="w-5 h-5" />
                   </Button>
-                </motion.div>
-              </motion.div>
+                </OptimizedMotion>
+              </OptimizedMotion>
 
               {/* To Account */}
-              <motion.div
+              <OptimizedMotion
                 className="space-y-2"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.35 }}
               >
                 <Label htmlFor="toAccount" className="text-slate-700">Куда *</Label>
-                <motion.div whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+                <OptimizedMotion whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                   <Select value={toAccountId} onValueChange={setToAccountId}>
                     <SelectTrigger className="border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 bg-gradient-to-br from-white to-blue-50/30">
                       <SelectValue placeholder="Выберите счёт зачисления" />
@@ -309,11 +310,11 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                         })}
                     </SelectContent>
                   </Select>
-                </motion.div>
-              </motion.div>
+                </OptimizedMotion>
+              </OptimizedMotion>
 
               {/* Amount */}
-              <motion.div
+              <OptimizedMotion
                 className="space-y-2"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -321,7 +322,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
               >
                 <Label htmlFor="amount" className="text-slate-700">Сумма перевода *</Label>
                 <div className="relative">
-                  <motion.div
+                  <OptimizedMotion
                     whileFocus={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                   >
@@ -335,19 +336,19 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                       step="0.01"
                       min="0"
                     />
-                  </motion.div>
+                  </OptimizedMotion>
                 </div>
-              </motion.div>
+              </OptimizedMotion>
 
               {/* Description */}
-              <motion.div
+              <OptimizedMotion
                 className="space-y-2"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.45 }}
               >
                 <Label htmlFor="description" className="text-slate-700">Описание (опционально)</Label>
-                <motion.div whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+                <OptimizedMotion whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                   <Textarea
                     id="description"
                     placeholder="Добавьте описание перевода..."
@@ -356,11 +357,11 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                     rows={3}
                     className="border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 bg-gradient-to-br from-white to-blue-50/30"
                   />
-                </motion.div>
-              </motion.div>
+                </OptimizedMotion>
+              </OptimizedMotion>
 
               {/* Submit Button */}
-              <motion.div
+              <OptimizedMotion
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.5 }}
@@ -372,7 +373,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                   className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group"
                   disabled={submitting}
                 >
-                  <motion.div
+                  <OptimizedMotion
                     className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full"
                     transition={{ duration: 800 }}
                   />
@@ -381,11 +382,11 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                     {submitting ? 'Выполняем перевод...' : 'Выполнить перевод'}
                   </span>
                 </Button>
-              </motion.div>
+              </OptimizedMotion>
             </form>
           </CardContent>
         </Card>
-      </motion.div>
+      </OptimizedMotion>
     </div>
   );
 }

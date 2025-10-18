@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Textarea } from "./ui/textarea";
 import { ArrowLeft, Plus, Minus, Home, Car, ShoppingBag, Coffee, Zap, Heart, Wallet, CreditCard, PiggyBank, DollarSign, Briefcase, TrendingUp, Gift, Loader2 } from "./icons";
 import { toast } from "sonner@2.0.3";
-import { motion } from "framer-motion";
+import { OptimizedMotion } from "./ui/OptimizedMotion";
+import { LightMotion } from "./ui/LightMotion";
 import categoriesService, { Category } from "../services/categories.service";
 import transactionsService from "../services/transactions.service";
 import accountsService, { Account } from "../services/accounts.service";
@@ -227,7 +228,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
   return (
     <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Header */}
-      <motion.div 
+      <OptimizedMotion 
         className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-4 pb-6 relative overflow-hidden"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -237,31 +238,30 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-y-12"></div>
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
         
-        <motion.div 
+        <OptimizedMotion 
           className="flex items-center justify-between relative z-10"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
+          <LightMotion
             whileTap={{ scale: 0.95 }}
           >
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={onBack}
               className="text-white hover:bg-white/20 backdrop-blur-sm transition-all duration-200"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-          </motion.div>
+          </LightMotion>
           <h1 className="text-lg font-medium text-white">Новая операция</h1>
           <div className="w-8" />
-        </motion.div>
-      </motion.div>
+        </OptimizedMotion>
+      </OptimizedMotion>
 
-      <motion.div 
+      <OptimizedMotion 
         className="p-4 -mt-2"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -269,7 +269,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
       >
         <Card className="border-none shadow-xl bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm">
           <CardHeader className="pb-4">
-            <motion.div
+            <OptimizedMotion
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4, delay: 0.2 }}
@@ -277,26 +277,25 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
               <CardTitle className="text-center bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Добавить операцию
               </CardTitle>
-            </motion.div>
+            </OptimizedMotion>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Type Selection */}
-            <motion.div 
+            <OptimizedMotion 
               className="flex gap-2"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4, delay: 0.25 }}
             >
-              <motion.div
+              <LightMotion
                 className="flex-1"
-                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <Button
                   type="button"
                   variant={type === 'expense' ? 'default' : 'outline'}
-                  className={`w-full transition-all duration-300 ${type === 'expense' 
-                    ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg' 
+                  className={`w-full transition-all duration-300 ${type === 'expense'
+                    ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg'
                     : 'border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400'
                   }`}
                   onClick={() => setType('expense')}
@@ -304,10 +303,9 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                   <Minus className="w-4 h-4 mr-2" />
                   Расход
                 </Button>
-              </motion.div>
-              <motion.div
+              </LightMotion>
+              <LightMotion
                 className="flex-1"
-                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <Button
@@ -322,12 +320,12 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                   <Plus className="w-4 h-4 mr-2" />
                   Доход
                 </Button>
-              </motion.div>
-            </motion.div>
+              </LightMotion>
+            </OptimizedMotion>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Amount */}
-              <motion.div 
+              <OptimizedMotion 
                 className="space-y-2"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -335,7 +333,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
               >
                 <Label htmlFor="amount" className="text-slate-700">Сумма *</Label>
                 <div className="relative">
-                  <motion.div
+                  <OptimizedMotion
                     whileFocus={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                   >
@@ -349,12 +347,12 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                       step="0.01"
                       min="0"
                     />
-                  </motion.div>
+                  </OptimizedMotion>
                 </div>
-              </motion.div>
+              </OptimizedMotion>
 
               {/* Category */}
-              <motion.div 
+              <OptimizedMotion 
                 className="space-y-2"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -371,26 +369,20 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                     const categoryId = String(cat.id);
 
                     return (
-                      <motion.button
+                      <LightMotion
                         key={categoryId}
-                        type="button"
-                        className={`p-3 rounded-lg border text-center transition-all duration-200 ${
-                          category === categoryId
-                            ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
-                            : 'border-blue-200 hover:border-blue-400 hover:bg-blue-50/30'
-                        }`}
-                        onClick={() => setCategory(categoryId)}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.2, delay: 0.4 + index * 0.02 }}
-                        whileHover={{ scale: 1.03, y: -1 }}
                         whileTap={{ scale: 0.97 }}
                       >
-                        <motion.div
-                          className="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 bg-gradient-to-br from-blue-100 to-indigo-200 shadow-sm"
-                          whileHover={{ scale: 1.1 }}
-                          transition={{ duration: 0.2 }}
+                        <button
+                          type="button"
+                          className={`p-3 rounded-lg border text-center transition-all duration-200 w-full ${
+                            category === categoryId
+                              ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
+                              : 'border-blue-200 hover:border-blue-400 hover:bg-blue-50/30'
+                          }`}
+                          onClick={() => setCategory(categoryId)}
                         >
+                        <div className="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 bg-gradient-to-br from-blue-100 to-indigo-200 shadow-sm">
                           {isApiCategory ? (
                             <span className="text-lg">{cat.icon}</span>
                           ) : Icon ? (
@@ -398,23 +390,24 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                               type === 'expense' ? 'text-red-600' : 'text-emerald-600'
                             }`} />
                           ) : null}
-                        </motion.div>
+                        </div>
                         <span className="text-xs text-slate-700">{cat.name}</span>
-                      </motion.button>
+                        </button>
+                      </LightMotion>
                     );
                   })}
                 </div>
-              </motion.div>
+              </OptimizedMotion>
 
               {/* Account Selection */}
-              <motion.div 
+              <OptimizedMotion 
                 className="space-y-2"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.5 }}
               >
                 <Label htmlFor="account" className="text-slate-700">Счёт *</Label>
-                <motion.div whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+                <OptimizedMotion whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                   <Select value={account} onValueChange={setAccount}>
                     <SelectTrigger className="border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 bg-gradient-to-br from-white to-blue-50/30">
                       <SelectValue placeholder="Выберите счёт" />
@@ -442,18 +435,18 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                       })}
                     </SelectContent>
                   </Select>
-                </motion.div>
-              </motion.div>
+                </OptimizedMotion>
+              </OptimizedMotion>
 
               {/* Description */}
-              <motion.div 
+              <OptimizedMotion 
                 className="space-y-2"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.55 }}
               >
                 <Label htmlFor="description" className="text-slate-700">Описание</Label>
-                <motion.div whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
+                <OptimizedMotion whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                   <Textarea
                     id="description"
                     placeholder="Добавьте описание..."
@@ -462,34 +455,27 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                     rows={3}
                     className="border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 bg-gradient-to-br from-white to-blue-50/30"
                   />
-                </motion.div>
-              </motion.div>
+                </OptimizedMotion>
+              </OptimizedMotion>
 
               {/* Submit Button */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.6 }}
-                whileHover={{ scale: 1.02 }}
+              <LightMotion
                 whileTap={{ scale: 0.98 }}
               >
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group"
                 >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full"
-                    transition={{ duration: 800 }}
-                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                   <span className="relative z-10 font-medium">
                     Добавить {type === 'income' ? 'доход' : 'расход'}
                   </span>
                 </Button>
-              </motion.div>
+              </LightMotion>
             </form>
           </CardContent>
         </Card>
-      </motion.div>
+      </OptimizedMotion>
     </div>
   );
 }

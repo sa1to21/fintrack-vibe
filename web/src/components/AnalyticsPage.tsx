@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { DateRangePicker } from "./DateRangePicker";
 import { TrendingUp, TrendingDown, DollarSign, Target, Filter, BarChart3, Sparkles } from "./icons";
-import { motion } from "framer-motion";
+import { OptimizedMotion } from "./ui/OptimizedMotion";
+import { LightMotion } from "./ui/LightMotion";
 import { getCurrencySymbol } from "../constants/currencies";
 
 export function AnalyticsPage() {
@@ -75,7 +76,7 @@ export function AnalyticsPage() {
       <div className="absolute top-1/3 right-0 w-16 h-16 bg-indigo-200/20 rounded-full blur-xl"></div>
       
       {/* Header */}
-      <motion.div 
+      <OptimizedMotion 
         className="bg-gradient-to-br from-blue-500 via-indigo-600 to-blue-700 px-4 py-6 relative overflow-hidden"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -87,7 +88,7 @@ export function AnalyticsPage() {
         <div className="absolute bottom-4 left-8 w-24 h-24 bg-white/5 rounded-full blur-2xl"></div>
         
         <div className="max-w-md mx-auto relative">
-          <motion.div 
+          <OptimizedMotion 
             className="flex items-center justify-center gap-2 mb-4"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -96,10 +97,10 @@ export function AnalyticsPage() {
             <BarChart3 className="w-6 h-6 text-yellow-300" />
             <h1 className="text-white font-medium">Аналитика</h1>
             <Sparkles className="w-5 h-5 text-yellow-300" />
-          </motion.div>
+          </OptimizedMotion>
           
           {/* Period Filter */}
-          <motion.div 
+          <OptimizedMotion 
             className="flex justify-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -111,37 +112,37 @@ export function AnalyticsPage() {
               customRange={customRange}
               onCustomRangeChange={setCustomRange}
             />
-          </motion.div>
+          </OptimizedMotion>
         </div>
-      </motion.div>
+      </OptimizedMotion>
 
-      <motion.div 
+      <OptimizedMotion 
         className="px-4 py-6 max-w-md mx-auto space-y-6 relative z-10"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
       >
         {/* Monthly Overview */}
-        <motion.div 
+        <OptimizedMotion 
           className="grid grid-cols-2 gap-3"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.25 }}
         >
-          <motion.div
+          <OptimizedMotion
             whileHover={{ scale: 1.02, y: -2 }}
             transition={{ duration: 0.2 }}
           >
             <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <motion.div 
+                  <OptimizedMotion 
                     className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.2 }}
                   >
                     <TrendingUp className="w-5 h-5 text-white" />
-                  </motion.div>
+                  </OptimizedMotion>
                   <div>
                     <p className="text-sm text-blue-600/70">Доходы</p>
                     <p className="font-medium text-blue-700">{formatCurrency(currentStats.income)}</p>
@@ -149,22 +150,22 @@ export function AnalyticsPage() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
+          </OptimizedMotion>
 
-          <motion.div
+          <OptimizedMotion
             whileHover={{ scale: 1.02, y: -2 }}
             transition={{ duration: 0.2 }}
           >
             <Card className="border-indigo-200 bg-gradient-to-br from-indigo-50 to-blue-50 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <motion.div 
+                  <OptimizedMotion 
                     className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center shadow-sm"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.2 }}
                   >
                     <TrendingDown className="w-5 h-5 text-white" />
-                  </motion.div>
+                  </OptimizedMotion>
                   <div>
                     <p className="text-sm text-indigo-600/70">Расходы</p>
                     <p className="font-medium text-indigo-700">{formatCurrency(currentStats.expenses)}</p>
@@ -172,22 +173,22 @@ export function AnalyticsPage() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
+          </OptimizedMotion>
 
-          <motion.div
+          <OptimizedMotion
             whileHover={{ scale: 1.02, y: -2 }}
             transition={{ duration: 0.2 }}
           >
             <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <motion.div 
+                  <OptimizedMotion 
                     className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.2 }}
                   >
                     <DollarSign className="w-5 h-5 text-white" />
-                  </motion.div>
+                  </OptimizedMotion>
                   <div>
                     <p className="text-sm text-blue-600/70">Накопления</p>
                     <p className="font-medium text-blue-700">{formatCurrency(currentStats.savings)}</p>
@@ -195,22 +196,22 @@ export function AnalyticsPage() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
+          </OptimizedMotion>
 
-          <motion.div
+          <OptimizedMotion
             whileHover={{ scale: 1.02, y: -2 }}
             transition={{ duration: 0.2 }}
           >
             <Card className="border-indigo-200 bg-gradient-to-br from-indigo-50 to-blue-50 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <motion.div 
+                  <OptimizedMotion 
                     className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center shadow-sm"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.2 }}
                   >
                     <Target className="w-5 h-5 text-white" />
-                  </motion.div>
+                  </OptimizedMotion>
                   <div>
                     <p className="text-sm text-indigo-600/70">Норма</p>
                     <p className="font-medium text-indigo-700">{currentStats.savingsRate}%</p>
@@ -218,11 +219,11 @@ export function AnalyticsPage() {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
-        </motion.div>
+          </OptimizedMotion>
+        </OptimizedMotion>
 
         {/* Spending by Category */}
-        <motion.div
+        <OptimizedMotion
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.3 }}
@@ -233,18 +234,18 @@ export function AnalyticsPage() {
                 <span className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
                   Расходы по категориям
                 </span>
-                <motion.div 
+                <OptimizedMotion 
                   className="flex items-center gap-1 text-sm text-indigo-600/70"
                   whileHover={{ scale: 1.05 }}
                 >
                   <Filter className="w-4 h-4" />
                   <span>{getPeriodLabel(selectedPeriod)}</span>
-                </motion.div>
+                </OptimizedMotion>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {categoryExpenses.map((category, index) => (
-                <motion.div 
+                <OptimizedMotion 
                   key={category.name} 
                   className="space-y-2"
                   initial={{ opacity: 0, x: -30 }}
@@ -260,22 +261,22 @@ export function AnalyticsPage() {
                     </div>
                   </div>
                   <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                    <motion.div 
+                    <OptimizedMotion 
                       className={`h-2 rounded-full ${category.color}`}
                       initial={{ width: 0 }}
                       animate={{ width: `${category.percentage}%` }}
                       transition={{ duration: 0.6, delay: 0.5 + index * 0.06, ease: "easeOut" }}
                     />
                   </div>
-                </motion.div>
+                </OptimizedMotion>
               ))}
             </CardContent>
           </Card>
-        </motion.div>
+        </OptimizedMotion>
 
         {/* Comparison with Previous Period */}
         {selectedPeriod !== 'custom' && (
-          <motion.div
+          <OptimizedMotion
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}
@@ -288,7 +289,7 @@ export function AnalyticsPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
-                  <motion.div 
+                  <OptimizedMotion 
                     className="text-center"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.2 }}
@@ -296,16 +297,16 @@ export function AnalyticsPage() {
                     <p className="text-sm text-blue-600/70 mb-1">Доходы</p>
                     <div className="flex items-center justify-center gap-1">
                       <span className="font-medium text-slate-700">{formatCurrency(currentStats.income)}</span>
-                      <motion.div 
+                      <OptimizedMotion 
                         className="flex items-center gap-1 text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full"
                         whileHover={{ scale: 1.1 }}
                       >
                         <TrendingUp className="w-3 h-3" />
                         <span>+12%</span>
-                      </motion.div>
+                      </OptimizedMotion>
                     </div>
-                  </motion.div>
-                  <motion.div 
+                  </OptimizedMotion>
+                  <OptimizedMotion 
                     className="text-center"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.2 }}
@@ -313,23 +314,23 @@ export function AnalyticsPage() {
                     <p className="text-sm text-indigo-600/70 mb-1">Расходы</p>
                     <div className="flex items-center justify-center gap-1">
                       <span className="font-medium text-slate-700">{formatCurrency(currentStats.expenses)}</span>
-                      <motion.div 
+                      <OptimizedMotion 
                         className="flex items-center gap-1 text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full"
                         whileHover={{ scale: 1.1 }}
                       >
                         <TrendingUp className="w-3 h-3" />
                         <span>+8%</span>
-                      </motion.div>
+                      </OptimizedMotion>
                     </div>
-                  </motion.div>
+                  </OptimizedMotion>
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
+          </OptimizedMotion>
         )}
 
         {/* Goals Section */}
-        <motion.div
+        <OptimizedMotion
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.55 }}
@@ -341,23 +342,23 @@ export function AnalyticsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <motion.div 
+              <OptimizedMotion 
                 className="text-center py-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.6 }}
               >
-                <motion.div 
+                <OptimizedMotion 
                   className="w-12 h-12 mx-auto bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full flex items-center justify-center mb-3 shadow-sm"
                   whileHover={{ scale: 1.1, rotate: 10 }}
                   transition={{ duration: 0.3 }}
                 >
                   <Target className="w-6 h-6 text-blue-600" />
-                </motion.div>
+                </OptimizedMotion>
                 <p className="text-blue-600/70 text-sm mb-3">
                   Установите финансовые цели
                 </p>
-                <motion.div
+                <OptimizedMotion
                   animate={{ 
                     opacity: [0.5, 1, 0.5],
                   }}
@@ -370,12 +371,12 @@ export function AnalyticsPage() {
                   <p className="text-xs text-blue-500">
                     Скоро доступно
                   </p>
-                </motion.div>
-              </motion.div>
+                </OptimizedMotion>
+              </OptimizedMotion>
             </CardContent>
           </Card>
-        </motion.div>
-      </motion.div>
+        </OptimizedMotion>
+      </OptimizedMotion>
     </div>
   );
 }
