@@ -30,7 +30,8 @@ import {
   ArrowRightLeft,
   Loader2
 } from "./icons";
-import { motion } from "motion/react";
+import { OptimizedMotion } from "./ui/OptimizedMotion";
+import { LightMotion } from "./ui/LightMotion";
 import { getCurrencySymbol } from "../constants/currencies";
 
 interface Transaction {
@@ -290,25 +291,12 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
       {/* Background decorations removed for performance */}
       
       {/* Header */}
-      <motion.div
-        className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 pb-6 relative overflow-hidden"
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
+      <OptimizedMotion className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 pb-6 relative overflow-hidden">
         {/* Background decorations - simplified for performance */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-y-12"></div>
-        
-        <motion.div 
-          className="flex items-center justify-between relative z-10 mb-4"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-        >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+
+        <div className="flex items-center justify-between relative z-10 mb-4">
+          <LightMotion whileTap={{ scale: 0.95 }}>
             <Button
               variant="ghost"
               size="sm"
@@ -317,18 +305,13 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-          </motion.div>
+          </LightMotion>
           <h1 className="font-medium text-white">Все операции</h1>
           <div className="w-8" />
-        </motion.div>
+        </div>
 
         {/* Stats */}
-        <motion.div 
-          className="grid grid-cols-2 gap-3 relative z-10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.15 }}
-        >
+        <div className="grid grid-cols-2 gap-3 relative z-10">
           <Card className="bg-white/15 border-white/30">
             <CardContent className="p-3">
               <div className="flex items-center gap-2">
@@ -351,22 +334,12 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
               </div>
             </CardContent>
           </Card>
-        </motion.div>
-      </motion.div>
+        </div>
+      </OptimizedMotion>
 
-      <motion.div 
-        className="p-4 -mt-2 space-y-4 relative z-10"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
-      >
+      <div className="p-4 -mt-2 space-y-4 relative z-10">
         {/* Search and Filters */}
-        <motion.div 
-          className="space-y-3"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, delay: 0.25 }}
-        >
+        <div className="space-y-3">
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -413,34 +386,18 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
             customRange={customRange}
             onCustomRangeChange={setCustomRange}
           />
-        </motion.div>
+        </div>
 
         {/* Results count */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.3 }}
-        >
-          <p className="text-sm text-muted-foreground">
-            Найдено операций: {filteredTransactions.length}
-          </p>
-        </motion.div>
+        <p className="text-sm text-muted-foreground">
+          Найдено операций: {filteredTransactions.length}
+        </p>
 
         {/* Transactions List */}
-        <motion.div 
-          className="space-y-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.35 }}
-        >
+        <div className="space-y-4">
           {sortedDates.length > 0 ? (
             sortedDates.map((date, dateIndex) => (
-              <motion.div 
-                key={date}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.4 + dateIndex * 0.05 }}
-              >
+              <div key={date}>
                 {/* Date Header */}
                 <div className="flex items-center gap-2 mb-2">
                   <Calendar className="w-4 h-4 text-muted-foreground" />
@@ -464,15 +421,12 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
                         : undefined;
 
                       return (
-                        <motion.div
+                        <div
                           key={transaction.id}
                           className={`p-4 hover:bg-blue-50/50 transition-colors duration-200 cursor-pointer ${
                             transactionIndex !== groupedTransactions[date].length - 1 ? 'border-b border-blue-100' : ''
                           }`}
                           onClick={() => onTransactionClick(transaction)}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.3, delay: 0.45 + dateIndex * 0.05 + transactionIndex * 0.02 }}
                         >
                           <div className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -535,42 +489,32 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
                               </Badge>
                             </div>
                           </div>
-                        </motion.div>
+                        </div>
                       );
                     })}
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             ))
           ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-            >
-              <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30">
-                <CardContent className="p-8">
-                  <div className="text-center">
-                    <motion.div 
-                      className="w-12 h-12 mx-auto bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mb-3 shadow-sm"
-                      whileHover={{ scale: 1.1, rotate: 10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <Search className="w-6 h-6 text-blue-600" />
-                    </motion.div>
-                    <p className="text-muted-foreground text-sm">
-                      Операции не найдены
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Попробуйте изменить фильтры поиска
-                    </p>
+            <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30">
+              <CardContent className="p-8">
+                <div className="text-center">
+                  <div className="w-12 h-12 mx-auto bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mb-3 shadow-sm">
+                    <Search className="w-6 h-6 text-blue-600" />
                   </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+                  <p className="text-muted-foreground text-sm">
+                    Операции не найдены
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Попробуйте изменить фильтры поиска
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           )}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   );
 }
