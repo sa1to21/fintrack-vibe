@@ -1,7 +1,8 @@
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Wallet, TrendingUp, PieChart, Sparkles, Shield, Target } from "./icons";
-import { motion } from "motion/react";
+import { OptimizedMotion } from "./ui/OptimizedMotion";
+import { LightMotion } from "./ui/LightMotion";
 
 interface WelcomePageProps {
   onGetStarted: () => void;
@@ -15,44 +16,29 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
       <div className="absolute bottom-10 right-10 w-24 h-24 bg-indigo-200/30 rounded-full blur-2xl"></div>
       <div className="absolute top-1/2 left-0 w-16 h-16 bg-purple-200/20 rounded-full blur-xl"></div>
       
-      <motion.div 
+      <LightMotion
         className="max-w-md mx-auto space-y-8 relative z-10"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
       >
         {/* Header */}
-        <motion.div 
-          className="text-center space-y-4"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-        >
-          <motion.div 
-            className="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 rounded-full flex items-center justify-center shadow-xl relative"
-            whileHover={{ scale: 1.05, rotate: 5 }}
-            transition={{ duration: 0.3 }}
-          >
+        <OptimizedMotion className="text-center space-y-4">
+          <OptimizedMotion className="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 rounded-full flex items-center justify-center shadow-xl relative">
             <Wallet className="w-12 h-12 text-white relative z-10" />
             <div className="absolute -top-1 -right-1">
               <Sparkles className="w-6 h-6 text-yellow-400" />
             </div>
-          </motion.div>
+          </OptimizedMotion>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
             FinanceTracker
           </h1>
           <p className="text-slate-600">
             Отслеживайте свои доходы и расходы легко и просто
           </p>
-        </motion.div>
+        </OptimizedMotion>
 
         {/* Features */}
-        <motion.div 
-          className="space-y-4"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-        >
+        <OptimizedMotion className="space-y-4">
           {[
             {
               icon: TrendingUp,
@@ -81,23 +67,13 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
           ].map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.3 + index * 0.08 }}
-                whileHover={{ scale: 1.02, y: -2 }}
-              >
+              <OptimizedMotion key={index}>
                 <Card className={`${feature.borderColor} bg-gradient-to-br ${feature.bgGradient} hover:shadow-lg transition-all duration-300`}>
                   <CardContent className="p-4">
                     <div className="flex items-center space-x-3">
-                      <motion.div 
-                        className={`w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-full flex items-center justify-center shadow-sm`}
-                        whileHover={{ scale: 1.1, rotate: 5 }}
-                        transition={{ duration: 0.2 }}
-                      >
+                      <div className={`w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-full flex items-center justify-center shadow-sm`}>
                         <Icon className="w-6 h-6 text-white" />
-                      </motion.div>
+                      </div>
                       <div>
                         <h3 className="font-medium text-slate-800">{feature.title}</h3>
                         <p className="text-sm text-slate-600">
@@ -107,46 +83,29 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </OptimizedMotion>
             );
           })}
-        </motion.div>
+        </OptimizedMotion>
 
         {/* CTA Button */}
-        <motion.div 
-          className="pt-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.5 }}
-        >
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Button 
+        <OptimizedMotion className="pt-4">
+          <LightMotion whileTap={{ scale: 0.98 }}>
+            <Button
               onClick={onGetStarted}
               className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group"
             >
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full"
-                transition={{ duration: 800 }}
-              />
               <span className="relative z-10 font-medium">Начать отслеживание</span>
             </Button>
-          </motion.div>
-        </motion.div>
+          </LightMotion>
+        </OptimizedMotion>
 
         {/* Footer */}
-        <motion.div 
-          className="text-center text-sm text-slate-500 flex items-center justify-center space-x-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.6 }}
-        >
+        <OptimizedMotion className="text-center text-sm text-slate-500 flex items-center justify-center space-x-2">
           <Shield className="w-4 h-4" />
           <span>Безопасно и просто в использовании</span>
-        </motion.div>
-      </motion.div>
+        </OptimizedMotion>
+      </LightMotion>
     </div>
   );
 }
