@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Textarea } from "./ui/textarea";
 import { ArrowLeft, Plus, Minus, Home, Car, ShoppingBag, Coffee, Zap, Heart, Wallet, CreditCard, PiggyBank, DollarSign, Briefcase, TrendingUp, Gift, Loader2 } from "./icons";
 import { toast } from "sonner@2.0.3";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import categoriesService, { Category } from "../services/categories.service";
 import transactionsService from "../services/transactions.service";
 import accountsService, { Account } from "../services/accounts.service";

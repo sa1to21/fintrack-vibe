@@ -1,5 +1,5 @@
 import { Home, BarChart3, BookOpen, Settings } from "./icons";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 
 interface BottomNavigationProps {
   currentPage: string;

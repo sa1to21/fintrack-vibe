@@ -3,7 +3,7 @@ import { Badge } from "./ui/badge";
 import { BookOpen, Clock, Award, TrendingUp, PiggyBank, Shield, Target, GraduationCap, Sparkles } from "./icons";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 
 export function EducationPage() {
   const courses = [

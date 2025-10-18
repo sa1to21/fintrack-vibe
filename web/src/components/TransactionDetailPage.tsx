@@ -34,7 +34,7 @@ import {
   Loader2
 } from "./icons";
 import { toast } from "sonner@2.0.3";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import categoriesService, { Category } from "../services/categories.service";
 import accountsService, { Account as APIAccount } from "../services/accounts.service";
 import transactionsService from "../services/transactions.service";

@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Textarea } from "./ui/textarea";
 import { ArrowLeft, ArrowRightLeft, Loader2 } from "./icons";
 import { toast } from "sonner";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import accountsService, { Account } from "../services/accounts.service";
 import transfersService from "../services/transfers.service";
 import { getAccountIconComponent } from "../utils/accountIcons";

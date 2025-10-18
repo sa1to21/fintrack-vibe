@@ -1,4 +1,4 @@
-import { motion, HTMLMotionProps } from 'motion/react';
+import { motion, HTMLMotionProps } from 'framer-motion';
 
 /**
  * Облегчённая версия motion.div для критичных анимаций

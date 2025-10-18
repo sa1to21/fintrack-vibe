@@ -21,7 +21,7 @@ import {
   Loader2
 } from "./icons";
 import { toast } from "sonner";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import accountsService from "../services/accounts.service";
 import transactionsService from "../services/transactions.service";
 import categoriesService from "../services/categories.service";

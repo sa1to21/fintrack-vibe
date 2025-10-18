@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { DateRangePicker } from "./DateRangePicker";
 import { TrendingUp, TrendingDown, DollarSign, Target, Filter, BarChart3, Sparkles } from "./icons";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { getCurrencySymbol } from "../constants/currencies";
 
 export function AnalyticsPage() {
