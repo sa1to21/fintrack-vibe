@@ -725,7 +725,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                 )}
 
                 {/* Date & Time */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-3">
                   <div className="space-y-2">
                     <Label htmlFor="date">Дата</Label>
                     <Input
