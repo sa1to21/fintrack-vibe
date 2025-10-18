@@ -279,7 +279,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           </div>
 
           {/* Total Balance */}
-          <motion.div
+          <OptimizedMotion
             className="text-center mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -287,7 +287,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           >
             <p className="text-white/80 text-sm mb-1">Общий баланс</p>
             {showBalance ? (
-              <motion.div
+              <OptimizedMotion
                 className="space-y-1 mb-2"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -298,19 +298,20 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     {formatCurrency(balance, currency)}
                   </p>
                 ))}
-              </motion.div>
+              </OptimizedMotion>
             ) : (
-              <motion.p
+              <OptimizedMotion
+                as="p"
                 className="text-white text-3xl font-medium mb-2"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
                 • • •
-              </motion.p>
+              </OptimizedMotion>
             )}
             <div className="flex items-center justify-center gap-2">
-              <motion.div 
+              <OptimizedMotion
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs backdrop-blur-sm ${
                   monthlyChange >= 0 
                     ? 'bg-emerald-500/30 text-emerald-100 border border-emerald-400/30' 
@@ -326,16 +327,16 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 <span>
                   {showBalance ? formatCurrency(Math.abs(monthlyChange), baseCurrency) : "• • •"}
                 </span>
-              </motion.div>
+              </OptimizedMotion>
               <span className="text-white/60 text-xs">за месяц</span>
             </div>
-          </motion.div>
+          </OptimizedMotion>
 
           {/* Accounts */}
           <div>
             {/* First 4 accounts in 2x2 grid */}
             {accounts.length > 0 && (
-              <motion.div
+              <OptimizedMotion
                 className="grid grid-cols-2 gap-3"
                 variants={{
                   hidden: { opacity: 0 },
@@ -352,7 +353,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 {accounts.slice(0, 4).map((account) => {
                   const Icon = account.icon;
                   return (
-                    <motion.div
+                    <OptimizedMotion
                       key={account.id}
                       variants={{
                         hidden: { opacity: 0, y: 20 },
@@ -375,24 +376,24 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                           </p>
                         </CardContent>
                       </Card>
-                    </motion.div>
+                    </OptimizedMotion>
                   );
                 })}
-              </motion.div>
+              </OptimizedMotion>
             )}
           </div>
         </div>
       </OptimizedMotion>
 
       {/* Content */}
-      <motion.div
+      <OptimizedMotion
         className="px-4 py-6 max-w-md mx-auto"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.35 }}
       >
         {/* Quick Actions */}
-        <motion.div
+        <OptimizedMotion
           className="mb-6"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -400,7 +401,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         >
           <h2 className="font-medium mb-3 text-foreground">Быстрые действия</h2>
           <div className="space-y-3">
-            <motion.div
+            <OptimizedMotion
               whileHover={{ scale: 1.03, y: -3 }}
               whileTap={{ scale: 0.97 }}
               transition={{ duration: 0.2 }}
@@ -413,10 +414,10 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 <Plus className="w-5 h-5 relative z-10" />
                 <span className="text-sm relative z-10">Добавить операцию</span>
               </Button>
-            </motion.div>
+            </OptimizedMotion>
             <div className="grid grid-cols-2 gap-3">
               {onTransfer && (
-                <motion.div
+                <OptimizedMotion
                   whileHover={accounts.length >= 2 ? { scale: 1.03, y: -3 } : {}}
                   whileTap={accounts.length >= 2 ? { scale: 0.97 } : {}}
                   transition={{ duration: 0.2 }}
@@ -430,9 +431,9 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     <ArrowRightLeft className="w-5 h-5" />
                     <span className="text-sm">Перевод</span>
                   </Button>
-                </motion.div>
+                </OptimizedMotion>
               )}
-              <motion.div
+              <OptimizedMotion
                 whileHover={{ scale: 1.03, y: -3 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ duration: 0.2 }}
@@ -445,13 +446,13 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   <Wallet className="w-5 h-5" />
                   <span className="text-sm">Счета</span>
                 </Button>
-              </motion.div>
+              </OptimizedMotion>
             </div>
           </div>
-        </motion.div>
+        </OptimizedMotion>
 
         {/* Quick Stats */}
-        <motion.div
+        <OptimizedMotion
           className="mb-6"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -459,15 +460,15 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         >
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-medium text-foreground">Этот месяц</h2>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <OptimizedMotion whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200">
                 <CalendarIcon className="w-4 h-4 mr-1" />
                 {currentMonthName}
               </Button>
-            </motion.div>
+            </OptimizedMotion>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <motion.div
+            <OptimizedMotion
               whileHover={{ scale: 1.02, y: -2 }}
               transition={{ duration: 0.2 }}
             >
@@ -479,7 +480,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     </div>
                     <div>
                       <p className="text-xs text-emerald-600/70">Доходы</p>
-                      <motion.p
+                      <OptimizedMotion as="p"
                         className="font-medium text-sm text-emerald-700"
                         key={showBalance ? monthlyIncome : 'hidden'}
                         initial={{ opacity: 0 }}
@@ -487,13 +488,13 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         transition={{ duration: 0.3 }}
                       >
                         {showBalance ? formatCurrency(monthlyIncome, baseCurrency) : "• • •"}
-                      </motion.p>
+                      </OptimizedMotion>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
-            <motion.div
+            </OptimizedMotion>
+            <OptimizedMotion
               whileHover={{ scale: 1.02, y: -2 }}
               transition={{ duration: 0.2 }}
             >
@@ -505,7 +506,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     </div>
                     <div>
                       <p className="text-xs text-red-600/70">Расходы</p>
-                      <motion.p
+                      <OptimizedMotion as="p"
                         className="font-medium text-sm text-red-700"
                         key={showBalance ? monthlyExpenses : 'hidden'}
                         initial={{ opacity: 0 }}
@@ -513,24 +514,24 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         transition={{ duration: 0.3 }}
                       >
                         {showBalance ? formatCurrency(monthlyExpenses, baseCurrency) : "• • •"}
-                      </motion.p>
+                      </OptimizedMotion>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </OptimizedMotion>
           </div>
-        </motion.div>
+        </OptimizedMotion>
 
         {/* Recent Transactions */}
-        <motion.div
+        <OptimizedMotion
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.5 }}
         >
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-medium text-foreground">Последние операции</h2>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <OptimizedMotion whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 onClick={onViewAllTransactions}
                 variant="ghost"
@@ -540,14 +541,14 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 <Filter className="w-4 h-4 mr-1" />
                 Все
               </Button>
-            </motion.div>
+            </OptimizedMotion>
           </div>
           
           {recentTransactions.length > 0 ? (
             <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm hover:shadow-md transition-all duration-300">
               <CardContent className="p-0">
                 {recentTransactions.map((transaction, index) => (
-                  <motion.div
+                  <OptimizedMotion
                     key={transaction.id}
                     className={`p-4 hover:bg-blue-50/50 transition-colors duration-200 cursor-pointer ${
                       index !== recentTransactions.length - 1 ? 'border-b border-blue-100' : ''
@@ -591,7 +592,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         </div>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <motion.p
+                        <OptimizedMotion as="p"
                           className={`font-medium ${
                             transaction.type === 'transfer'
                               ? 'text-purple-600'
@@ -606,7 +607,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                             ? ''
                             : transaction.type === 'income' ? '+' : '-'}
                           {showBalance ? formatCurrency(transaction.amount, transaction.accountCurrency || DEFAULT_CURRENCY) : "• • •"}
-                        </motion.p>
+                        </OptimizedMotion>
                         <Badge
                           variant="outline"
                           className="text-xs max-w-full border-blue-300 text-blue-700"
@@ -629,10 +630,10 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         </Badge>
                       </div>
                     </div>
-                  </motion.div>
+                  </OptimizedMotion>
                 ))}
                 <div className="p-4 border-t border-blue-100">
-                  <motion.div
+                  <OptimizedMotion
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -643,30 +644,30 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     >
                       Показать все операции
                     </Button>
-                  </motion.div>
+                  </OptimizedMotion>
                 </div>
               </CardContent>
             </Card>
           ) : (
             <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30">
               <CardContent className="p-4">
-                <motion.div 
+                <OptimizedMotion 
                   className="text-center py-8"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4 }}
                 >
-                  <motion.div 
+                  <OptimizedMotion 
                     className="w-12 h-12 mx-auto bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mb-3 shadow-sm"
                     whileHover={{ scale: 1.1, rotate: 10 }}
                     transition={{ duration: 0.3 }}
                   >
                     <Wallet className="w-6 h-6 text-blue-600" />
-                  </motion.div>
+                  </OptimizedMotion>
                   <p className="text-muted-foreground text-sm mb-3">
                     Операций пока нет
                   </p>
-                  <motion.div
+                  <OptimizedMotion
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -678,13 +679,13 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     >
                       Добавить первую операцию
                     </Button>
-                  </motion.div>
-                </motion.div>
+                  </OptimizedMotion>
+                </OptimizedMotion>
               </CardContent>
             </Card>
           )}
-        </motion.div>
-      </motion.div>
+        </OptimizedMotion>
+      </OptimizedMotion>
     </div>
   );
 }
