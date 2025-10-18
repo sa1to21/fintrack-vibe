@@ -34,7 +34,8 @@ import {
   Loader2
 } from "./icons";
 import { toast } from "sonner@2.0.3";
-import { motion } from "framer-motion";
+import { OptimizedMotion } from "./ui/OptimizedMotion";
+import { LightMotion } from "./ui/LightMotion";
 import categoriesService, { Category } from "../services/categories.service";
 import accountsService, { Account as APIAccount } from "../services/accounts.service";
 import transactionsService from "../services/transactions.service";
@@ -271,7 +272,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
       {/* Background decorations removed for performance */}
       
       {/* Header */}
-      <motion.div
+      <OptimizedMotion
         className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 pb-6 relative overflow-hidden"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -280,30 +281,29 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
         {/* Background decorations - simplified for performance */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-y-12"></div>
         
-        <motion.div 
+        <OptimizedMotion 
           className="flex items-center justify-between relative z-10"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
+          <LightMotion
             whileTap={{ scale: 0.95 }}
           >
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={onBack}
               className="text-white hover:bg-white/20 transition-all duration-200"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-          </motion.div>
+          </LightMotion>
           <h1 className="font-medium text-white">Детали операции</h1>
           <div className="flex items-center gap-2">
             {!isEditing && (
               <>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <LightMotion whileTap={{ scale: 0.95 }}>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -312,8 +312,8 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                   >
                     <Edit className="w-4 h-4" />
                   </Button>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                </LightMotion>
+                <LightMotion whileTap={{ scale: 0.95 }}>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -346,12 +346,12 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                </motion.div>
+                </LightMotion>
               </>
             )}
             {isEditing && (
               <>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <LightMotion whileTap={{ scale: 0.95 }}>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -360,8 +360,8 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                   >
                     <Save className="w-4 h-4" />
                   </Button>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                </LightMotion>
+                <LightMotion whileTap={{ scale: 0.95 }}>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -382,14 +382,14 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                   >
                     Отмена
                   </Button>
-                </motion.div>
+                </LightMotion>
               </>
             )}
           </div>
-        </motion.div>
-      </motion.div>
+        </OptimizedMotion>
+      </OptimizedMotion>
 
-      <motion.div 
+      <OptimizedMotion 
         className="p-4 -mt-2 space-y-4 relative z-10"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -397,7 +397,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
       >
         {!isEditing ? (
           // View Mode
-          <motion.div
+          <OptimizedMotion
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, delay: 0.2 }}
@@ -526,10 +526,10 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                 )}
               </CardContent>
             </Card>
-          </motion.div>
+          </OptimizedMotion>
         ) : (
           // Edit Mode
-          <motion.div
+          <OptimizedMotion
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, delay: 0.2 }}
@@ -544,7 +544,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                 {/* Type Selection - только для обычных операций */}
                 {transaction.type !== 'transfer' && (
                   <div className="flex gap-2">
-                    <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <LightMotion className="flex-1" whileTap={{ scale: 0.98 }}>
                       <Button
                         type="button"
                         variant={editData.type === 'expense' ? 'default' : 'outline'}
@@ -557,8 +557,8 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                         <Minus className="w-4 h-4 mr-2" />
                         Расход
                       </Button>
-                    </motion.div>
-                    <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    </LightMotion>
+                    <LightMotion className="flex-1" whileTap={{ scale: 0.98 }}>
                       <Button
                         type="button"
                         variant={editData.type === 'income' ? 'default' : 'outline'}
@@ -571,7 +571,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                         <Plus className="w-4 h-4 mr-2" />
                         Доход
                       </Button>
-                    </motion.div>
+                    </LightMotion>
                   </div>
                 )}
 
@@ -604,23 +604,25 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                     <div className="grid grid-cols-3 gap-2">
                       {currentCategories.map((cat) => {
                         return (
-                          <motion.button
+                          <LightMotion
                             key={cat.id}
-                            type="button"
-                            className={`p-3 rounded-lg border text-center transition-all duration-200 ${
-                              String(editData.category) === String(cat.id)
-                                ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
-                                : 'border-blue-200 hover:border-blue-400 hover:bg-blue-50/30'
-                            }`}
-                            onClick={() => setEditData(prev => ({ ...prev, category: String(cat.id) }))}
-                            whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.97 }}
                           >
-                            <div className="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 bg-gradient-to-br from-blue-100 to-indigo-200">
-                              <span className="text-lg">{cat.icon}</span>
-                            </div>
-                            <span className="text-xs">{cat.name}</span>
-                          </motion.button>
+                            <button
+                              type="button"
+                              className={`p-3 rounded-lg border text-center transition-all duration-200 w-full ${
+                                String(editData.category) === String(cat.id)
+                                  ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
+                                  : 'border-blue-200 hover:border-blue-400 hover:bg-blue-50/30'
+                              }`}
+                              onClick={() => setEditData(prev => ({ ...prev, category: String(cat.id) }))}
+                            >
+                              <div className="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 bg-gradient-to-br from-blue-100 to-indigo-200">
+                                <span className="text-lg">{cat.icon}</span>
+                              </div>
+                              <span className="text-xs">{cat.name}</span>
+                            </button>
+                          </LightMotion>
                         );
                       })}
                     </div>
@@ -760,9 +762,9 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
+          </OptimizedMotion>
         )}
-      </motion.div>
+      </OptimizedMotion>
     </div>
   );
 }
