@@ -366,6 +366,7 @@ export function AnalyticsPage() {
                         initial={{ width: 0 }}
                         animate={{ width: `${category.percentage}%` }}
                         transition={{ duration: 0.6, delay: 0.5 + index * 0.06, ease: "easeOut" }}
+                        style={{ width: `${category.percentage}%` }}
                       />
                     </div>
                   </OptimizedMotion>
