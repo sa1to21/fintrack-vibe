@@ -392,33 +392,33 @@ export function AnalyticsPage() {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full flex items-center justify-center shadow-sm">
-                        <TrendingUp className="w-4 h-4 text-white" />
+                      <div className="w-8 h-8 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center shadow-sm">
+                        <TrendingUp className="w-4 h-4 text-emerald-600" />
                       </div>
-                      <span className="text-sm font-medium text-emerald-700">Доходы</span>
+                      <span className="text-xs text-emerald-600/70">Доходы</span>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-emerald-700">{formatCurrency(comparison.current.income)}</p>
-                      {comparison.change.income_percent !== 0 && (
-                        <OptimizedMotion
-                          className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full mt-1 ${
-                            comparison.change.income_percent > 0
-                              ? 'text-emerald-700 bg-emerald-200/60'
-                              : 'text-red-600 bg-red-100'
-                          }`}
-                          whileHover={{ scale: 1.1 }}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: 0.2 }}
-                        >
-                          {comparison.change.income_percent > 0 ? '↗' : '↘'}
-                          <span>{comparison.change.income_percent > 0 ? '+' : ''}{comparison.change.income_percent}%</span>
-                        </OptimizedMotion>
-                      )}
-                    </div>
+                    <p className="font-medium text-sm text-emerald-700">{formatCurrency(comparison.current.income)}</p>
                   </div>
-                  <div className="text-xs text-emerald-600/70">
-                    Предыдущий период: {formatCurrency(comparison.previous.income)}
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs text-emerald-600/70">
+                      Предыдущий период: {formatCurrency(comparison.previous.income)}
+                    </div>
+                    {comparison.change.income_percent !== 0 && (
+                      <OptimizedMotion
+                        className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
+                          comparison.change.income_percent > 0
+                            ? 'text-emerald-700 bg-emerald-200/60'
+                            : 'text-red-600 bg-red-100'
+                        }`}
+                        whileHover={{ scale: 1.1 }}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: 0.2 }}
+                      >
+                        {comparison.change.income_percent > 0 ? '↗' : '↘'}
+                        <span>{comparison.change.income_percent > 0 ? '+' : ''}{comparison.change.income_percent}%</span>
+                      </OptimizedMotion>
+                    )}
                   </div>
                 </OptimizedMotion>
 
@@ -430,33 +430,33 @@ export function AnalyticsPage() {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-rose-500 rounded-full flex items-center justify-center shadow-sm">
-                        <TrendingDown className="w-4 h-4 text-white" />
+                      <div className="w-8 h-8 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center shadow-sm">
+                        <TrendingDown className="w-4 h-4 text-red-600" />
                       </div>
-                      <span className="text-sm font-medium text-red-700">Расходы</span>
+                      <span className="text-xs text-red-600/70">Расходы</span>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-red-700">{formatCurrency(comparison.current.expenses)}</p>
-                      {comparison.change.expenses_percent !== 0 && (
-                        <OptimizedMotion
-                          className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full mt-1 ${
-                            comparison.change.expenses_percent > 0
-                              ? 'text-red-700 bg-red-200/60'
-                              : 'text-emerald-600 bg-emerald-100'
-                          }`}
-                          whileHover={{ scale: 1.1 }}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: 0.3 }}
-                        >
-                          {comparison.change.expenses_percent > 0 ? '↗' : '↘'}
-                          <span>{comparison.change.expenses_percent > 0 ? '+' : ''}{comparison.change.expenses_percent}%</span>
-                        </OptimizedMotion>
-                      )}
-                    </div>
+                    <p className="font-medium text-sm text-red-700">{formatCurrency(comparison.current.expenses)}</p>
                   </div>
-                  <div className="text-xs text-red-600/70">
-                    Предыдущий период: {formatCurrency(comparison.previous.expenses)}
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs text-red-600/70">
+                      Предыдущий период: {formatCurrency(comparison.previous.expenses)}
+                    </div>
+                    {comparison.change.expenses_percent !== 0 && (
+                      <OptimizedMotion
+                        className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
+                          comparison.change.expenses_percent > 0
+                            ? 'text-red-700 bg-red-200/60'
+                            : 'text-emerald-600 bg-emerald-100'
+                        }`}
+                        whileHover={{ scale: 1.1 }}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: 0.3 }}
+                      >
+                        {comparison.change.expenses_percent > 0 ? '↗' : '↘'}
+                        <span>{comparison.change.expenses_percent > 0 ? '+' : ''}{comparison.change.expenses_percent}%</span>
+                      </OptimizedMotion>
+                    )}
                   </div>
                 </OptimizedMotion>
               </CardContent>
