@@ -206,4 +206,87 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
       }
     }
   end
+
+  def insights
+    # Get date range from params or use current month
+    date_from = params[:date_from]&.to_date || Date.current.beginning_of_month
+    date_to = params[:date_to]&.to_date || Date.current.end_of_month
+
+    # Get base currency from user settings
+    base_currency = current_user.base_currency || 'RUB'
+
+    # Get accounts with base currency
+    base_currency_accounts = current_user.accounts.where(currency: base_currency)
+
+    # Get transactions for the period from base currency accounts only
+    transactions = Transaction
+      .where(account: base_currency_accounts)
+      .where(date: date_from..date_to)
+      .includes(:category)
+
+    expense_transactions = transactions.where(transaction_type: 'expense')
+
+    # 1. Biggest expense
+    biggest_expense_transaction = expense_transactions.order(amount: :desc).first
+    biggest_expense = if biggest_expense_transaction
+      {
+        amount: biggest_expense_transaction.amount,
+        category: biggest_expense_transaction.category&.name,
+        date: biggest_expense_transaction.date.strftime('%d %b')
+      }
+    else
+      nil
+    end
+
+    # 2. Average transaction amount (expenses only)
+    total_expense_transactions = expense_transactions.count
+    avg_transaction = total_expense_transactions > 0 ?
+      (expense_transactions.sum(:amount) / total_expense_transactions).round(2) : 0
+
+    # 3. Busiest day of week (most transactions)
+    transactions_by_weekday = expense_transactions.group_by { |t| t.date.strftime('%A') }
+    busiest_day = if transactions_by_weekday.any?
+      transactions_by_weekday.max_by { |day, txns| txns.count }&.first
+    else
+      nil
+    end
+
+    # Translate day to Russian
+    day_translations = {
+      'Monday' => 'Понедельник',
+      'Tuesday' => 'Вторник',
+      'Wednesday' => 'Среда',
+      'Thursday' => 'Четверг',
+      'Friday' => 'Пятница',
+      'Saturday' => 'Суббота',
+      'Sunday' => 'Воскресенье'
+    }
+    busiest_day = day_translations[busiest_day] if busiest_day
+
+    # 4. Top category percentage
+    top_category = expense_transactions
+      .joins(:category)
+      .group('categories.name')
+      .sum(:amount)
+      .max_by { |name, amount| amount }
+
+    top_category_insight = if top_category
+      total_expenses = expense_transactions.sum(:amount)
+      percentage = total_expenses > 0 ? ((top_category[1] / total_expenses) * 100).round : 0
+      {
+        name: top_category[0],
+        percentage: percentage
+      }
+    else
+      nil
+    end
+
+    render json: {
+      biggest_expense: biggest_expense,
+      avg_transaction: avg_transaction,
+      total_transactions: total_expense_transactions,
+      busiest_day: busiest_day,
+      top_category: top_category_insight
+    }
+  end
 end

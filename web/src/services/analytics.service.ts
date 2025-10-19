@@ -56,6 +56,21 @@ export interface ComparisonResponse {
   };
 }
 
+export interface InsightsResponse {
+  biggest_expense: {
+    amount: string;
+    category: string;
+    date: string;
+  } | null;
+  avg_transaction: string;
+  total_transactions: number;
+  busiest_day: string | null;
+  top_category: {
+    name: string;
+    percentage: number;
+  } | null;
+}
+
 const analyticsService = {
   /**
    * Получить основную статистику за период
@@ -90,6 +105,14 @@ const analyticsService = {
    */
   async getComparison(params?: { date_from?: string; date_to?: string }): Promise<ComparisonResponse> {
     const response = await api.get<ComparisonResponse>('/analytics/comparison', { params });
+    return response.data;
+  },
+
+  /**
+   * Получить интересные факты и инсайты
+   */
+  async getInsights(params?: { date_from?: string; date_to?: string }): Promise<InsightsResponse> {
+    const response = await api.get<InsightsResponse>('/analytics/insights', { params });
     return response.data;
   },
 };

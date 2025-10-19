@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { DateRangePicker } from "./DateRangePicker";
-import { TrendingUp, TrendingDown, DollarSign, CalendarIcon, Filter, BarChart3, Sparkles, Target } from "./icons";
+import { TrendingUp, TrendingDown, DollarSign, CalendarIcon, Filter, BarChart3, Sparkles } from "./icons";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
 import { getCurrencySymbol } from "../constants/currencies";
 import analyticsService, {
   AnalyticsSummary,
   CategoriesResponse,
-  ComparisonResponse
+  ComparisonResponse,
+  InsightsResponse
 } from "../services/analytics.service";
 
 export function AnalyticsPage() {
@@ -22,6 +23,7 @@ export function AnalyticsPage() {
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
   const [categories, setCategories] = useState<CategoriesResponse | null>(null);
   const [comparison, setComparison] = useState<ComparisonResponse | null>(null);
+  const [insights, setInsights] = useState<InsightsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -73,15 +75,17 @@ export function AnalyticsPage() {
 
       const dateRange = getDateRange();
 
-      const [summaryData, categoriesData, comparisonData] = await Promise.all([
+      const [summaryData, categoriesData, comparisonData, insightsData] = await Promise.all([
         analyticsService.getSummary(dateRange),
         analyticsService.getCategoriesExpenses({ ...dateRange, limit: 6 }),
         selectedPeriod !== 'custom' ? analyticsService.getComparison(dateRange) : Promise.resolve(null),
+        analyticsService.getInsights(dateRange),
       ]);
 
       setSummary(summaryData);
       setCategories(categoriesData);
       setComparison(comparisonData);
+      setInsights(insightsData);
     } catch (err) {
       console.error('Failed to load analytics:', err);
       setError('Не удалось загрузить данные аналитики');
@@ -464,53 +468,91 @@ export function AnalyticsPage() {
           </OptimizedMotion>
         )}
 
-        {/* Goals Section */}
-        <OptimizedMotion
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.55 }}
-        >
-          <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-sm hover:shadow-lg transition-all duration-300">
-            <CardHeader>
-              <CardTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Финансовые цели
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <OptimizedMotion 
-                className="text-center py-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.6 }}
-              >
-                <OptimizedMotion 
-                  className="w-12 h-12 mx-auto bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full flex items-center justify-center mb-3 shadow-sm"
-                  whileHover={{ scale: 1.1, rotate: 10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Target className="w-6 h-6 text-blue-600" />
-                </OptimizedMotion>
-                <p className="text-blue-600/70 text-sm mb-3">
-                  Установите финансовые цели
-                </p>
-                <OptimizedMotion
-                  animate={{ 
-                    opacity: [0.5, 1, 0.5],
-                  }}
-                  transition={{ 
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  <p className="text-xs text-blue-500">
-                    Скоро доступно
-                  </p>
-                </OptimizedMotion>
-              </OptimizedMotion>
-            </CardContent>
-          </Card>
-        </OptimizedMotion>
+        {/* Insights Section */}
+        {insights && (
+          <OptimizedMotion
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.55 }}
+          >
+            <Card className="border-yellow-200 bg-gradient-to-br from-yellow-50 via-white to-amber-50 shadow-sm hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-yellow-100 to-amber-200 rounded-full flex items-center justify-center shadow-sm">
+                    <Sparkles className="w-4 h-4 text-yellow-600" />
+                  </div>
+                  <span className="bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent">
+                    Ваша финансовая статистика
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {insights.biggest_expense && (
+                  <OptimizedMotion
+                    className="flex items-start gap-2 text-sm"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.6 }}
+                  >
+                    <span className="text-base">🏆</span>
+                    <div>
+                      <span className="text-slate-700">Рекорд дня: </span>
+                      <span className="font-medium text-slate-800">{formatCurrency(insights.biggest_expense.amount)}</span>
+                      <span className="text-slate-500"> ({insights.biggest_expense.category}, {insights.biggest_expense.date})</span>
+                    </div>
+                  </OptimizedMotion>
+                )}
+
+                {insights.total_transactions > 0 && (
+                  <OptimizedMotion
+                    className="flex items-start gap-2 text-sm"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.65 }}
+                  >
+                    <span className="text-base">📊</span>
+                    <div>
+                      <span className="text-slate-700">Средний чек: </span>
+                      <span className="font-medium text-slate-800">{formatCurrency(insights.avg_transaction)}</span>
+                      <span className="text-slate-500"> ({insights.total_transactions} {insights.total_transactions === 1 ? 'транзакция' : insights.total_transactions < 5 ? 'транзакции' : 'транзакций'})</span>
+                    </div>
+                  </OptimizedMotion>
+                )}
+
+                {insights.busiest_day && (
+                  <OptimizedMotion
+                    className="flex items-start gap-2 text-sm"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.7 }}
+                  >
+                    <span className="text-base">🔥</span>
+                    <div>
+                      <span className="text-slate-700">Самый активный день: </span>
+                      <span className="font-medium text-slate-800">{insights.busiest_day}</span>
+                    </div>
+                  </OptimizedMotion>
+                )}
+
+                {insights.top_category && (
+                  <OptimizedMotion
+                    className="flex items-start gap-2 text-sm"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.75 }}
+                  >
+                    <span className="text-base">⚡</span>
+                    <div>
+                      <span className="text-slate-700">{insights.top_category.name} — </span>
+                      <span className="font-medium text-slate-800">{insights.top_category.percentage}%</span>
+                      <span className="text-slate-500"> от всех расходов</span>
+                    </div>
+                  </OptimizedMotion>
+                )}
+              </CardContent>
+            </Card>
+          </OptimizedMotion>
+        )}
       </OptimizedMotion>
     </div>
   );
