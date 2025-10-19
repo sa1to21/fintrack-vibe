@@ -1,33 +1,45 @@
 class Api::V1::AnalyticsController < Api::V1::BaseController
   def summary
-    # Get all user transactions
-    transactions = current_user.transactions.includes(:category)
+    # Get date range from params or use current month
+    date_from = params[:date_from]&.to_date || Date.current.beginning_of_month
+    date_to = params[:date_to]&.to_date || Date.current.end_of_month
 
-    # Calculate totals
-    total_income = transactions.income.sum(:amount)
-    total_expenses = transactions.expense.sum(:amount)
-    balance = total_income - total_expenses
+    # Get transactions for the period
+    transactions = current_user.transactions
+      .includes(:category, :account)
+      .where(date: date_from..date_to)
 
-    # Get recent transactions
-    recent_transactions = transactions.order(date: :desc, time: :desc).limit(5)
+    # Calculate totals for the period
+    income = transactions.income.sum(:amount)
+    expenses = transactions.expense.sum(:amount)
+    savings = income - expenses
 
-    # Calculate monthly data for current month
-    current_month = Date.current.beginning_of_month..Date.current.end_of_month
-    monthly_income = transactions.income.where(date: current_month).sum(:amount)
-    monthly_expenses = transactions.expense.where(date: current_month).sum(:amount)
+    # Calculate average expense per day
+    days_count = (date_to - date_from).to_i + 1
+    avg_expense_per_day = days_count > 0 ? (expenses / days_count).round(2) : 0
+
+    # Get total balance across all accounts
+    total_balance = current_user.accounts.sum(:balance)
+
+    # Find biggest expense in the period
+    biggest_expense_transaction = transactions.expense.order(amount: :desc).first
+    biggest_expense = if biggest_expense_transaction
+      {
+        amount: biggest_expense_transaction.amount,
+        category: biggest_expense_transaction.category&.name,
+        date: biggest_expense_transaction.date
+      }
+    else
+      nil
+    end
 
     render json: {
-      total_income: total_income,
-      total_expenses: total_expenses,
-      balance: balance,
-      monthly_income: monthly_income,
-      monthly_expenses: monthly_expenses,
-      accounts_count: current_user.accounts.count,
-      transactions_count: transactions.count,
-      recent_transactions: ActiveModelSerializers::SerializableResource.new(
-        recent_transactions,
-        each_serializer: TransactionSerializer
-      )
+      income: income,
+      expenses: expenses,
+      savings: savings,
+      avg_expense_per_day: avg_expense_per_day,
+      total_balance: total_balance,
+      biggest_expense: biggest_expense
     }
   end
 
@@ -53,38 +65,123 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
   end
 
   def by_category
-    # Get transactions grouped by category
-    income_by_category = current_user.transactions.income
-      .joins(:category)
-      .group('categories.name', 'categories.color', 'categories.icon')
-      .sum(:amount)
-      .map do |(name, color, icon), amount|
-        {
-          category: name,
-          amount: amount,
-          color: color,
-          icon: icon,
-          type: 'income'
-        }
-      end
+    # Get date range from params or use current month
+    date_from = params[:date_from]&.to_date || Date.current.beginning_of_month
+    date_to = params[:date_to]&.to_date || Date.current.end_of_month
+    limit = params[:limit]&.to_i || 5
 
-    expenses_by_category = current_user.transactions.expense
+    # Get expense transactions for the period
+    expense_transactions = current_user.transactions
+      .expense
+      .includes(:category)
+      .where(date: date_from..date_to)
+
+    # Calculate total expenses
+    total_expenses = expense_transactions.sum(:amount)
+
+    # Group by category and calculate percentages
+    expenses_by_category = expense_transactions
       .joins(:category)
-      .group('categories.name', 'categories.color', 'categories.icon')
+      .group('categories.id', 'categories.name', 'categories.color', 'categories.icon')
       .sum(:amount)
-      .map do |(name, color, icon), amount|
+      .map do |(id, name, color, icon), amount|
         {
-          category: name,
-          amount: amount,
-          color: color,
+          id: id,
+          name: name,
           icon: icon,
-          type: 'expense'
+          amount: amount,
+          percentage: total_expenses > 0 ? ((amount / total_expenses) * 100).round : 0,
+          color: color
         }
       end
+      .sort_by { |cat| -cat[:amount] }
+      .first(limit)
 
     render json: {
-      income_categories: income_by_category,
-      expense_categories: expenses_by_category
+      categories: expenses_by_category,
+      total_expenses: total_expenses
+    }
+  end
+
+  def accounts_balance
+    # Get all user accounts
+    accounts = current_user.accounts
+
+    # Calculate total balance
+    total_balance = accounts.sum(:balance)
+
+    # Prepare accounts data with percentages
+    accounts_data = accounts.map do |account|
+      {
+        id: account.id,
+        name: account.name,
+        balance: account.balance,
+        percentage: total_balance > 0 ? ((account.balance / total_balance) * 100).round : 0,
+        currency: account.currency,
+        account_type: account.account_type
+      }
+    end
+
+    render json: {
+      accounts: accounts_data,
+      total_balance: total_balance
+    }
+  end
+
+  def comparison
+    # Get date range from params
+    date_from = params[:date_from]&.to_date || Date.current.beginning_of_month
+    date_to = params[:date_to]&.to_date || Date.current.end_of_month
+
+    # Calculate period length
+    period_length = (date_to - date_from).to_i + 1
+
+    # Calculate previous period dates
+    prev_date_to = date_from - 1.day
+    prev_date_from = prev_date_to - period_length.days + 1.day
+
+    # Current period transactions
+    current_transactions = current_user.transactions
+      .includes(:category)
+      .where(date: date_from..date_to)
+
+    current_income = current_transactions.income.sum(:amount)
+    current_expenses = current_transactions.expense.sum(:amount)
+
+    # Previous period transactions
+    previous_transactions = current_user.transactions
+      .includes(:category)
+      .where(date: prev_date_from..prev_date_to)
+
+    previous_income = previous_transactions.income.sum(:amount)
+    previous_expenses = previous_transactions.expense.sum(:amount)
+
+    # Calculate percentage changes
+    income_change = if previous_income > 0
+      (((current_income - previous_income) / previous_income) * 100).round
+    else
+      current_income > 0 ? 100 : 0
+    end
+
+    expenses_change = if previous_expenses > 0
+      (((current_expenses - previous_expenses) / previous_expenses) * 100).round
+    else
+      current_expenses > 0 ? 100 : 0
+    end
+
+    render json: {
+      current: {
+        income: current_income,
+        expenses: current_expenses
+      },
+      previous: {
+        income: previous_income,
+        expenses: previous_expenses
+      },
+      change: {
+        income_percent: income_change,
+        expenses_percent: expenses_change
+      }
     }
   end
 end

@@ -39,6 +39,8 @@ Rails.application.routes.draw do
       get '/analytics/summary', to: 'analytics#summary'
       get '/analytics/monthly', to: 'analytics#monthly'
       get '/analytics/categories', to: 'analytics#by_category'
+      get '/analytics/accounts_balance', to: 'analytics#accounts_balance'
+      get '/analytics/comparison', to: 'analytics#comparison'
 
       # User Data Management
       delete '/user_data', to: 'user_data#destroy_all'

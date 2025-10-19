@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { DateRangePicker } from "./DateRangePicker";
 import { TrendingUp, TrendingDown, DollarSign, Target, Filter, BarChart3, Sparkles } from "./icons";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
 import { getCurrencySymbol } from "../constants/currencies";
+import analyticsService, {
+  AnalyticsSummary,
+  CategoriesResponse,
+  ComparisonResponse
+} from "../services/analytics.service";
 
 export function AnalyticsPage() {
   const [selectedPeriod, setSelectedPeriod] = useState('month');
@@ -13,45 +18,104 @@ export function AnalyticsPage() {
     to: Date | undefined;
   }>({ from: undefined, to: undefined });
 
-  // Mock data for demonstration - в реальном приложении данные будут фильтроваться по выбранному периоду
-  const getStatsForPeriod = (period: string) => {
-    const baseStats = {
-      week: { income: 18750, expenses: 13000, savings: 5750, savingsRate: 30.7 },
-      month: { income: 75000, expenses: 52000, savings: 23000, savingsRate: 30.7 },
-      '3months': { income: 225000, expenses: 156000, savings: 69000, savingsRate: 30.7 },
-      year: { income: 900000, expenses: 624000, savings: 276000, savingsRate: 30.7 },
-      custom: { income: 50000, expenses: 35000, savings: 15000, savingsRate: 30.0 },
+  // API data states
+  const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
+  const [categories, setCategories] = useState<CategoriesResponse | null>(null);
+  const [comparison, setComparison] = useState<ComparisonResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Calculate date range based on selected period
+  const getDateRange = () => {
+    const today = new Date();
+    let dateFrom: Date;
+    let dateTo = today;
+
+    switch (selectedPeriod) {
+      case 'week':
+        dateFrom = new Date(today);
+        dateFrom.setDate(today.getDate() - 7);
+        break;
+      case 'month':
+        dateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
+        break;
+      case '3months':
+        dateFrom = new Date(today);
+        dateFrom.setMonth(today.getMonth() - 3);
+        break;
+      case 'year':
+        dateFrom = new Date(today.getFullYear(), 0, 1);
+        break;
+      case 'custom':
+        if (customRange.from && customRange.to) {
+          return {
+            date_from: customRange.from.toISOString().split('T')[0],
+            date_to: customRange.to.toISOString().split('T')[0],
+          };
+        }
+        dateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
+        break;
+      default:
+        dateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
+    }
+
+    return {
+      date_from: dateFrom.toISOString().split('T')[0],
+      date_to: dateTo.toISOString().split('T')[0],
     };
-    return baseStats[period as keyof typeof baseStats] || baseStats.month;
   };
 
-  const currentStats = getStatsForPeriod(selectedPeriod);
+  // Load analytics data
+  const loadAnalyticsData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-  const getCategoryExpenses = (period: string) => {
-    const multiplier = {
-      week: 0.25,
-      month: 1,
-      '3months': 3,
-      year: 12,
-      custom: 0.67,
-    };
-    const factor = multiplier[period as keyof typeof multiplier] || 1;
+      const dateRange = getDateRange();
 
-    return [
-      { name: "Еда", amount: Math.round(18000 * factor), percentage: 35, color: "bg-blue-500" },
-      { name: "Транспорт", amount: Math.round(12000 * factor), percentage: 23, color: "bg-blue-600" },
-      { name: "Покупки", amount: Math.round(8000 * factor), percentage: 15, color: "bg-indigo-500" },
-      { name: "Дом", amount: Math.round(7000 * factor), percentage: 13, color: "bg-indigo-600" },
-      { name: "Коммуналка", amount: Math.round(4000 * factor), percentage: 8, color: "bg-blue-700" },
-      { name: "Здоровье", amount: Math.round(3000 * factor), percentage: 6, color: "bg-indigo-700" },
+      const [summaryData, categoriesData, comparisonData] = await Promise.all([
+        analyticsService.getSummary(dateRange),
+        analyticsService.getCategoriesExpenses({ ...dateRange, limit: 6 }),
+        selectedPeriod !== 'custom' ? analyticsService.getComparison(dateRange) : Promise.resolve(null),
+      ]);
+
+      setSummary(summaryData);
+      setCategories(categoriesData);
+      setComparison(comparisonData);
+    } catch (err) {
+      console.error('Failed to load analytics:', err);
+      setError('Не удалось загрузить данные аналитики');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAnalyticsData();
+  }, [selectedPeriod, customRange]);
+
+  // Calculate savings rate
+  const getSavingsRate = () => {
+    if (!summary) return 0;
+    const income = parseFloat(summary.income);
+    const savings = parseFloat(summary.savings);
+    if (income === 0) return 0;
+    return ((savings / income) * 100).toFixed(1);
+  };
+
+  // Get color classes for categories (cycle through colors)
+  const getColorClass = (index: number) => {
+    const colors = [
+      "bg-blue-500", "bg-blue-600", "bg-indigo-500",
+      "bg-indigo-600", "bg-blue-700", "bg-indigo-700"
     ];
+    return colors[index % colors.length];
   };
 
-  const categoryExpenses = getCategoryExpenses(selectedPeriod);
-
-  const formatCurrency = (amount: number, currency: string = 'RUB') => {
+  const formatCurrency = (amount: number | string, currency: string = 'RUB') => {
     const symbol = getCurrencySymbol(currency);
-    return `${amount.toLocaleString('ru-RU', {
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    return `${numAmount.toLocaleString('ru-RU', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     })} ${symbol}`;
@@ -67,6 +131,36 @@ export function AnalyticsPage() {
     };
     return labels[period as keyof typeof labels] || 'За месяц';
   };
+
+  // Show loading or error state
+  if (loading) {
+    return (
+      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-blue-600">Загрузка аналитики...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !summary || !categories) {
+    return (
+      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+        <Card className="max-w-md w-full">
+          <CardContent className="p-6 text-center">
+            <p className="text-red-600 mb-4">{error || 'Не удалось загрузить данные'}</p>
+            <button
+              onClick={loadAnalyticsData}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Попробовать снова
+            </button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
@@ -145,7 +239,7 @@ export function AnalyticsPage() {
                   </OptimizedMotion>
                   <div>
                     <p className="text-sm text-blue-600/70">Доходы</p>
-                    <p className="font-medium text-blue-700">{formatCurrency(currentStats.income)}</p>
+                    <p className="font-medium text-blue-700">{formatCurrency(summary.income)}</p>
                   </div>
                 </div>
               </CardContent>
@@ -159,7 +253,7 @@ export function AnalyticsPage() {
             <Card className="border-indigo-200 bg-gradient-to-br from-indigo-50 to-blue-50 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <OptimizedMotion 
+                  <OptimizedMotion
                     className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center shadow-sm"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.2 }}
@@ -168,7 +262,7 @@ export function AnalyticsPage() {
                   </OptimizedMotion>
                   <div>
                     <p className="text-sm text-indigo-600/70">Расходы</p>
-                    <p className="font-medium text-indigo-700">{formatCurrency(currentStats.expenses)}</p>
+                    <p className="font-medium text-indigo-700">{formatCurrency(summary.expenses)}</p>
                   </div>
                 </div>
               </CardContent>
@@ -182,7 +276,7 @@ export function AnalyticsPage() {
             <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <OptimizedMotion 
+                  <OptimizedMotion
                     className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.2 }}
@@ -191,7 +285,7 @@ export function AnalyticsPage() {
                   </OptimizedMotion>
                   <div>
                     <p className="text-sm text-blue-600/70">Накопления</p>
-                    <p className="font-medium text-blue-700">{formatCurrency(currentStats.savings)}</p>
+                    <p className="font-medium text-blue-700">{formatCurrency(summary.savings)}</p>
                   </div>
                 </div>
               </CardContent>
@@ -205,7 +299,7 @@ export function AnalyticsPage() {
             <Card className="border-indigo-200 bg-gradient-to-br from-indigo-50 to-blue-50 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <OptimizedMotion 
+                  <OptimizedMotion
                     className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center shadow-sm"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.2 }}
@@ -214,7 +308,7 @@ export function AnalyticsPage() {
                   </OptimizedMotion>
                   <div>
                     <p className="text-sm text-indigo-600/70">Норма</p>
-                    <p className="font-medium text-indigo-700">{currentStats.savingsRate}%</p>
+                    <p className="font-medium text-indigo-700">{getSavingsRate()}%</p>
                   </div>
                 </div>
               </CardContent>
@@ -244,38 +338,45 @@ export function AnalyticsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {categoryExpenses.map((category, index) => (
-                <OptimizedMotion 
-                  key={category.name} 
-                  className="space-y-2"
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.4 + index * 0.04 }}
-                  whileHover={{ x: 4 }}
-                >
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-slate-800">{category.name}</span>
-                    <div className="text-right">
-                      <div className="text-sm font-medium text-slate-700">{formatCurrency(category.amount)}</div>
-                      <div className="text-xs text-slate-500">{category.percentage}%</div>
+              {categories.categories.length === 0 ? (
+                <p className="text-center text-slate-500 py-4">Нет расходов за выбранный период</p>
+              ) : (
+                categories.categories.map((category, index) => (
+                  <OptimizedMotion
+                    key={category.id}
+                    className="space-y-2"
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.4 + index * 0.04 }}
+                    whileHover={{ x: 4 }}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">{category.icon}</span>
+                        <span className="text-sm font-medium text-slate-800">{category.name}</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-slate-700">{formatCurrency(category.amount)}</div>
+                        <div className="text-xs text-slate-500">{category.percentage}%</div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                    <OptimizedMotion 
-                      className={`h-2 rounded-full ${category.color}`}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${category.percentage}%` }}
-                      transition={{ duration: 0.6, delay: 0.5 + index * 0.06, ease: "easeOut" }}
-                    />
-                  </div>
-                </OptimizedMotion>
-              ))}
+                    <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                      <OptimizedMotion
+                        className={`h-2 rounded-full ${getColorClass(index)}`}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${category.percentage}%` }}
+                        transition={{ duration: 0.6, delay: 0.5 + index * 0.06, ease: "easeOut" }}
+                      />
+                    </div>
+                  </OptimizedMotion>
+                ))
+              )}
             </CardContent>
           </Card>
         </OptimizedMotion>
 
         {/* Comparison with Previous Period */}
-        {selectedPeriod !== 'custom' && (
+        {selectedPeriod !== 'custom' && comparison && (
           <OptimizedMotion
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -289,38 +390,58 @@ export function AnalyticsPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
-                  <OptimizedMotion 
+                  <OptimizedMotion
                     className="text-center"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.2 }}
                   >
                     <p className="text-sm text-blue-600/70 mb-1">Доходы</p>
                     <div className="flex items-center justify-center gap-1">
-                      <span className="font-medium text-slate-700">{formatCurrency(currentStats.income)}</span>
-                      <OptimizedMotion 
-                        className="flex items-center gap-1 text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full"
-                        whileHover={{ scale: 1.1 }}
-                      >
-                        <TrendingUp className="w-3 h-3" />
-                        <span>+12%</span>
-                      </OptimizedMotion>
+                      <span className="font-medium text-slate-700">{formatCurrency(comparison.current.income)}</span>
+                      {comparison.change.income_percent !== 0 && (
+                        <OptimizedMotion
+                          className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+                            comparison.change.income_percent > 0
+                              ? 'text-blue-600 bg-blue-100'
+                              : 'text-red-600 bg-red-100'
+                          }`}
+                          whileHover={{ scale: 1.1 }}
+                        >
+                          {comparison.change.income_percent > 0 ? (
+                            <TrendingUp className="w-3 h-3" />
+                          ) : (
+                            <TrendingDown className="w-3 h-3" />
+                          )}
+                          <span>{comparison.change.income_percent > 0 ? '+' : ''}{comparison.change.income_percent}%</span>
+                        </OptimizedMotion>
+                      )}
                     </div>
                   </OptimizedMotion>
-                  <OptimizedMotion 
+                  <OptimizedMotion
                     className="text-center"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.2 }}
                   >
                     <p className="text-sm text-indigo-600/70 mb-1">Расходы</p>
                     <div className="flex items-center justify-center gap-1">
-                      <span className="font-medium text-slate-700">{formatCurrency(currentStats.expenses)}</span>
-                      <OptimizedMotion 
-                        className="flex items-center gap-1 text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full"
-                        whileHover={{ scale: 1.1 }}
-                      >
-                        <TrendingUp className="w-3 h-3" />
-                        <span>+8%</span>
-                      </OptimizedMotion>
+                      <span className="font-medium text-slate-700">{formatCurrency(comparison.current.expenses)}</span>
+                      {comparison.change.expenses_percent !== 0 && (
+                        <OptimizedMotion
+                          className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+                            comparison.change.expenses_percent > 0
+                              ? 'text-red-600 bg-red-100'
+                              : 'text-blue-600 bg-blue-100'
+                          }`}
+                          whileHover={{ scale: 1.1 }}
+                        >
+                          {comparison.change.expenses_percent > 0 ? (
+                            <TrendingUp className="w-3 h-3" />
+                          ) : (
+                            <TrendingDown className="w-3 h-3" />
+                          )}
+                          <span>{comparison.change.expenses_percent > 0 ? '+' : ''}{comparison.change.expenses_percent}%</span>
+                        </OptimizedMotion>
+                      )}
                     </div>
                   </OptimizedMotion>
                 </div>
