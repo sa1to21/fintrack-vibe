@@ -227,19 +227,15 @@ export function AnalyticsPage() {
             whileHover={{ scale: 1.02, y: -2 }}
             transition={{ duration: 0.2 }}
           >
-            <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-lg transition-all duration-300">
+            <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <OptimizedMotion 
-                    className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <TrendingUp className="w-5 h-5 text-white" />
-                  </OptimizedMotion>
+                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center shadow-sm">
+                    <TrendingUp className="w-4 h-4 text-emerald-600" />
+                  </div>
                   <div>
-                    <p className="text-sm text-blue-600/70">Доходы</p>
-                    <p className="font-medium text-blue-700">{formatCurrency(summary.income)}</p>
+                    <p className="text-xs text-emerald-600/70">Доходы</p>
+                    <p className="font-medium text-sm text-emerald-700">{formatCurrency(summary.income)}</p>
                   </div>
                 </div>
               </CardContent>
@@ -250,19 +246,15 @@ export function AnalyticsPage() {
             whileHover={{ scale: 1.02, y: -2 }}
             transition={{ duration: 0.2 }}
           >
-            <Card className="border-indigo-200 bg-gradient-to-br from-indigo-50 to-blue-50 hover:shadow-lg transition-all duration-300">
+            <Card className="border-red-200 bg-gradient-to-br from-red-50 to-rose-50 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <OptimizedMotion
-                    className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center shadow-sm"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <TrendingDown className="w-5 h-5 text-white" />
-                  </OptimizedMotion>
+                  <div className="w-8 h-8 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center shadow-sm">
+                    <TrendingDown className="w-4 h-4 text-red-600" />
+                  </div>
                   <div>
-                    <p className="text-sm text-indigo-600/70">Расходы</p>
-                    <p className="font-medium text-indigo-700">{formatCurrency(summary.expenses)}</p>
+                    <p className="text-xs text-red-600/70">Расходы</p>
+                    <p className="font-medium text-sm text-red-700">{formatCurrency(summary.expenses)}</p>
                   </div>
                 </div>
               </CardContent>
@@ -284,7 +276,7 @@ export function AnalyticsPage() {
                     <DollarSign className="w-5 h-5 text-white" />
                   </OptimizedMotion>
                   <div>
-                    <p className="text-sm text-blue-600/70">Накопления</p>
+                    <p className="text-sm text-blue-600/70">Баланс</p>
                     <p className="font-medium text-blue-700">{formatCurrency(summary.savings)}</p>
                   </div>
                 </div>
