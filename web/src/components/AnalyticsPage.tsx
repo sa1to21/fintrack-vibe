@@ -285,19 +285,19 @@ export function AnalyticsPage() {
             whileHover={{ scale: 1.02, y: -2 }}
             transition={{ duration: 0.2 }}
           >
-            <Card className="border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 hover:shadow-lg transition-all duration-300">
+            <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <OptimizedMotion
-                    className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center shadow-sm"
+                    className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.2 }}
                   >
                     <CalendarIcon className="w-4 h-4 text-white" />
                   </OptimizedMotion>
                   <div>
-                    <p className="text-xs text-amber-600/70">В день</p>
-                    <p className="font-medium text-sm text-amber-700">{formatCurrency(getAvgExpensePerDay())}</p>
+                    <p className="text-xs text-blue-600/70">В день</p>
+                    <p className="font-medium text-sm text-blue-700">{formatCurrency(getAvgExpensePerDay())}</p>
                   </div>
                 </div>
               </CardContent>
