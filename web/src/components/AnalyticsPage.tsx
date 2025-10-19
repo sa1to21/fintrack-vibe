@@ -372,69 +372,93 @@ export function AnalyticsPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}
           >
-            <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-sm hover:shadow-lg transition-all duration-300">
+            <Card className="border-purple-200 bg-gradient-to-br from-purple-50 via-white to-indigo-50 shadow-sm hover:shadow-lg transition-all duration-300">
               <CardHeader>
-                <CardTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Сравнение с предыдущим периодом
+                <CardTitle className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-indigo-200 rounded-full flex items-center justify-center shadow-sm">
+                    <BarChart3 className="w-4 h-4 text-purple-600" />
+                  </div>
+                  <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                    Сравнение с предыдущим периодом
+                  </span>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4">
-                  <OptimizedMotion
-                    className="text-center"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <p className="text-sm text-blue-600/70 mb-1">Доходы</p>
-                    <div className="flex items-center justify-center gap-1">
-                      <span className="font-medium text-slate-700">{formatCurrency(comparison.current.income)}</span>
+              <CardContent className="space-y-4">
+                {/* Income Comparison */}
+                <OptimizedMotion
+                  className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-100"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full flex items-center justify-center shadow-sm">
+                        <TrendingUp className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium text-emerald-700">Доходы</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-emerald-700">{formatCurrency(comparison.current.income)}</p>
                       {comparison.change.income_percent !== 0 && (
                         <OptimizedMotion
-                          className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+                          className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full mt-1 ${
                             comparison.change.income_percent > 0
-                              ? 'text-blue-600 bg-blue-100'
+                              ? 'text-emerald-700 bg-emerald-200/60'
                               : 'text-red-600 bg-red-100'
                           }`}
                           whileHover={{ scale: 1.1 }}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3, delay: 0.2 }}
                         >
-                          {comparison.change.income_percent > 0 ? (
-                            <TrendingUp className="w-3 h-3" />
-                          ) : (
-                            <TrendingDown className="w-3 h-3" />
-                          )}
+                          {comparison.change.income_percent > 0 ? '↗' : '↘'}
                           <span>{comparison.change.income_percent > 0 ? '+' : ''}{comparison.change.income_percent}%</span>
                         </OptimizedMotion>
                       )}
                     </div>
-                  </OptimizedMotion>
-                  <OptimizedMotion
-                    className="text-center"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <p className="text-sm text-indigo-600/70 mb-1">Расходы</p>
-                    <div className="flex items-center justify-center gap-1">
-                      <span className="font-medium text-slate-700">{formatCurrency(comparison.current.expenses)}</span>
+                  </div>
+                  <div className="text-xs text-emerald-600/70">
+                    Предыдущий период: {formatCurrency(comparison.previous.income)}
+                  </div>
+                </OptimizedMotion>
+
+                {/* Expenses Comparison */}
+                <OptimizedMotion
+                  className="bg-gradient-to-br from-red-50 to-rose-50 rounded-xl p-4 border border-red-100"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-rose-500 rounded-full flex items-center justify-center shadow-sm">
+                        <TrendingDown className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium text-red-700">Расходы</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-red-700">{formatCurrency(comparison.current.expenses)}</p>
                       {comparison.change.expenses_percent !== 0 && (
                         <OptimizedMotion
-                          className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+                          className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full mt-1 ${
                             comparison.change.expenses_percent > 0
-                              ? 'text-red-600 bg-red-100'
-                              : 'text-blue-600 bg-blue-100'
+                              ? 'text-red-700 bg-red-200/60'
+                              : 'text-emerald-600 bg-emerald-100'
                           }`}
                           whileHover={{ scale: 1.1 }}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3, delay: 0.3 }}
                         >
-                          {comparison.change.expenses_percent > 0 ? (
-                            <TrendingUp className="w-3 h-3" />
-                          ) : (
-                            <TrendingDown className="w-3 h-3" />
-                          )}
+                          {comparison.change.expenses_percent > 0 ? '↗' : '↘'}
                           <span>{comparison.change.expenses_percent > 0 ? '+' : ''}{comparison.change.expenses_percent}%</span>
                         </OptimizedMotion>
                       )}
                     </div>
-                  </OptimizedMotion>
-                </div>
+                  </div>
+                  <div className="text-xs text-red-600/70">
+                    Предыдущий период: {formatCurrency(comparison.previous.expenses)}
+                  </div>
+                </OptimizedMotion>
               </CardContent>
             </Card>
           </OptimizedMotion>
