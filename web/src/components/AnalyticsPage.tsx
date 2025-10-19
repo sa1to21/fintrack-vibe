@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { DateRangePicker } from "./DateRangePicker";
-import { TrendingUp, TrendingDown, DollarSign, Target, Filter, BarChart3, Sparkles } from "./icons";
+import { TrendingUp, TrendingDown, DollarSign, CalendarIcon, Filter, BarChart3, Sparkles } from "./icons";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
 import { getCurrencySymbol } from "../constants/currencies";
@@ -94,13 +94,10 @@ export function AnalyticsPage() {
     loadAnalyticsData();
   }, [selectedPeriod, customRange]);
 
-  // Calculate savings rate
-  const getSavingsRate = () => {
+  // Get average expense per day
+  const getAvgExpensePerDay = () => {
     if (!summary) return 0;
-    const income = parseFloat(summary.income);
-    const savings = parseFloat(summary.savings);
-    if (income === 0) return 0;
-    return ((savings / income) * 100).toFixed(1);
+    return parseFloat(summary.avg_expense_per_day);
   };
 
   // Get color classes for categories (cycle through colors)
@@ -288,19 +285,15 @@ export function AnalyticsPage() {
             whileHover={{ scale: 1.02, y: -2 }}
             transition={{ duration: 0.2 }}
           >
-            <Card className="border-indigo-200 bg-gradient-to-br from-indigo-50 to-blue-50 hover:shadow-lg transition-all duration-300">
+            <Card className="border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <OptimizedMotion
-                    className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center shadow-sm"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Target className="w-5 h-5 text-white" />
-                  </OptimizedMotion>
+                  <div className="w-8 h-8 bg-gradient-to-br from-amber-100 to-amber-200 rounded-full flex items-center justify-center shadow-sm">
+                    <CalendarIcon className="w-4 h-4 text-amber-600" />
+                  </div>
                   <div>
-                    <p className="text-sm text-indigo-600/70">Норма</p>
-                    <p className="font-medium text-indigo-700">{getSavingsRate()}%</p>
+                    <p className="text-xs text-amber-600/70">В день</p>
+                    <p className="font-medium text-sm text-amber-700">{formatCurrency(getAvgExpensePerDay())}</p>
                   </div>
                 </div>
               </CardContent>
