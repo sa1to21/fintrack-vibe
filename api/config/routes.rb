@@ -34,6 +34,7 @@ Rails.application.routes.draw do
 
       # Dashboard - unified endpoint for accounts + recent transactions
       get '/dashboard', to: 'dashboard#index'
+      get '/dashboard/monthly_stats', to: 'dashboard#monthly_stats'
 
       # Analytics
       get '/analytics/summary', to: 'analytics#summary'

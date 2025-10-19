@@ -34,6 +34,13 @@ export interface DashboardData {
   }>;
 }
 
+export interface MonthlyStats {
+  monthly_income: string;
+  monthly_expenses: string;
+  monthly_change: string;
+  base_currency: string;
+}
+
 const dashboardService = {
   /**
    * Получить данные для дашборда (счета + последние транзакции)
@@ -41,6 +48,15 @@ const dashboardService = {
    */
   async getData(): Promise<DashboardData> {
     const response = await api.get<DashboardData>('/dashboard');
+    return response.data;
+  },
+
+  /**
+   * Получить месячную статистику (доходы/расходы за текущий месяц)
+   * Учитывает только счета с базовой валютой пользователя
+   */
+  async getMonthlyStats(): Promise<MonthlyStats> {
+    const response = await api.get<MonthlyStats>('/dashboard/monthly_stats');
     return response.data;
   }
 };

@@ -4,10 +4,17 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
     date_from = params[:date_from]&.to_date || Date.current.beginning_of_month
     date_to = params[:date_to]&.to_date || Date.current.end_of_month
 
-    # Get transactions for the period
-    transactions = current_user.transactions
-      .includes(:category, :account)
+    # Get base currency from user settings
+    base_currency = current_user.base_currency || 'RUB'
+
+    # Get accounts with base currency
+    base_currency_accounts = current_user.accounts.where(currency: base_currency)
+
+    # Get transactions for the period from base currency accounts only
+    transactions = Transaction
+      .where(account: base_currency_accounts)
       .where(date: date_from..date_to)
+      .includes(:category, :account)
 
     # Calculate totals for the period
     income = transactions.income.sum(:amount)
@@ -18,8 +25,8 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
     days_count = (date_to - date_from).to_i + 1
     avg_expense_per_day = days_count > 0 ? (expenses / days_count).round(2) : 0
 
-    # Get total balance across all accounts
-    total_balance = current_user.accounts.sum(:balance)
+    # Get total balance for base currency accounts only
+    total_balance = base_currency_accounts.sum(:balance)
 
     # Find biggest expense in the period
     biggest_expense_transaction = transactions.expense.order(amount: :desc).first
@@ -70,11 +77,18 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
     date_to = params[:date_to]&.to_date || Date.current.end_of_month
     limit = params[:limit]&.to_i || 5
 
-    # Get expense transactions for the period
-    expense_transactions = current_user.transactions
-      .expense
-      .includes(:category)
+    # Get base currency from user settings
+    base_currency = current_user.base_currency || 'RUB'
+
+    # Get accounts with base currency
+    base_currency_accounts = current_user.accounts.where(currency: base_currency)
+
+    # Get expense transactions for the period from base currency accounts only
+    expense_transactions = Transaction
+      .where(account: base_currency_accounts)
+      .where(transaction_type: 'expense')
       .where(date: date_from..date_to)
+      .includes(:category)
 
     # Calculate total expenses
     total_expenses = expense_transactions.sum(:amount)
@@ -133,6 +147,12 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
     date_from = params[:date_from]&.to_date || Date.current.beginning_of_month
     date_to = params[:date_to]&.to_date || Date.current.end_of_month
 
+    # Get base currency from user settings
+    base_currency = current_user.base_currency || 'RUB'
+
+    # Get accounts with base currency
+    base_currency_accounts = current_user.accounts.where(currency: base_currency)
+
     # Calculate period length
     period_length = (date_to - date_from).to_i + 1
 
@@ -140,21 +160,23 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
     prev_date_to = date_from - 1.day
     prev_date_from = prev_date_to - period_length.days + 1.day
 
-    # Current period transactions
-    current_transactions = current_user.transactions
-      .includes(:category)
+    # Current period transactions from base currency accounts
+    current_transactions = Transaction
+      .where(account: base_currency_accounts)
       .where(date: date_from..date_to)
-
-    current_income = current_transactions.income.sum(:amount)
-    current_expenses = current_transactions.expense.sum(:amount)
-
-    # Previous period transactions
-    previous_transactions = current_user.transactions
       .includes(:category)
-      .where(date: prev_date_from..prev_date_to)
 
-    previous_income = previous_transactions.income.sum(:amount)
-    previous_expenses = previous_transactions.expense.sum(:amount)
+    current_income = current_transactions.where(transaction_type: 'income').sum(:amount)
+    current_expenses = current_transactions.where(transaction_type: 'expense').sum(:amount)
+
+    # Previous period transactions from base currency accounts
+    previous_transactions = Transaction
+      .where(account: base_currency_accounts)
+      .where(date: prev_date_from..prev_date_to)
+      .includes(:category)
+
+    previous_income = previous_transactions.where(transaction_type: 'income').sum(:amount)
+    previous_expenses = previous_transactions.where(transaction_type: 'expense').sum(:amount)
 
     # Calculate percentage changes
     income_change = if previous_income > 0

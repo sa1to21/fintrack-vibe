@@ -5,7 +5,7 @@ import { Badge } from "./ui/badge";
 import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingDown, CalendarIcon, Filter, Sparkles, ArrowRightLeft } from "./icons";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
-import dashboardService from "../services/dashboard.service";
+import dashboardService, { MonthlyStats } from "../services/dashboard.service";
 import { cache } from "../utils/cache";
 import { getCurrencySymbol, DEFAULT_CURRENCY } from "../constants/currencies";
 import usersService from "../services/users.service";
@@ -49,6 +49,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [baseCurrency, setBaseCurrency] = useState<string>(DEFAULT_CURRENCY);
+  const [monthlyStats, setMonthlyStats] = useState<MonthlyStats | null>(null);
 
   // Загрузить данные дашборда одним запросом (счета + транзакции)
   useEffect(() => {
@@ -151,6 +152,10 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         setAccounts(accountsWithIcons);
         setTransactions(formattedTransactions);
 
+        // Загружаем месячную статистику
+        const stats = await dashboardService.getMonthlyStats();
+        setMonthlyStats(stats);
+
         // Сохраняем RAW данные в кеш (без иконок, только сериализуемые данные)
         cache.set('dashboard-raw', data);
       } catch (error) {
@@ -195,7 +200,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   }, [transactions]);
 
   // Memoize calculations for performance
-  const { balancesByCurrency, monthlyIncome, monthlyExpenses, monthlyChange, currentMonthName } = useMemo(() => {
+  const { balancesByCurrency, currentMonthName } = useMemo(() => {
     // Level 2: Group balances by currency (no conversion)
     const balances: Record<string, number> = {};
     accounts.forEach(account => {
@@ -205,45 +210,21 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
       balances[account.currency] += account.balance;
     });
 
-    // Calculate actual monthly stats from transactions ONLY in base currency
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth() + 1;
-    const currentYear = currentDate.getFullYear();
-
     // Получаем название текущего месяца
+    const currentDate = new Date();
     const monthName = currentDate.toLocaleDateString('ru-RU', { month: 'long' });
     const capitalizedMonthName = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
-    // Filter by base currency accounts only
-    const baseCurrencyAccountIds = accounts
-      .filter(acc => acc.currency === baseCurrency)
-      .map(acc => acc.id);
-
-    const monthlyTransactions = transactions.filter(t => {
-      const transactionDate = new Date(t.date);
-      const isCurrentMonth = transactionDate.getMonth() + 1 === currentMonth &&
-                             transactionDate.getFullYear() === currentYear;
-      const isBaseCurrencyAccount = baseCurrencyAccountIds.includes(t.accountId);
-
-      return isCurrentMonth && isBaseCurrencyAccount;
-    });
-
-    const income = monthlyTransactions
-      .filter(t => t.type === 'income')
-      .reduce((sum, t) => sum + t.amount, 0);
-
-    const expenses = monthlyTransactions
-      .filter(t => t.type === 'expense')
-      .reduce((sum, t) => sum + t.amount, 0);
-
     return {
       balancesByCurrency: balances,
-      monthlyIncome: income,
-      monthlyExpenses: expenses,
-      monthlyChange: income - expenses,
       currentMonthName: capitalizedMonthName
     };
-  }, [accounts, transactions, baseCurrency]);
+  }, [accounts]);
+
+  // Get monthly stats from API or use defaults
+  const monthlyIncome = monthlyStats ? parseFloat(monthlyStats.monthly_income) : 0;
+  const monthlyExpenses = monthlyStats ? parseFloat(monthlyStats.monthly_expenses) : 0;
+  const monthlyChange = monthlyStats ? parseFloat(monthlyStats.monthly_change) : 0;
 
   const formatCurrency = (amount: number, currency: string = 'RUB') => {
     const symbol = getCurrencySymbol(currency);
