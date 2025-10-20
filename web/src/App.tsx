@@ -7,6 +7,7 @@ const WelcomePage = lazy(() => import("./components/WelcomePage").then(m => ({ d
 const DashboardPage = lazy(() => import("./components/DashboardPage").then(m => ({ default: m.DashboardPage })));
 const AddTransactionPage = lazy(() => import("./components/AddTransactionPage").then(m => ({ default: m.AddTransactionPage })));
 const ManageAccountsPage = lazy(() => import("./components/ManageAccountsPage").then(m => ({ default: m.ManageAccountsPage })));
+const ManageCategoriesPage = lazy(() => import("./components/ManageCategoriesPage").then(m => ({ default: m.ManageCategoriesPage })));
 const AllTransactionsPage = lazy(() => import("./components/AllTransactionsPage").then(m => ({ default: m.AllTransactionsPage })));
 const TransactionDetailPage = lazy(() => import("./components/TransactionDetailPage").then(m => ({ default: m.TransactionDetailPage })));
 const TransferPage = lazy(() => import("./components/TransferPage").then(m => ({ default: m.TransferPage })));
@@ -27,7 +28,7 @@ interface Transaction {
   time: string;
 }
 
-type AppScreen = 'welcome' | 'dashboard' | 'analytics' | 'education' | 'settings' | 'add-transaction' | 'manage-accounts' | 'all-transactions' | 'transaction-detail' | 'transfer';
+type AppScreen = 'welcome' | 'dashboard' | 'analytics' | 'education' | 'settings' | 'add-transaction' | 'manage-accounts' | 'manage-categories' | 'all-transactions' | 'transaction-detail' | 'transfer';
 
 function AppContent() {
   const { isAuthenticated, loading, error, isNewUser } = useTelegramAuth();
@@ -101,6 +102,7 @@ function AppContent() {
   const showBottomNav = hasSeenWelcome &&
     currentScreen !== 'add-transaction' &&
     currentScreen !== 'manage-accounts' &&
+    currentScreen !== 'manage-categories' &&
     currentScreen !== 'all-transactions' &&
     currentScreen !== 'transaction-detail' &&
     currentScreen !== 'welcome';
@@ -173,6 +175,9 @@ function AppContent() {
             )}
             {currentScreen === 'manage-accounts' && (
               <ManageAccountsPage onBack={handleBack} />
+            )}
+            {currentScreen === 'manage-categories' && (
+              <ManageCategoriesPage onBack={handleBack} />
             )}
             {currentScreen === 'all-transactions' && (
               <AllTransactionsPage

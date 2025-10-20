@@ -221,6 +221,9 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                     if (item.label === "Счета и карты" && onNavigate) {
                       onNavigate('manage-accounts');
                     }
+                    if (item.label === "Управление категориями" && onNavigate) {
+                      onNavigate('manage-categories');
+                    }
                   };
 
                   return (

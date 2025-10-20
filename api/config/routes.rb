@@ -30,7 +30,7 @@ Rails.application.routes.draw do
       resources :transactions, only: [:show, :update, :destroy]
 
       # Categories
-      resources :categories, only: [:index, :show]
+      resources :categories, only: [:index, :show, :create, :update, :destroy]
 
       # Dashboard - unified endpoint for accounts + recent transactions
       get '/dashboard', to: 'dashboard#index'
