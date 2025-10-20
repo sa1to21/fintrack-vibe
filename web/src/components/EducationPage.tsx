@@ -49,10 +49,16 @@ export function EducationPage() {
     }
   ];
 
-  const tips = [
+  // All 7 tips that rotate daily
+  const allTips = [
     {
-      title: "Правило 50/30/20",
-      description: "50% на необходимое, 30% на желания, 20% на сбережения",
+      title: "Отслеживайте все расходы",
+      description: "Записывайте каждую трату в течение месяца — это поможет найти «утечки» денег",
+      category: "Бюджетирование"
+    },
+    {
+      title: "Правило одной категории",
+      description: "Определите одну категорию расходов для сокращения каждый месяц",
       category: "Бюджетирование"
     },
     {
@@ -64,8 +70,45 @@ export function EducationPage() {
       title: "Сложный процент",
       description: "Начинайте инвестировать как можно раньше, время — ваш лучший союзник",
       category: "Инвестиции"
+    },
+    {
+      title: "Правило 24 часов",
+      description: "Перед крупной покупкой подождите сутки — это поможет избежать импульсивных трат",
+      category: "Расходы"
+    },
+    {
+      title: "Автоматизация сбережений",
+      description: "Настройте автоматический перевод части дохода на накопительный счёт сразу после зарплаты",
+      category: "Накопления"
+    },
+    {
+      title: "Диверсификация",
+      description: "Не держите все яйца в одной корзине — распределяйте активы между разными инструментами",
+      category: "Инвестиции"
     }
   ];
+
+  // Calculate day offset (0-6) based on current date
+  const getDayOffset = () => {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const diff = now.getTime() - start.getTime();
+    const oneDay = 1000 * 60 * 60 * 24;
+    const dayOfYear = Math.floor(diff / oneDay);
+    return dayOfYear % 7;
+  };
+
+  // Get 3 tips for today (sliding window)
+  const getTodaysTips = () => {
+    const offset = getDayOffset();
+    const tips = [];
+    for (let i = 0; i < 3; i++) {
+      tips.push(allTips[(offset + i) % 7]);
+    }
+    return tips;
+  };
+
+  const tips = getTodaysTips();
 
   const getLevelColor = (level: string) => {
     switch (level) {
