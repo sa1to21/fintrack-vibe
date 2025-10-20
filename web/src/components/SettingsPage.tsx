@@ -14,7 +14,11 @@ import { CURRENCIES, getCurrency } from "../constants/currencies";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useEffect } from "react";
 
-export function SettingsPage() {
+interface SettingsPageProps {
+  onNavigate?: (screen: string) => void;
+}
+
+export function SettingsPage({ onNavigate }: SettingsPageProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [baseCurrency, setBaseCurrency] = useState<string>('RUB');
@@ -213,9 +217,16 @@ export function SettingsPage() {
               <CardContent className="p-0">
                 {group.items.map((item, index) => {
                   const Icon = item.icon;
+                  const handleClick = () => {
+                    if (item.label === "Счета и карты" && onNavigate) {
+                      onNavigate('manage-accounts');
+                    }
+                  };
+
                   return (
                     <div
                       key={item.label}
+                      onClick={handleClick}
                       className="flex items-center justify-between p-4 hover:bg-blue-50/50 transition-colors duration-200 cursor-pointer"
                     >
                       <div className="flex items-center gap-3">
@@ -271,18 +282,18 @@ export function SettingsPage() {
                     key={item.label}
                     className="flex items-center justify-between p-4 hover:bg-red-50/70 transition-colors duration-200"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-red-500 to-pink-600 shadow-sm">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-red-500 to-pink-600 shadow-sm flex-shrink-0">
                         <Icon className="w-5 h-5 text-white" />
                       </div>
-                      <div>
+                      <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-red-700">{item.label}</h3>
                         <p className="text-sm text-red-600">
                           {item.description}
                         </p>
                       </div>
                     </div>
-                    <LightMotion whileTap={{ scale: 0.95 }}>
+                    <LightMotion whileTap={{ scale: 0.95 }} className="flex-shrink-0 ml-2">
                       <Button
                         variant="destructive"
                         size="sm"

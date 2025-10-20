@@ -164,7 +164,7 @@ function AppContent() {
             )}
             {currentScreen === 'analytics' && <AnalyticsPage />}
             {currentScreen === 'education' && <EducationPage />}
-            {currentScreen === 'settings' && <SettingsPage />}
+            {currentScreen === 'settings' && <SettingsPage onNavigate={setCurrentScreen} />}
             {currentScreen === 'add-transaction' && (
               <AddTransactionPage
                 onBack={handleBack}
