@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Switch } from "./ui/switch";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "./ui/alert-dialog";
-import { Trash2, LogOut, Sparkles, User, Shield, Tags, DollarSign, Bell, Moon, Globe, Palette, Upload, Download, Settings, ChevronRight } from "./icons";
+import { Trash2, Sparkles, Tags, DollarSign, Bell, Moon, Globe, Upload, Download, Settings, ChevronRight } from "./icons";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
 import { useTelegramAuth } from "../contexts/TelegramAuthContext";
@@ -15,7 +15,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { useEffect } from "react";
 
 export function SettingsPage() {
-  const { logout, user, telegramUser } = useTelegramAuth();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [baseCurrency, setBaseCurrency] = useState<string>('RUB');
@@ -52,15 +51,6 @@ export function SettingsPage() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      toast.success('Вы вышли из аккаунта');
-    } catch (error) {
-      toast.error('Ошибка выхода');
-    }
-  };
-
   const handleDeleteAllData = async () => {
     try {
       setIsDeleting(true);
@@ -80,25 +70,6 @@ export function SettingsPage() {
     }
   };
   const settingsGroups = [
-    {
-      title: "Аккаунт",
-      items: [
-        {
-          icon: User,
-          label: "Профиль",
-          description: "Управление личными данными",
-          action: "navigate",
-          color: "bg-blue-100 text-blue-600"
-        },
-        {
-          icon: Shield,
-          label: "Безопасность",
-          description: "Пароли и двухфакторная аутентификация",
-          action: "navigate",
-          color: "bg-green-100 text-green-600"
-        }
-      ]
-    },
     {
       title: "Финансы",
       items: [
@@ -143,13 +114,6 @@ export function SettingsPage() {
           description: "Русский",
           action: "navigate",
           color: "bg-indigo-100 text-indigo-600"
-        },
-        {
-          icon: Palette,
-          label: "Цветовая схема",
-          description: "Настройка внешнего вида",
-          action: "navigate",
-          color: "bg-pink-100 text-pink-600"
         }
       ]
     },
@@ -302,30 +266,6 @@ export function SettingsPage() {
           </div>
         ))}
 
-        {/* Logout Button */}
-        <Card className="border-slate-200 bg-white shadow-sm hover:shadow-lg transition-all duration-300">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between cursor-pointer" onClick={handleLogout}>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 shadow-sm">
-                  <LogOut className="w-5 h-5 text-slate-600" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-slate-800">Выйти</h3>
-                  <p className="text-sm text-slate-600">
-                    {user?.email || 'Выйти из аккаунта'}
-                  </p>
-                </div>
-              </div>
-              <LightMotion whileTap={{ scale: 0.95 }}>
-                <Button variant="outline" size="sm" className="border-slate-300 text-slate-600 hover:bg-slate-50">
-                  Выйти
-                </Button>
-              </LightMotion>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Dangerous Actions */}
         <div className="space-y-3">
           <h2 className="font-medium text-sm uppercase tracking-wide bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
@@ -405,12 +345,23 @@ export function SettingsPage() {
         </AlertDialog>
 
         {/* App Info */}
-        <div className="text-center pt-4">
+        <div className="text-center pt-4 space-y-1">
           <p className="text-xs text-slate-500">
             FinanceTracker v1.0.0
           </p>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-500">
             Сделано с ❤️ для вашего финансового благополучия
+          </p>
+          <p className="text-xs text-slate-500">
+            Создатель:{' '}
+            <a
+              href="https://t.me/sa1to21"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:text-blue-600 underline transition-colors"
+            >
+              @sa1to21
+            </a>
           </p>
         </div>
       </div>
