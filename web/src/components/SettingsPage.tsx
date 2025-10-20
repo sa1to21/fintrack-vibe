@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Switch } from "./ui/switch";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "./ui/alert-dialog";
-import { Trash2, Sparkles, Tags, DollarSign, Bell, Moon, Globe, Upload, Download, Settings, ChevronRight } from "./icons";
+import { Trash2, Sparkles, Tags, DollarSign, Bell, Moon, Globe, Upload, Settings, ChevronRight } from "./icons";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
 import { useTelegramAuth } from "../contexts/TelegramAuthContext";
@@ -126,13 +126,6 @@ export function SettingsPage() {
           description: "Скачать все ваши данные",
           action: "button",
           color: "bg-cyan-100 text-cyan-600"
-        },
-        {
-          icon: Download,
-          label: "Импорт данных",
-          description: "Загрузить данные из файла",
-          action: "button",
-          color: "bg-teal-100 text-teal-600"
         }
       ]
     }
@@ -223,9 +216,7 @@ export function SettingsPage() {
                   return (
                     <div
                       key={item.label}
-                      className={`flex items-center justify-between p-4 hover:bg-blue-50/50 transition-colors duration-200 cursor-pointer ${
-                        index !== group.items.length - 1 ? 'border-b border-blue-100' : ''
-                      }`}
+                      className="flex items-center justify-between p-4 hover:bg-blue-50/50 transition-colors duration-200 cursor-pointer"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-gradient-to-br from-blue-100 to-indigo-200">
