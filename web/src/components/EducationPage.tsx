@@ -36,16 +36,6 @@ export function EducationPage() {
       icon: TrendingUp,
       progress: 0,
       color: "bg-purple-100 text-purple-600"
-    },
-    {
-      id: 4,
-      title: "Финансовая безопасность",
-      description: "Защита от финансовых рисков",
-      duration: "18 мин",
-      level: "Средний",
-      icon: Shield,
-      progress: 0,
-      color: "bg-orange-100 text-orange-600"
     }
   ];
 
@@ -202,78 +192,79 @@ export function EducationPage() {
           </Card>
         </OptimizedMotion>
 
-        {/* Progress Overview - blurred */}
-        <div className="relative">
-          <div className="absolute inset-0 backdrop-blur-sm bg-white/40 z-10 rounded-lg"></div>
-          <OptimizedMotion>
-            <Card className="border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-sm opacity-60">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-sm">
-                    <Award className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-indigo-700">Ваш прогресс</h3>
-                    <p className="text-sm text-indigo-600/70">0 из 4 курсов завершено</p>
-                    <div className="w-full bg-indigo-200 rounded-full h-2 mt-2 overflow-hidden">
-                      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full" style={{width: '0%'}} />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </OptimizedMotion>
-        </div>
+        {/* Blurred section - Progress and Courses */}
+        <div className="relative rounded-lg overflow-hidden">
+          {/* Blur overlay covering everything */}
+          <div className="absolute inset-0 backdrop-blur-sm bg-white/50 z-10"></div>
 
-        {/* Courses - blurred */}
-        <div className="space-y-4 relative">
-          <div className="absolute inset-0 backdrop-blur-sm bg-white/40 z-10 rounded-lg"></div>
-          <h2 className="font-medium text-foreground bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent opacity-60">Курсы</h2>
-          {courses.map((course, index) => {
-            const Icon = course.icon;
-            return (
-              <LightMotion key={course.id} whileTap={{ scale: 0.98 }}>
-                <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 transition-all duration-300 opacity-60">
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-gradient-to-br ${
-                          index === 0 ? 'from-blue-500 to-indigo-600' :
-                          index === 1 ? 'from-green-500 to-emerald-600' :
-                          index === 2 ? 'from-purple-500 to-pink-600' :
-                          'from-orange-500 to-red-600'
-                        }`}>
-                        <Icon className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-start justify-between mb-2">
-                          <h3 className="font-medium text-slate-800">{course.title}</h3>
-                          <Badge
-                            variant="secondary"
-                            className={`${getLevelColor(course.level)} border shadow-sm`}
-                          >
-                            {course.level}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-slate-600 mb-3">
-                          {course.description}
-                        </p>
-                        <div className="flex items-center gap-4 text-xs text-slate-500">
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            <span>{course.duration}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <BookOpen className="w-3 h-3" />
-                            <span>Не начат</span>
-                          </div>
-                        </div>
+          <div className="space-y-4">
+            {/* Progress Overview */}
+            <OptimizedMotion>
+              <Card className="border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-sm">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-sm">
+                      <Award className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-medium text-indigo-700">Ваш прогресс</h3>
+                      <p className="text-sm text-indigo-600/70">0 из 3 курсов завершено</p>
+                      <div className="w-full bg-indigo-200 rounded-full h-2 mt-2 overflow-hidden">
+                        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full" style={{width: '0%'}} />
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </LightMotion>
-            );
-          })}
+                  </div>
+                </CardContent>
+              </Card>
+            </OptimizedMotion>
+
+            {/* Courses */}
+            <div className="space-y-4">
+              <h2 className="font-medium text-foreground bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Курсы</h2>
+              {courses.map((course, index) => {
+                const Icon = course.icon;
+                return (
+                  <Card key={course.id} className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm">
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-gradient-to-br ${
+                            index === 0 ? 'from-blue-500 to-indigo-600' :
+                            index === 1 ? 'from-green-500 to-emerald-600' :
+                            'from-purple-500 to-pink-600'
+                          }`}>
+                          <Icon className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between mb-2">
+                            <h3 className="font-medium text-slate-800">{course.title}</h3>
+                            <Badge
+                              variant="secondary"
+                              className={`${getLevelColor(course.level)} border shadow-sm`}
+                            >
+                              {course.level}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-slate-600 mb-3">
+                            {course.description}
+                          </p>
+                          <div className="flex items-center gap-4 text-xs text-slate-500">
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              <span>{course.duration}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <BookOpen className="w-3 h-3" />
+                              <span>Не начат</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </div>
