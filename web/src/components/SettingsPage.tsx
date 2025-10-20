@@ -338,7 +338,7 @@ export function SettingsPage() {
         {/* App Info */}
         <div className="text-center pt-4 space-y-1">
           <p className="text-xs text-slate-500">
-            FinanceTracker v1.0.0
+            FinanceTracker v1.0 <span className="text-orange-500 font-medium">(BETA)</span>
           </p>
           <p className="text-xs text-slate-500">
             Сделано с ❤️ для вашего финансового благополучия
