@@ -389,8 +389,8 @@ function CategoryItem({ category, onEdit, onDelete, actionLoading }: CategoryIte
         >
           <span className="text-xl">{category.icon}</span>
         </div>
-        <div>
-          <h3 className="font-medium text-slate-800">{category.name}</h3>
+        <div className="min-w-0 flex-1">
+          <h3 className="font-medium text-slate-800 break-words">{category.name}</h3>
           <p className="text-xs text-slate-500">
             {category.category_type === 'expense' ? 'Расход' : 'Доход'}
           </p>

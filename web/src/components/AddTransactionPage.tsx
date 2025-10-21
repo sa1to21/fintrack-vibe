@@ -375,14 +375,14 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                       >
                         <button
                           type="button"
-                          className={`p-3 rounded-lg border text-center transition-all duration-200 w-full ${
+                          className={`p-3 rounded-lg border text-center transition-all duration-200 w-full h-[88px] flex flex-col items-center justify-center ${
                             category === categoryId
                               ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
                               : 'border-blue-200 hover:border-blue-400 hover:bg-blue-50/30'
                           }`}
                           onClick={() => setCategory(categoryId)}
                         >
-                        <div className="w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 bg-gradient-to-br from-blue-100 to-indigo-200 shadow-sm">
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1 bg-gradient-to-br from-blue-100 to-indigo-200 shadow-sm flex-shrink-0">
                           {isApiCategory ? (
                             <span className="text-lg">{cat.icon}</span>
                           ) : Icon ? (
@@ -391,7 +391,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                             }`} />
                           ) : null}
                         </div>
-                        <span className="text-xs text-slate-700">{cat.name}</span>
+                        <span className="text-xs text-slate-700 truncate w-full px-1">{cat.name}</span>
                         </button>
                       </LightMotion>
                     );
