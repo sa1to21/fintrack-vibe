@@ -545,14 +545,12 @@ function CategoryForm({ formData, setFormData }: CategoryFormProps) {
               </div>
             </SelectValue>
           </SelectTrigger>
-          <SelectContent className="max-h-[300px]">
-            <div className="grid grid-cols-6 gap-1 p-2">
-              {DEFAULT_EMOJIS.map((emoji) => (
-                <SelectItem key={emoji} value={emoji} className="cursor-pointer">
-                  <span className="text-2xl">{emoji}</span>
-                </SelectItem>
-              ))}
-            </div>
+          <SelectContent className="max-h-[250px]">
+            {DEFAULT_EMOJIS.map((emoji) => (
+              <SelectItem key={emoji} value={emoji} className="cursor-pointer justify-center">
+                <span className="text-2xl">{emoji}</span>
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -569,16 +567,14 @@ function CategoryForm({ formData, setFormData }: CategoryFormProps) {
               </div>
             </SelectValue>
           </SelectTrigger>
-          <SelectContent>
-            <div className="grid grid-cols-4 gap-2 p-2">
-              {DEFAULT_COLORS.map((color) => (
-                <SelectItem key={color} value={color} className="cursor-pointer">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded" style={{ backgroundColor: color }} />
-                  </div>
-                </SelectItem>
-              ))}
-            </div>
+          <SelectContent className="max-h-[300px]">
+            {DEFAULT_COLORS.map((color) => (
+              <SelectItem key={color} value={color} className="cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded" style={{ backgroundColor: color }} />
+                </div>
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
