@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './DonateDialog.css';
+import { Heart, Sparkles } from './icons';
 
 interface DonateDialogProps {
   isOpen: boolean;
@@ -48,8 +49,15 @@ const DonateDialog: React.FC<DonateDialogProps> = ({ isOpen, onClose }) => {
   return (
     <div className="donate-dialog-overlay" onClick={onClose}>
       <div className="donate-dialog" onClick={(e) => e.stopPropagation()}>
+        {/* Decorative background */}
+        <div className="donate-dialog-bg-decoration"></div>
+
         <div className="donate-dialog-header">
-          <h3>Поддержать проект</h3>
+          <div className="donate-dialog-title">
+            <Heart className="donate-dialog-icon" />
+            <h3>Поддержать проект</h3>
+            <Sparkles className="donate-dialog-icon-sparkle" />
+          </div>
           <button className="donate-dialog-close" onClick={onClose}>
             ✕
           </button>
@@ -57,14 +65,14 @@ const DonateDialog: React.FC<DonateDialogProps> = ({ isOpen, onClose }) => {
 
         <div className="donate-dialog-content">
           <p className="donate-dialog-description">
-            Проект развивается на донатной основе. Спасибо за вашу поддержку! 💙
+            Проект развивается на донатной основе. Спасибо за вашу поддержку!
           </p>
 
           <div className="donate-methods">
             {donationMethods.map((method, index) => (
               <div key={index} className="donate-method">
                 <label className="donate-method-label">{method.label}</label>
-                <div className="donate-method-value-container">
+                <div className={`donate-method-value-container ${copiedIndex === index ? 'copied-animation' : ''}`}>
                   <div className="donate-method-value" title={method.value}>
                     {method.value}
                   </div>
@@ -72,7 +80,11 @@ const DonateDialog: React.FC<DonateDialogProps> = ({ isOpen, onClose }) => {
                     className={`donate-copy-button ${copiedIndex === index ? 'copied' : ''}`}
                     onClick={() => handleCopy(method.value, index)}
                   >
-                    {copiedIndex === index ? '✓' : '📋'}
+                    {copiedIndex === index ? (
+                      <span className="copy-success">✓ Скопировано</span>
+                    ) : (
+                      '📋'
+                    )}
                   </button>
                 </div>
               </div>
