@@ -6,7 +6,7 @@ class Api::V1::ExportsController < Api::V1::BaseController
       .includes(:category, :account)
       .order(date: :desc, time: :desc)
 
-    csv_data = CSV.generate(headers: true, encoding: 'UTF-8') do |csv|
+    csv_data = CSV.generate(headers: true, col_sep: ';', encoding: 'UTF-8') do |csv|
       # Заголовки
       csv << ['Дата', 'Время', 'Категория', 'Счёт', 'Сумма', 'Валюта', 'Тип', 'Описание']
 
