@@ -527,7 +527,7 @@ function CategoryForm({ formData, setFormData }: CategoryFormProps) {
               </div>
             </SelectValue>
           </SelectTrigger>
-          <SelectContent position="popper" className="max-h-[200px] overflow-y-auto" sideOffset={4}>
+          <SelectContent>
             {DEFAULT_EMOJIS.map((emoji) => (
               <SelectItem key={emoji} value={emoji} className="cursor-pointer justify-center">
                 <span className="text-2xl">{emoji}</span>
