@@ -24,6 +24,7 @@ export {
   Trash2,
   Save,
   Check,
+  Copy,
   AlertCircle,
   Loader2,
 
