@@ -14,6 +14,7 @@ import exportService from "../services/export.service";
 import { CURRENCIES, getCurrency } from "../constants/currencies";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useEffect } from "react";
+import DonateDialog from "./DonateDialog";
 
 interface SettingsPageProps {
   onNavigate?: (screen: string) => void;
@@ -25,6 +26,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [baseCurrency, setBaseCurrency] = useState<string>('RUB');
   const [isLoadingCurrency, setIsLoadingCurrency] = useState(true);
+  const [isDonateDialogOpen, setIsDonateDialogOpen] = useState(false);
 
   useEffect(() => {
     loadBaseCurrency();
@@ -391,10 +393,19 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
               @sa1to21
             </a>
           </p>
-          <p className="text-xs text-slate-500">
+          <button
+            onClick={() => setIsDonateDialogOpen(true)}
+            className="text-xs text-blue-500 hover:text-blue-600 underline transition-colors cursor-pointer"
+          >
             Проект работает на донатной основе
-          </p>
+          </button>
         </div>
+
+        {/* Donate Dialog */}
+        <DonateDialog
+          isOpen={isDonateDialogOpen}
+          onClose={() => setIsDonateDialogOpen(false)}
+        />
       </div>
     </div>
   );
