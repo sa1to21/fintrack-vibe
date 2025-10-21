@@ -49,40 +49,42 @@ export function DonateDialog({ open, onOpenChange }: DonateDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md border-pink-200 bg-gradient-to-br from-white to-pink-50/30">
+      <DialogContent className="max-w-sm border-pink-200 bg-gradient-to-br from-white to-pink-50/30">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-pink-700">
             <Heart className="w-5 h-5 fill-current" />
             Поддержать разработку
           </DialogTitle>
-          <DialogDescription className="text-slate-600">
+          <DialogDescription className="text-slate-600 text-sm">
             Приложение полностью бесплатное и работает на донатной основе.
             Ваша поддержка помогает развивать проект! 💙
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-3 mt-4">
+        <div className="space-y-3 mt-2">
           {paymentMethods.map((method, index) => (
             <Card
               key={method.name}
               className="border-pink-100 bg-white/50 hover:bg-pink-50/50 transition-colors duration-200"
             >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 min-w-0 overflow-hidden">
-                    <h3 className="font-medium text-slate-800 text-sm mb-1 truncate w-full">
+              <CardContent className="p-3">
+                <div className="flex items-start gap-2">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-slate-800 text-sm mb-1">
                       {method.name}
                     </h3>
-                    <p className="text-xs text-slate-500 mb-1 truncate w-full">{method.label}</p>
-                    <p className="font-mono text-sm text-slate-700 truncate w-full">
-                      {method.value}
-                    </p>
+                    <p className="text-xs text-slate-500 mb-1">{method.label}</p>
+                    <div className="overflow-x-auto scrollbar-thin">
+                      <p className="font-mono text-xs text-slate-700 whitespace-nowrap">
+                        {method.value}
+                      </p>
+                    </div>
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleCopy(method.value, index)}
-                    className={`flex-shrink-0 ${
+                    className={`flex-shrink-0 h-8 w-8 p-0 ${
                       copiedIndex === index
                         ? "border-green-300 bg-green-50 text-green-600"
                         : "border-pink-300 text-pink-600 hover:bg-pink-50"
@@ -100,9 +102,12 @@ export function DonateDialog({ open, onOpenChange }: DonateDialogProps) {
           ))}
         </div>
 
-        <div className="mt-4 text-center">
+        <div className="mt-2 text-center">
           <p className="text-xs text-slate-500">
             Спасибо за вашу поддержку! ❤️
+          </p>
+          <p className="text-xs text-slate-400 mt-1">
+            @fintrack21bot
           </p>
         </div>
       </DialogContent>
