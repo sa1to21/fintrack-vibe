@@ -3,8 +3,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Switch } from "./ui/switch";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "./ui/alert-dialog";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
-import { Trash2, Sparkles, Tags, DollarSign, Bell, Moon, Globe, Upload, Settings, ChevronRight, Heart, Copy, Check } from "./icons";
+import { Trash2, Sparkles, Tags, DollarSign, Bell, Moon, Globe, Upload, Settings, ChevronRight } from "./icons";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
 import { useTelegramAuth } from "../contexts/TelegramAuthContext";
@@ -26,8 +25,6 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [baseCurrency, setBaseCurrency] = useState<string>('RUB');
   const [isLoadingCurrency, setIsLoadingCurrency] = useState(true);
-  const [isDonateDialogOpen, setIsDonateDialogOpen] = useState(false);
-  const [copiedItem, setCopiedItem] = useState<string | null>(null);
 
   useEffect(() => {
     loadBaseCurrency();
@@ -91,41 +88,6 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
       setIsExporting(false);
     }
   };
-
-  const copyToClipboard = (text: string, id: string, title: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedItem(id);
-    toast.success(`${title} скопирован!`);
-    setTimeout(() => setCopiedItem(null), 2000);
-  };
-
-  const donateItems = [
-    {
-      id: "sbp",
-      title: "СБП (Т-банк)",
-      value: "+79939009598",
-      icon: "💳"
-    },
-    {
-      id: "tbc",
-      title: "Карта TBC (Только GEL)",
-      subtitle: "IBAN",
-      value: "GE15TB7537945061200012",
-      icon: "🏦"
-    },
-    {
-      id: "ton",
-      title: "Ton",
-      value: "UQBagnAhrTd6AJbQg8zfP9oyIFU_8a5RgX_78k64jBVxLLEJ",
-      icon: "💎"
-    },
-    {
-      id: "usdt",
-      title: "USDT (TRC20)",
-      value: "TSG71BQmZL2E6q46u39PfUQSjaWNcENmRm",
-      icon: "₮"
-    }
-  ];
   const settingsGroups = [
     {
       title: "Финансы",
@@ -429,74 +391,11 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
               @sa1to21
             </a>
           </p>
-          <p
-            className="text-xs text-blue-600 hover:text-purple-600 cursor-pointer transition-colors underline"
-            onClick={() => setIsDonateDialogOpen(true)}
-          >
+          <p className="text-xs text-slate-500">
             Проект работает на донатной основе
           </p>
         </div>
       </div>
-
-      {/* Donate Dialog */}
-      <Dialog open={isDonateDialogOpen} onOpenChange={setIsDonateDialogOpen}>
-        <DialogContent className="max-w-[90%] w-full sm:max-w-md bg-gradient-to-br from-white to-blue-50/50 border-blue-200">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 justify-center">
-              <Heart className="w-5 h-5 text-pink-500 fill-pink-500" />
-              <span className="bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                Поддержать проект
-              </span>
-            </DialogTitle>
-            <DialogDescription className="text-center">
-              Спасибо за вашу поддержку! Выберите удобный способ
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-3 mt-4">
-            {donateItems.map((item) => (
-              <Card key={item.id} className="border-blue-200 bg-white/80 hover:bg-blue-50/50 transition-all duration-200">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="text-2xl mt-1">{item.icon}</div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-slate-800">
-                        {item.title}
-                      </h4>
-                      {item.subtitle && (
-                        <p className="text-xs text-slate-600 mb-1">
-                          {item.subtitle}
-                        </p>
-                      )}
-                      <p className="text-sm text-slate-600 break-all font-mono bg-slate-100 px-2 py-1 rounded">
-                        {item.value}
-                      </p>
-                    </div>
-                    <LightMotion
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <button
-                        className="flex-shrink-0 p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-sm"
-                        onClick={() => copyToClipboard(item.value, item.id, item.title)}
-                      >
-                        {copiedItem === item.id ? (
-                          <Check className="w-4 h-4" />
-                        ) : (
-                          <Copy className="w-4 h-4" />
-                        )}
-                      </button>
-                    </LightMotion>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="text-center mt-4 text-xs text-slate-500">
-            Любая поддержка помогает развивать проект
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
