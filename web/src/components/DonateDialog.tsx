@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './DonateDialog.css';
-import { Heart, Sparkles } from './icons';
+import { Heart } from './icons';
 
 interface DonateDialogProps {
   isOpen: boolean;
@@ -21,7 +21,7 @@ const DonateDialog: React.FC<DonateDialogProps> = ({ isOpen, onClose }) => {
       value: '+79939009598',
     },
     {
-      label: 'Карта TBC (Только GEL)',
+      label: 'TBC Bank IBAN (только GEL)',
       value: 'GE15TB7537945061200012',
     },
     {
@@ -56,7 +56,6 @@ const DonateDialog: React.FC<DonateDialogProps> = ({ isOpen, onClose }) => {
           <div className="donate-dialog-title">
             <Heart className="donate-dialog-icon" />
             <h3>Поддержать проект</h3>
-            <Sparkles className="donate-dialog-icon-sparkle" />
           </div>
           <button className="donate-dialog-close" onClick={onClose}>
             ✕
