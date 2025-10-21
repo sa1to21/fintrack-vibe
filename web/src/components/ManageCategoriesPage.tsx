@@ -486,6 +486,7 @@ interface CategoryFormProps {
 
 function CategoryForm({ formData, setFormData }: CategoryFormProps) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
 
   return (
     <div className="space-y-4">
@@ -572,21 +573,38 @@ function CategoryForm({ formData, setFormData }: CategoryFormProps) {
       {/* Color */}
       <div className="space-y-2">
         <Label>Цвет *</Label>
-        <div className="grid grid-cols-8 gap-1.5">
-          {DEFAULT_COLORS.map((color) => (
-            <button
-              key={color}
-              type="button"
-              className={`w-8 h-8 rounded-lg transition-all ${
-                formData.color === color
-                  ? 'ring-2 ring-purple-500 ring-offset-1'
-                  : 'hover:scale-110'
-              }`}
-              style={{ backgroundColor: color }}
-              onClick={() => setFormData({ ...formData, color })}
-            />
-          ))}
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowColorPicker(!showColorPicker)}
+          className="w-full p-3 border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors flex items-center gap-3"
+        >
+          <div
+            className="w-8 h-8 rounded-lg"
+            style={{ backgroundColor: formData.color }}
+          />
+          <span className="text-slate-600">Выберите цвет</span>
+        </button>
+
+        {showColorPicker && (
+          <div className="grid grid-cols-8 gap-1.5 p-2 border border-purple-200 rounded-lg bg-white shadow-lg">
+            {DEFAULT_COLORS.map((color) => (
+              <button
+                key={color}
+                type="button"
+                className={`w-8 h-8 rounded-lg transition-all ${
+                  formData.color === color
+                    ? 'ring-2 ring-purple-500 ring-offset-1'
+                    : 'hover:scale-110'
+                }`}
+                style={{ backgroundColor: color }}
+                onClick={() => {
+                  setFormData({ ...formData, color });
+                  setShowColorPicker(false);
+                }}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
