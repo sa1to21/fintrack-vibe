@@ -45,7 +45,15 @@
       "Bash(for file in AddTransactionPage.tsx ManageAccountsPage.tsx TransactionDetailPage.tsx TransferPage.tsx)",
       "Bash(do echo \"=== $file ===\")",
       "Bash(done)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(npm run:*)",
+      "Bash(npx netlify-cli:*)",
+      "Bash(for file in TransferPage.tsx AnalyticsPage.tsx)",
+      "Bash(do)",
+      "Bash(echo \"Processing $file\")",
+      "Bash(python:*)",
+      "Bash(git reset:*)",
+      "Bash(awk:*)"
     ],
     "deny": [],
     "ask": []
