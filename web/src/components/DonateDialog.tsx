@@ -68,13 +68,13 @@ export function DonateDialog({ open, onOpenChange }: DonateDialogProps) {
               className="border-pink-100 bg-white/50 hover:bg-pink-50/50 transition-colors duration-200"
             >
               <CardContent className="p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0 overflow-hidden">
                     <h3 className="font-medium text-slate-800 text-sm mb-1">
                       {method.name}
                     </h3>
                     <p className="text-xs text-slate-500 mb-1">{method.label}</p>
-                    <p className="font-mono text-sm text-slate-700 break-all">
+                    <p className="font-mono text-xs text-slate-700 break-words overflow-wrap-anywhere">
                       {method.value}
                     </p>
                   </div>
