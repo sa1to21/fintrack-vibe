@@ -47,6 +47,9 @@ Rails.application.routes.draw do
       # User Data Management
       delete '/user_data', to: 'user_data#destroy_all'
 
+      # Exports
+      get '/exports/transactions', to: 'exports#transactions_csv'
+
       # Transfers
       post '/transfers', to: 'transfers#create'
       put '/transfers/:transfer_id', to: 'transfers#update'

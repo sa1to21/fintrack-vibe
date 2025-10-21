@@ -10,6 +10,7 @@ import { useTelegramAuth } from "../contexts/TelegramAuthContext";
 import { toast } from "sonner";
 import userDataService from "../services/userData.service";
 import usersService from "../services/users.service";
+import exportService from "../services/export.service";
 import { CURRENCIES, getCurrency } from "../constants/currencies";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useEffect } from "react";
@@ -21,6 +22,7 @@ interface SettingsPageProps {
 export function SettingsPage({ onNavigate }: SettingsPageProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [baseCurrency, setBaseCurrency] = useState<string>('RUB');
   const [isLoadingCurrency, setIsLoadingCurrency] = useState(true);
 
@@ -71,6 +73,19 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
       toast.error('Не удалось удалить данные');
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleExportData = async () => {
+    try {
+      setIsExporting(true);
+      await exportService.exportTransactionsToCsv();
+      toast.success('Данные успешно экспортированы');
+    } catch (error) {
+      console.error('Failed to export data:', error);
+      toast.error('Не удалось экспортировать данные');
+    } finally {
+      setIsExporting(false);
     }
   };
   const settingsGroups = [
@@ -224,6 +239,9 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                     if (item.label === "Управление категориями" && onNavigate) {
                       onNavigate('manage-categories');
                     }
+                    if (item.label === "Экспорт данных") {
+                      handleExportData();
+                    }
                   };
 
                   return (
@@ -257,8 +275,13 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                         )}
                         {item.action === 'button' && (
                           <LightMotion whileTap={{ scale: 0.95 }}>
-                            <Button variant="outline" size="sm" className="border-blue-300 text-blue-600 hover:bg-blue-50">
-                              Открыть
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                              disabled={isExporting}
+                            >
+                              {isExporting ? 'Экспорт...' : 'Скачать'}
                             </Button>
                           </LightMotion>
                         )}
