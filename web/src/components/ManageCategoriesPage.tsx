@@ -297,91 +297,103 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
 
       {/* Add Category Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="border-purple-200 bg-gradient-to-br from-white to-purple-50/30">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Plus className="w-5 h-5 text-purple-600" />
-              Новая категория
-            </DialogTitle>
-            <DialogDescription>
-              Создайте новую категорию для классификации операций
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className="border-purple-200 bg-gradient-to-br from-white to-purple-50/30 max-h-[85vh] flex flex-col p-0">
+          <div className="p-6 pb-0">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Plus className="w-5 h-5 text-purple-600" />
+                Новая категория
+              </DialogTitle>
+              <DialogDescription>
+                Создайте новую категорию для классификации операций
+              </DialogDescription>
+            </DialogHeader>
+          </div>
 
-          <CategoryForm
-            formData={formData}
-            setFormData={setFormData}
-          />
+          <div className="overflow-y-auto px-6 py-4 flex-1">
+            <CategoryForm
+              formData={formData}
+              setFormData={setFormData}
+            />
+          </div>
 
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsAddDialogOpen(false)}
-              disabled={actionLoading}
-              className="border-purple-300"
-            >
-              Отмена
-            </Button>
-            <Button
-              onClick={handleAddCategory}
-              disabled={actionLoading}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-            >
-              {actionLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Создание...
-                </>
-              ) : (
-                "Создать"
-              )}
-            </Button>
-          </DialogFooter>
+          <div className="p-6 pt-4 border-t border-purple-100">
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsAddDialogOpen(false)}
+                disabled={actionLoading}
+                className="border-purple-300"
+              >
+                Отмена
+              </Button>
+              <Button
+                onClick={handleAddCategory}
+                disabled={actionLoading}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              >
+                {actionLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Создание...
+                  </>
+                ) : (
+                  "Создать"
+                )}
+              </Button>
+            </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
 
       {/* Edit Category Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="border-purple-200 bg-gradient-to-br from-white to-purple-50/30">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Edit className="w-5 h-5 text-purple-600" />
-              Редактировать категорию
-            </DialogTitle>
-            <DialogDescription>
-              Измените параметры категории
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className="border-purple-200 bg-gradient-to-br from-white to-purple-50/30 max-h-[85vh] flex flex-col p-0">
+          <div className="p-6 pb-0">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Edit className="w-5 h-5 text-purple-600" />
+                Редактировать категорию
+              </DialogTitle>
+              <DialogDescription>
+                Измените параметры категории
+              </DialogDescription>
+            </DialogHeader>
+          </div>
 
-          <CategoryForm
-            formData={formData}
-            setFormData={setFormData}
-          />
+          <div className="overflow-y-auto px-6 py-4 flex-1">
+            <CategoryForm
+              formData={formData}
+              setFormData={setFormData}
+            />
+          </div>
 
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsEditDialogOpen(false)}
-              disabled={actionLoading}
-              className="border-purple-300"
-            >
-              Отмена
-            </Button>
-            <Button
-              onClick={handleEditCategory}
-              disabled={actionLoading}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-            >
-              {actionLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Сохранение...
-                </>
-              ) : (
-                "Сохранить"
-              )}
-            </Button>
-          </DialogFooter>
+          <div className="p-6 pt-4 border-t border-purple-100">
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsEditDialogOpen(false)}
+                disabled={actionLoading}
+                className="border-purple-300"
+              >
+                Отмена
+              </Button>
+              <Button
+                onClick={handleEditCategory}
+                disabled={actionLoading}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              >
+                {actionLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Сохранение...
+                  </>
+                ) : (
+                  "Сохранить"
+                )}
+              </Button>
+            </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
