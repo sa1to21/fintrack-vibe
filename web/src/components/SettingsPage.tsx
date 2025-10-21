@@ -80,7 +80,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
     try {
       setIsExporting(true);
       await exportService.exportTransactionsToCsv();
-      toast.success('Данные успешно экспортированы');
+      toast.success('📊 Файл отправлен в чат!');
     } catch (error) {
       console.error('Failed to export data:', error);
       toast.error('Не удалось экспортировать данные');
