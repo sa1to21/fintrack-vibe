@@ -26,24 +26,11 @@ interface ManageCategoriesPageProps {
   onBack: () => void;
 }
 
-const DEFAULT_COLORS = [
-  "#EF4444", // red
-  "#F97316", // orange
-  "#F59E0B", // amber
-  "#EAB308", // yellow
-  "#84CC16", // lime
-  "#22C55E", // green
-  "#10B981", // emerald
-  "#14B8A6", // teal
-  "#06B6D4", // cyan
-  "#0EA5E9", // sky
-  "#3B82F6", // blue
-  "#6366F1", // indigo
-  "#8B5CF6", // violet
-  "#A855F7", // purple
-  "#D946EF", // fuchsia
-  "#EC4899", // pink
-];
+// Цвета для фона иконок категорий
+const CATEGORY_COLORS = {
+  expense: "#FCA5A5", // светло-красный для расходов
+  income: "#86EFAC",  // светло-зелёный для доходов
+};
 
 const DEFAULT_EMOJIS = [
   "🍕", "🍔", "🍟", "🍿", "🥗", "🍜", "🍱", "🍛", "☕", "🍰",
@@ -62,8 +49,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
   const [formData, setFormData] = useState({
     name: "",
     category_type: "expense" as "income" | "expense",
-    icon: "🍕",
-    color: DEFAULT_COLORS[0]
+    icon: "🍕"
   });
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -98,7 +84,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
         name: formData.name.trim(),
         category_type: formData.category_type,
         icon: formData.icon,
-        color: formData.color
+        color: CATEGORY_COLORS[formData.category_type]
       });
 
       await loadCategories();
@@ -126,7 +112,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
         name: formData.name.trim(),
         category_type: formData.category_type,
         icon: formData.icon,
-        color: formData.color
+        color: CATEGORY_COLORS[formData.category_type]
       });
 
       await loadCategories();
@@ -162,8 +148,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
     setFormData({
       name: "",
       category_type: "expense",
-      icon: "🍕",
-      color: DEFAULT_COLORS[0]
+      icon: "🍕"
     });
   };
 
@@ -177,8 +162,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
     setFormData({
       name: category.name,
       category_type: category.category_type,
-      icon: category.icon,
-      color: category.color
+      icon: category.icon
     });
     setIsEditDialogOpen(true);
   };
@@ -475,13 +459,11 @@ interface CategoryFormProps {
     name: string;
     category_type: "income" | "expense";
     icon: string;
-    color: string;
   };
   setFormData: React.Dispatch<React.SetStateAction<{
     name: string;
     category_type: "income" | "expense";
     icon: string;
-    color: string;
   }>>;
 }
 
@@ -549,30 +531,6 @@ function CategoryForm({ formData, setFormData }: CategoryFormProps) {
             {DEFAULT_EMOJIS.map((emoji) => (
               <SelectItem key={emoji} value={emoji} className="cursor-pointer justify-center">
                 <span className="text-2xl">{emoji}</span>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Color */}
-      <div className="space-y-2">
-        <Label htmlFor="category-color">Цвет *</Label>
-        <Select value={formData.color} onValueChange={(value) => setFormData({ ...formData, color: value })}>
-          <SelectTrigger className="border-purple-200 focus:border-purple-400">
-            <SelectValue>
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded" style={{ backgroundColor: formData.color }} />
-                <span>Цвет</span>
-              </div>
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent position="popper" className="max-h-[200px] overflow-y-auto" sideOffset={4}>
-            {DEFAULT_COLORS.map((color) => (
-              <SelectItem key={color} value={color} className="cursor-pointer">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded" style={{ backgroundColor: color }} />
-                </div>
               </SelectItem>
             ))}
           </SelectContent>
