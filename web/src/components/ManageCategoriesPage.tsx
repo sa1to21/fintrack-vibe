@@ -537,12 +537,12 @@ function CategoryForm({ formData, setFormData }: CategoryFormProps) {
       {/* Icon */}
       <div className="space-y-2">
         <Label>Иконка *</Label>
-        <div className="grid grid-cols-8 gap-2 max-h-40 overflow-y-auto p-2 border border-purple-200 rounded-lg">
+        <div className="grid grid-cols-6 sm:grid-cols-8 gap-1.5 max-h-32 overflow-y-auto p-2 border border-purple-200 rounded-lg bg-white/50">
           {DEFAULT_EMOJIS.map((emoji) => (
             <button
               key={emoji}
               type="button"
-              className={`w-10 h-10 rounded-lg flex items-center justify-center text-xl transition-all ${
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-lg sm:text-xl transition-all ${
                 formData.icon === emoji
                   ? 'bg-purple-200 ring-2 ring-purple-500'
                   : 'hover:bg-purple-100'
