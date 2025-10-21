@@ -5,6 +5,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "./ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import {
   ArrowLeft,
   Plus,
@@ -485,9 +486,6 @@ interface CategoryFormProps {
 }
 
 function CategoryForm({ formData, setFormData }: CategoryFormProps) {
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [showColorPicker, setShowColorPicker] = useState(false);
-
   return (
     <div className="space-y-4">
       {/* Name */}
@@ -537,74 +535,52 @@ function CategoryForm({ formData, setFormData }: CategoryFormProps) {
 
       {/* Icon */}
       <div className="space-y-2">
-        <Label>Иконка *</Label>
-        <button
-          type="button"
-          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          className="w-full p-3 border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors flex items-center gap-3"
-        >
-          <span className="text-2xl">{formData.icon}</span>
-          <span className="text-slate-600">Выберите иконку</span>
-        </button>
-
-        {showEmojiPicker && (
-          <div className="grid grid-cols-6 sm:grid-cols-8 gap-1.5 max-h-40 overflow-y-auto p-2 border border-purple-200 rounded-lg bg-white shadow-lg">
-            {DEFAULT_EMOJIS.map((emoji) => (
-              <button
-                key={emoji}
-                type="button"
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-lg sm:text-xl transition-all ${
-                  formData.icon === emoji
-                    ? 'bg-purple-200 ring-2 ring-purple-500'
-                    : 'hover:bg-purple-100'
-                }`}
-                onClick={() => {
-                  setFormData({ ...formData, icon: emoji });
-                  setShowEmojiPicker(false);
-                }}
-              >
-                {emoji}
-              </button>
-            ))}
-          </div>
-        )}
+        <Label htmlFor="category-icon">Иконка *</Label>
+        <Select value={formData.icon} onValueChange={(value) => setFormData({ ...formData, icon: value })}>
+          <SelectTrigger className="border-purple-200 focus:border-purple-400">
+            <SelectValue>
+              <div className="flex items-center gap-2">
+                <span className="text-xl">{formData.icon}</span>
+                <span>Иконка</span>
+              </div>
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent className="max-h-[300px]">
+            <div className="grid grid-cols-6 gap-1 p-2">
+              {DEFAULT_EMOJIS.map((emoji) => (
+                <SelectItem key={emoji} value={emoji} className="cursor-pointer">
+                  <span className="text-2xl">{emoji}</span>
+                </SelectItem>
+              ))}
+            </div>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Color */}
       <div className="space-y-2">
-        <Label>Цвет *</Label>
-        <button
-          type="button"
-          onClick={() => setShowColorPicker(!showColorPicker)}
-          className="w-full p-3 border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors flex items-center gap-3"
-        >
-          <div
-            className="w-8 h-8 rounded-lg"
-            style={{ backgroundColor: formData.color }}
-          />
-          <span className="text-slate-600">Выберите цвет</span>
-        </button>
-
-        {showColorPicker && (
-          <div className="grid grid-cols-8 gap-1.5 p-2 border border-purple-200 rounded-lg bg-white shadow-lg">
-            {DEFAULT_COLORS.map((color) => (
-              <button
-                key={color}
-                type="button"
-                className={`w-8 h-8 rounded-lg transition-all ${
-                  formData.color === color
-                    ? 'ring-2 ring-purple-500 ring-offset-1'
-                    : 'hover:scale-110'
-                }`}
-                style={{ backgroundColor: color }}
-                onClick={() => {
-                  setFormData({ ...formData, color });
-                  setShowColorPicker(false);
-                }}
-              />
-            ))}
-          </div>
-        )}
+        <Label htmlFor="category-color">Цвет *</Label>
+        <Select value={formData.color} onValueChange={(value) => setFormData({ ...formData, color: value })}>
+          <SelectTrigger className="border-purple-200 focus:border-purple-400">
+            <SelectValue>
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded" style={{ backgroundColor: formData.color }} />
+                <span>Цвет</span>
+              </div>
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <div className="grid grid-cols-4 gap-2 p-2">
+              {DEFAULT_COLORS.map((color) => (
+                <SelectItem key={color} value={color} className="cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded" style={{ backgroundColor: color }} />
+                  </div>
+                </SelectItem>
+              ))}
+            </div>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
