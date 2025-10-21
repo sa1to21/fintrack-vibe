@@ -37,4 +37,4 @@ api/storage/*
 *.sqlite3-journal
 
 # Docker
-docker-compose.override.yml
+docker-compose.override.ymlapi/.env
