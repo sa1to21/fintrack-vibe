@@ -12,23 +12,23 @@ interface DonateDialogProps {
 
 const paymentMethods = [
   {
-    name: "СБП (Сбербанк)",
-    value: "+79991234567",
+    name: "СБП (Т-банк)",
+    value: "+79939009598",
     label: "Номер телефона"
   },
   {
-    name: "Карта",
-    value: "2200 7007 0000 0000",
+    name: "Карта TBC (только GEL)",
+    value: "GE15TB7537945061200012",
     label: "Номер карты"
   },
   {
     name: "TON",
-    value: "UQAbc123...",
+    value: "UQBagnAhrTd6AJbQg8zfP9oyIFU_8a5RgX_78k64jBVxLLEJ",
     label: "TON адрес"
   },
   {
     name: "USDT (TRC20)",
-    value: "TXyz789...",
+    value: "TSG71BQmZL2E6q46u39PfUQSjaWNcENmRm",
     label: "USDT адрес"
   }
 ];
