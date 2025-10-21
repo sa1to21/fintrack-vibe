@@ -14,6 +14,7 @@ import exportService from "../services/export.service";
 import { CURRENCIES, getCurrency } from "../constants/currencies";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useEffect } from "react";
+import { DonateDialog } from "./DonateDialog";
 
 interface SettingsPageProps {
   onNavigate?: (screen: string) => void;
@@ -25,6 +26,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [baseCurrency, setBaseCurrency] = useState<string>('RUB');
   const [isLoadingCurrency, setIsLoadingCurrency] = useState(true);
+  const [isDonateDialogOpen, setIsDonateDialogOpen] = useState(false);
 
   useEffect(() => {
     loadBaseCurrency();
@@ -381,6 +383,14 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
             Сделано с ❤️ для вашего финансового благополучия
           </p>
           <p className="text-xs text-slate-500">
+            <button
+              onClick={() => setIsDonateDialogOpen(true)}
+              className="text-pink-500 hover:text-pink-600 underline transition-colors cursor-pointer"
+            >
+              Приложение работает на донатной основе
+            </button>
+          </p>
+          <p className="text-xs text-slate-500">
             Создатель:{' '}
             <a
               href="https://t.me/sa1to21"
@@ -393,6 +403,9 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
           </p>
         </div>
       </div>
+
+      {/* Donate Dialog */}
+      <DonateDialog open={isDonateDialogOpen} onOpenChange={setIsDonateDialogOpen} />
     </div>
   );
 }

@@ -4,7 +4,7 @@ require 'faraday/multipart'
 class TelegramService
   TELEGRAM_API_URL = "https://api.telegram.org"
 
-  def self.send_document(chat_id:, file_path:, caption: nil)
+  def self.send_document(chat_id:, file_path:, filename: nil, caption: nil)
     bot_token = ENV['TELEGRAM_BOT_TOKEN']
 
     unless bot_token
@@ -23,7 +23,7 @@ class TelegramService
     file = Faraday::Multipart::FilePart.new(
       file_path,
       'text/csv',
-      File.basename(file_path)
+      filename || File.basename(file_path)
     )
 
     payload = {

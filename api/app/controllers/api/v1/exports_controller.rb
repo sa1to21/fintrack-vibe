@@ -29,6 +29,11 @@ class Api::V1::ExportsController < Api::V1::BaseController
     # Добавляем BOM для корректного открытия в Excel
     csv_with_bom = "\uFEFF" + csv_data
 
+    # Формируем имя файла с username и датой
+    username = current_user.username.present? ? "@#{current_user.username}" : "user"
+    date_str = Time.current.strftime('%Y-%m-%d')
+    filename = "fintrack-transactions-#{username}-#{date_str}.csv"
+
     # Создаём временный файл
     temp_file = Tempfile.new(['fintrack-transactions', '.csv'], encoding: 'utf-8')
     begin
@@ -41,6 +46,7 @@ class Api::V1::ExportsController < Api::V1::BaseController
         success = TelegramService.send_document(
           chat_id: telegram_id,
           file_path: temp_file.path,
+          filename: filename,
           caption: "📊 Экспорт транзакций (#{transactions.count} записей)"
         )
 
