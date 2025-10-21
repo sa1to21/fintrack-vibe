@@ -49,33 +49,33 @@ export function DonateDialog({ open, onOpenChange }: DonateDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm border-pink-200 bg-gradient-to-br from-white to-pink-50/30">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-pink-700">
-            <Heart className="w-5 h-5 fill-current" />
+      <DialogContent className="p-4 gap-2 border-pink-200 bg-gradient-to-br from-white to-pink-50/30">
+        <DialogHeader className="gap-1">
+          <DialogTitle className="flex items-center gap-2 text-pink-700 text-base">
+            <Heart className="w-4 h-4 fill-current" />
             Поддержать разработку
           </DialogTitle>
-          <DialogDescription className="text-slate-600 text-sm">
+          <DialogDescription className="text-slate-600 text-xs leading-tight">
             Приложение полностью бесплатное и работает на донатной основе.
             Ваша поддержка помогает развивать проект! 💙
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-3 mt-2">
+        <div className="space-y-2">
           {paymentMethods.map((method, index) => (
             <Card
               key={method.name}
               className="border-pink-100 bg-white/50 hover:bg-pink-50/50 transition-colors duration-200"
             >
-              <CardContent className="p-3">
+              <CardContent className="p-2.5">
                 <div className="flex items-start gap-2">
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-slate-800 text-sm mb-1">
+                    <h3 className="font-medium text-slate-800 text-xs mb-0.5">
                       {method.name}
                     </h3>
-                    <p className="text-xs text-slate-500 mb-1">{method.label}</p>
+                    <p className="text-[10px] text-slate-500 mb-1">{method.label}</p>
                     <div className="overflow-x-auto scrollbar-thin">
-                      <p className="font-mono text-xs text-slate-700 whitespace-nowrap">
+                      <p className="font-mono text-[11px] text-slate-700 whitespace-nowrap">
                         {method.value}
                       </p>
                     </div>
@@ -84,16 +84,16 @@ export function DonateDialog({ open, onOpenChange }: DonateDialogProps) {
                     variant="outline"
                     size="sm"
                     onClick={() => handleCopy(method.value, index)}
-                    className={`flex-shrink-0 h-8 w-8 p-0 ${
+                    className={`flex-shrink-0 h-7 w-7 p-0 ${
                       copiedIndex === index
                         ? "border-green-300 bg-green-50 text-green-600"
                         : "border-pink-300 text-pink-600 hover:bg-pink-50"
                     }`}
                   >
                     {copiedIndex === index ? (
-                      <Check className="w-4 h-4" />
+                      <Check className="w-3.5 h-3.5" />
                     ) : (
-                      <Copy className="w-4 h-4" />
+                      <Copy className="w-3.5 h-3.5" />
                     )}
                   </Button>
                 </div>
@@ -102,11 +102,11 @@ export function DonateDialog({ open, onOpenChange }: DonateDialogProps) {
           ))}
         </div>
 
-        <div className="mt-2 text-center">
-          <p className="text-xs text-slate-500">
+        <div className="text-center">
+          <p className="text-[10px] text-slate-500">
             Спасибо за вашу поддержку! ❤️
           </p>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-[10px] text-slate-400 mt-0.5">
             @fintrack21bot
           </p>
         </div>
