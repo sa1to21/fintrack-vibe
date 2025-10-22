@@ -505,7 +505,7 @@ export function AnalyticsPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs">
                     <span className="text-slate-600">Общий прогресс</span>
-                    <span className="font-medium text-slate-700">{debtStats.overall_progress.toFixed(1)}%</span>
+                    <span className="font-medium text-slate-700">{(debtStats.overall_progress || 0).toFixed(1)}%</span>
                   </div>
                   <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
                     <OptimizedMotion
@@ -533,7 +533,7 @@ export function AnalyticsPage() {
                       </div>
                       <div className="text-right ml-2">
                         <p className="text-sm font-medium text-amber-700">{formatCurrency(debt.balance)}</p>
-                        <p className="text-xs text-emerald-600">{debt.progress.toFixed(0)}% ✓</p>
+                        <p className="text-xs text-emerald-600">{(debt.progress || 0).toFixed(0)}% ✓</p>
                       </div>
                     </OptimizedMotion>
                   ))}

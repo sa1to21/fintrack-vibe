@@ -38,9 +38,9 @@ export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
   const isOverdue = daysUntilDue < 0;
   const isUrgent = daysUntilDue >= 0 && daysUntilDue <= 30;
 
-  const progress = account.debt_progress || 0;
+  const progress = typeof account.debt_progress === 'number' ? account.debt_progress : 0;
   const remaining = Math.abs(account.balance);
-  const initialAmount = account.debt_info.initialAmount;
+  const initialAmount = account.debt_info.initialAmount || 0;
 
   return (
     <OptimizedMotion
