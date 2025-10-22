@@ -380,17 +380,18 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     Добавьте новый счёт для отслеживания ваших финансов
                   </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4 overflow-y-scroll px-6 py-2 flex-1 min-h-0" style={{ WebkitOverflowScrolling: 'touch', maxHeight: 'calc(600px - 200px)' }}>
-                <div className="space-y-2">
-                  <Label htmlFor="account-name">Название счёта</Label>
-                  <Input
-                    id="account-name"
-                    placeholder="Введите название..."
-                    value={newAccountName}
-                    onChange={(e) => setNewAccountName(e.target.value)}
-                    className="border-blue-200 focus:border-blue-400"
-                  />
-                </div>
+                <div className="overflow-y-scroll px-6 py-2 flex-1 min-h-0" style={{ WebkitOverflowScrolling: 'touch', maxHeight: 'calc(600px - 200px)' }}>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="account-name">Название счёта</Label>
+                      <Input
+                        id="account-name"
+                        placeholder="Введите название..."
+                        value={newAccountName}
+                        onChange={(e) => setNewAccountName(e.target.value)}
+                        className="border-blue-200 focus:border-blue-400"
+                      />
+                    </div>
                 <div className="space-y-2">
                   <Label htmlFor="account-currency">Валюта</Label>
                   <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
@@ -505,6 +506,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     </div>
                   </div>
                 )}
+                  </div>
                 </div>
                 <DialogFooter className="flex-shrink-0 px-6 pb-6 pt-4">
                   <Button
