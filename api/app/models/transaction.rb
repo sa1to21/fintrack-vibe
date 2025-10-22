@@ -32,6 +32,9 @@ class Transaction < ApplicationRecord
   private
 
   def update_account_balance
+    # Skip if account is being deleted or already destroyed
+    return if account.destroyed? || account.marked_for_destruction?
+
     account.update_balance!
   end
 end
