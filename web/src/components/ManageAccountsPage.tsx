@@ -370,16 +370,17 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 <span className="relative z-10">Добавить новый счёт</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 max-h-[85vh] overflow-hidden flex flex-col">
-              <DialogHeader className="flex-shrink-0">
-                <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Создать новый счёт
-                </DialogTitle>
-                <DialogDescription className="text-slate-600">
-                  Добавьте новый счёт для отслеживания ваших финансов
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 overflow-y-auto pr-2 flex-1 max-h-[calc(85vh-180px)]">
+            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 p-0 gap-0 max-h-[90vh]">
+              <div className="flex flex-col max-h-[90vh]">
+                <DialogHeader className="flex-shrink-0 px-6 pt-6 pb-2">
+                  <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Создать новый счёт
+                  </DialogTitle>
+                  <DialogDescription className="text-slate-600">
+                    Добавьте новый счёт для отслеживания ваших финансов
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 overflow-y-auto px-6 py-2 flex-1" style={{ WebkitOverflowScrolling: 'touch' }}>
                 <div className="space-y-2">
                   <Label htmlFor="account-name">Название счёта</Label>
                   <Input
@@ -504,22 +505,23 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     </div>
                   </div>
                 )}
+                </div>
+                <DialogFooter className="flex-shrink-0 px-6 pb-6 pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsAddDialogOpen(false)}
+                    className="border-blue-300"
+                  >
+                    Отмена
+                  </Button>
+                  <Button
+                    onClick={handleAddAccount}
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                  >
+                    Создать
+                  </Button>
+                </DialogFooter>
               </div>
-              <DialogFooter className="flex-shrink-0">
-                <Button
-                  variant="outline"
-                  onClick={() => setIsAddDialogOpen(false)}
-                  className="border-blue-300"
-                >
-                  Отмена
-                </Button>
-                <Button
-                  onClick={handleAddAccount}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-                >
-                  Создать
-                </Button>
-              </DialogFooter>
             </DialogContent>
           </Dialog>
         </LightMotion>
