@@ -251,7 +251,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   return (
     <div className="min-h-full bg-background">
       {/* Header */}
-      <OptimizedMotion className="bg-gradient-to-br from-blue-500 to-indigo-700 px-4 py-6 relative overflow-hidden">
+      <OptimizedMotion className="bg-gradient-to-br from-blue-500 to-indigo-700 px-4 pt-6 pb-3 relative overflow-hidden">
         {/* Background decorations - simplified for performance */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-y-12 translate-y-8"></div>
 
@@ -381,7 +381,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
       {/* Content */}
       <OptimizedMotion
-        className="px-4 pt-3 pb-5 max-w-md mx-auto"
+        className="px-4 pt-6 pb-5 max-w-md mx-auto"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.35 }}
