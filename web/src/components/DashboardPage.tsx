@@ -381,19 +381,19 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
       {/* Content */}
       <OptimizedMotion
-        className="px-4 py-6 max-w-md mx-auto"
+        className="px-4 py-5 max-w-md mx-auto"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.35 }}
       >
         {/* Quick Actions */}
         <OptimizedMotion
-          className="mb-6"
+          className="mb-4"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.45 }}
         >
-          <h2 className="font-medium mb-3 text-foreground">Быстрые действия</h2>
+          <h2 className="font-medium mb-2.5 text-foreground">Быстрые действия</h2>
           <div className="space-y-3">
             <LightMotion
               whileTap={{ scale: 0.97 }}
@@ -441,12 +441,12 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
         {/* Quick Stats */}
         <OptimizedMotion
-          className="mb-5"
+          className="mb-4"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.45 }}
         >
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-2.5">
             <h2 className="font-medium text-foreground">Этот месяц</h2>
             <LightMotion whileTap={{ scale: 0.95 }}>
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200">
@@ -503,12 +503,12 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
         {/* Recent Transactions */}
         <OptimizedMotion
-          className={debtAccounts.length > 0 ? "mb-5" : ""}
+          className={debtAccounts.length > 0 ? "mb-4" : ""}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.5 }}
         >
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-2.5">
             <h2 className="font-medium text-foreground">Последние операции</h2>
             <LightMotion whileTap={{ scale: 0.95 }}>
               <Button
@@ -665,7 +665,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.55 }}
           >
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-2.5">
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-amber-600" />
                 <h2 className="font-medium text-foreground">Долги</h2>
