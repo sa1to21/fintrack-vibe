@@ -522,7 +522,6 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
               </Button>
             </LightMotion>
           </div>
-          
           {recentTransactions.length > 0 ? (
             <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm hover:shadow-md transition-all duration-300">
               <CardContent className="p-0">
