@@ -370,8 +370,8 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 <span className="relative z-10">Добавить новый счёт</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 max-h-[90vh] overflow-hidden flex flex-col">
-              <DialogHeader>
+            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 max-h-[85vh] overflow-hidden flex flex-col">
+              <DialogHeader className="flex-shrink-0">
                 <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   Создать новый счёт
                 </DialogTitle>
@@ -379,7 +379,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   Добавьте новый счёт для отслеживания ваших финансов
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4 overflow-y-auto pr-2 flex-1">
+              <div className="space-y-4 overflow-y-auto pr-2 flex-1 max-h-[calc(85vh-180px)]">
                 <div className="space-y-2">
                   <Label htmlFor="account-name">Название счёта</Label>
                   <Input
@@ -505,15 +505,15 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   </div>
                 )}
               </div>
-              <DialogFooter>
-                <Button 
-                  variant="outline" 
+              <DialogFooter className="flex-shrink-0">
+                <Button
+                  variant="outline"
                   onClick={() => setIsAddDialogOpen(false)}
                   className="border-blue-300"
                 >
                   Отмена
                 </Button>
-                <Button 
+                <Button
                   onClick={handleAddAccount}
                   className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                 >
