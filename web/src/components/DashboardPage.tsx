@@ -2,7 +2,9 @@ import { useState, useMemo, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingDown, CalendarIcon, Filter, Sparkles, ArrowRightLeft } from "./icons";
+import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingDown, CalendarIcon, Filter, Sparkles, ArrowRightLeft, AlertCircle } from "./icons";
+import { DebtAccountCard } from "./DebtAccountCard";
+import accountsService, { type Account as ApiAccount } from "../services/accounts.service";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
 import dashboardService, { MonthlyStats } from "../services/dashboard.service";
@@ -50,6 +52,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   const [loading, setLoading] = useState(true);
   const [baseCurrency, setBaseCurrency] = useState<string>(DEFAULT_CURRENCY);
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats | null>(null);
+  const [debtAccounts, setDebtAccounts] = useState<ApiAccount[]>([]);
 
   // Загрузить данные дашборда одним запросом (счета + транзакции)
   useEffect(() => {
@@ -155,6 +158,10 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         // Загружаем месячную статистику
         const stats = await dashboardService.getMonthlyStats();
         setMonthlyStats(stats);
+
+        // Загружаем долговые счета
+        const debts = await accountsService.getAll('debt');
+        setDebtAccounts(debts);
 
         // Сохраняем RAW данные в кеш (без иконок, только сериализуемые данные)
         cache.set('dashboard-raw', data);
@@ -486,6 +493,35 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
               </Card>
           </div>
         </OptimizedMotion>
+
+        {/* Debts Section */}
+        {debtAccounts.length > 0 && (
+          <OptimizedMotion
+            className="mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.48 }}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-amber-600" />
+                <h2 className="font-medium text-foreground">Долги</h2>
+              </div>
+              <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300">
+                {debtAccounts.length}
+              </Badge>
+            </div>
+            <div className="space-y-3">
+              {debtAccounts.map((debt) => (
+                <DebtAccountCard
+                  key={debt.id}
+                  account={debt}
+                  onClick={onManageAccounts}
+                />
+              ))}
+            </div>
+          </OptimizedMotion>
+        )}
 
         {/* Recent Transactions */}
         <OptimizedMotion

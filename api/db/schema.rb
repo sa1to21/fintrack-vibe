@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_13_132934) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_22_100021) do
   create_table "accounts", force: :cascade do |t|
     t.string "name", null: false
     t.string "account_type", null: false
@@ -19,6 +19,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_13_132934) do
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_debt", default: false, null: false
+    t.json "debt_info"
     t.index ["user_id"], name: "index_accounts_on_user_id"
   end
 

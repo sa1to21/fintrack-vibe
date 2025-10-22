@@ -24,6 +24,9 @@ Rails.application.routes.draw do
       # Accounts
       resources :accounts do
         resources :transactions, only: [:index, :create]
+        collection do
+          get :debt_stats
+        end
       end
 
       # Transactions

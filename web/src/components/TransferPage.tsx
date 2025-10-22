@@ -232,15 +232,19 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                     <SelectContent>
                       {accounts.map((account) => {
                         const Icon = getAccountIconComponent(account.account_type);
+                        const isDebt = account.is_debt;
                         return (
-                          <SelectItem key={account.id} value={String(account.id)} disabled={String(account.id) === toAccountId}>
+                          <SelectItem key={account.id} value={String(account.id)} disabled={String(account.id) === toAccountId || isDebt}>
                             <div className="flex items-center justify-between gap-4 w-full">
                               <div className="flex items-center gap-2">
-                                <Icon className="w-4 h-4 text-blue-600" />
-                                <span>{account.name}</span>
+                                <Icon className={`w-4 h-4 ${isDebt ? 'text-amber-600' : 'text-blue-600'}`} />
+                                <span className={isDebt ? 'text-amber-700' : ''}>
+                                  {account.name}
+                                  {isDebt && ' 💳'}
+                                </span>
                               </div>
-                              <span className="text-xs text-muted-foreground">
-                                {formatCurrency(parseFloat(account.balance.toString()), account.currency)}
+                              <span className={`text-xs ${isDebt ? 'text-amber-600' : 'text-muted-foreground'}`}>
+                                {formatCurrency(Math.abs(parseFloat(account.balance.toString())), account.currency)}
                               </span>
                             </div>
                           </SelectItem>
@@ -294,15 +298,19 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                         .filter(acc => String(acc.id) !== fromAccountId)
                         .map((account) => {
                           const Icon = getAccountIconComponent(account.account_type);
+                          const isDebt = account.is_debt;
                           return (
                             <SelectItem key={account.id} value={String(account.id)}>
                               <div className="flex items-center justify-between gap-4 w-full">
                                 <div className="flex items-center gap-2">
-                                  <Icon className="w-4 h-4 text-blue-600" />
-                                  <span>{account.name}</span>
+                                  <Icon className={`w-4 h-4 ${isDebt ? 'text-amber-600' : 'text-blue-600'}`} />
+                                  <span className={isDebt ? 'text-amber-700' : ''}>
+                                    {account.name}
+                                    {isDebt && ' 💳'}
+                                  </span>
                                 </div>
-                                <span className="text-xs text-muted-foreground">
-                                  {formatCurrency(parseFloat(account.balance.toString()), account.currency)}
+                                <span className={`text-xs ${isDebt ? 'text-amber-600 font-medium' : 'text-muted-foreground'}`}>
+                                  {isDebt ? `Долг: ${formatCurrency(Math.abs(parseFloat(account.balance.toString())), account.currency)}` : formatCurrency(parseFloat(account.balance.toString()), account.currency)}
                                 </span>
                               </div>
                             </SelectItem>

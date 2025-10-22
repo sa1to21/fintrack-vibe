@@ -3,6 +3,14 @@ class Api::V1::AccountsController < Api::V1::BaseController
 
   def index
     accounts = current_user.accounts.includes(:transactions)
+
+    # Filter by debt type if requested
+    if params[:type] == 'debt'
+      accounts = accounts.debts
+    elsif params[:type] == 'regular'
+      accounts = accounts.regular
+    end
+
     render json: accounts, each_serializer: AccountSerializer
   end
 
@@ -33,6 +41,35 @@ class Api::V1::AccountsController < Api::V1::BaseController
     head :no_content
   end
 
+  def debt_stats
+    debts = current_user.accounts.debts
+
+    total_debt = debts.sum(&:balance).abs
+    total_initial = debts.sum { |d| d.debt_info&.dig('initialAmount').to_f || 0 }
+    total_paid = total_initial - total_debt
+
+    debts_data = debts.map do |debt|
+      {
+        id: debt.id,
+        name: debt.name,
+        creditor: debt.debt_info&.dig('creditorName'),
+        balance: debt.balance.abs,
+        initial_amount: debt.debt_info&.dig('initialAmount'),
+        due_date: debt.debt_info&.dig('dueDate'),
+        progress: debt.debt_progress,
+        currency: debt.currency
+      }
+    end
+
+    render json: {
+      total_debt: total_debt,
+      total_initial: total_initial,
+      total_paid: total_paid,
+      overall_progress: total_initial.zero? ? 0 : (total_paid / total_initial * 100).round(2),
+      debts: debts_data
+    }
+  end
+
   private
 
   def set_account
@@ -41,6 +78,6 @@ class Api::V1::AccountsController < Api::V1::BaseController
   end
 
   def account_params
-    params.require(:account).permit(:name, :account_type, :balance, :currency)
+    params.require(:account).permit(:name, :account_type, :balance, :currency, :is_debt, debt_info: {})
   end
 end

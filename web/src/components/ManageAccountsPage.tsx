@@ -28,6 +28,8 @@ import transactionsService from "../services/transactions.service";
 import categoriesService from "../services/categories.service";
 import { CURRENCIES, DEFAULT_CURRENCY, getCurrencySymbol } from "../constants/currencies";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Checkbox } from "./ui/checkbox";
+import { Textarea } from "./ui/textarea";
 
 interface ManageAccountsPageProps {
   onBack: () => void;
@@ -63,6 +65,12 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const [balanceChange, setBalanceChange] = useState("");
   const [balanceChangeType, setBalanceChangeType] = useState<'increase' | 'decrease'>('increase');
   const [actionLoading, setActionLoading] = useState(false);
+  const [isDebt, setIsDebt] = useState(false);
+  const [debtCreditor, setDebtCreditor] = useState("");
+  const [debtInitialAmount, setDebtInitialAmount] = useState("");
+  const [debtDueDate, setDebtDueDate] = useState("");
+  const [debtInterestRate, setDebtInterestRate] = useState("");
+  const [debtNotes, setDebtNotes] = useState("");
 
   // Загрузка счетов и категорий из API
   useEffect(() => {
@@ -121,20 +129,47 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       return;
     }
 
+    if (isDebt) {
+      if (!debtCreditor.trim()) {
+        toast.error("Введите имя кредитора");
+        return;
+      }
+      if (!debtInitialAmount || parseFloat(debtInitialAmount) <= 0) {
+        toast.error("Введите корректную сумму долга");
+        return;
+      }
+      if (!debtDueDate) {
+        toast.error("Укажите дату погашения");
+        return;
+      }
+    }
+
     try {
       setActionLoading(true);
-      await accountsService.create({
+
+      const accountData: any = {
         name: newAccountName.trim(),
-        balance: 0,
+        balance: isDebt ? -Math.abs(parseFloat(debtInitialAmount)) : 0,
         currency: selectedCurrency,
-        account_type: selectedIcon.type
-      });
+        account_type: selectedIcon.type,
+        is_debt: isDebt
+      };
+
+      if (isDebt) {
+        accountData.debt_info = {
+          initialAmount: parseFloat(debtInitialAmount),
+          creditorName: debtCreditor.trim(),
+          dueDate: debtDueDate,
+          interestRate: debtInterestRate ? parseFloat(debtInterestRate) : undefined,
+          notes: debtNotes.trim() || undefined
+        };
+      }
+
+      await accountsService.create(accountData);
 
       // Перезагружаем счета
       await loadAccounts();
-      setNewAccountName("");
-      setSelectedCurrency(DEFAULT_CURRENCY);
-      setSelectedIcon(accountIcons[0]);
+      resetForm();
       setIsAddDialogOpen(false);
       toast.success("Счёт создан!");
     } catch (error) {
@@ -143,6 +178,18 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const resetForm = () => {
+    setNewAccountName("");
+    setSelectedCurrency(DEFAULT_CURRENCY);
+    setSelectedIcon(accountIcons[0]);
+    setIsDebt(false);
+    setDebtCreditor("");
+    setDebtInitialAmount("");
+    setDebtDueDate("");
+    setDebtInterestRate("");
+    setDebtNotes("");
   };
 
   const handleEditAccount = async () => {
@@ -397,6 +444,82 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     })}
                   </div>
                 </div>
+
+                <div className="flex items-center space-x-2 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                  <Checkbox
+                    id="is-debt"
+                    checked={isDebt}
+                    onCheckedChange={(checked) => setIsDebt(checked as boolean)}
+                  />
+                  <Label
+                    htmlFor="is-debt"
+                    className="text-sm font-medium text-amber-800 cursor-pointer"
+                  >
+                    💳 Это долговой счёт (кредит, займ)
+                  </Label>
+                </div>
+
+                {isDebt && (
+                  <div className="space-y-3 p-4 bg-amber-50/50 rounded-lg border border-amber-200">
+                    <div className="space-y-2">
+                      <Label htmlFor="debt-creditor">Кредитор *</Label>
+                      <Input
+                        id="debt-creditor"
+                        placeholder="Банк, МФО или имя"
+                        value={debtCreditor}
+                        onChange={(e) => setDebtCreditor(e.target.value)}
+                        className="border-amber-200 focus:border-amber-400"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="debt-amount">Сумма долга *</Label>
+                      <Input
+                        id="debt-amount"
+                        type="number"
+                        placeholder="0"
+                        value={debtInitialAmount}
+                        onChange={(e) => setDebtInitialAmount(e.target.value)}
+                        className="border-amber-200 focus:border-amber-400"
+                        step="0.01"
+                        min="0"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="debt-due-date">Дата погашения *</Label>
+                      <Input
+                        id="debt-due-date"
+                        type="date"
+                        value={debtDueDate}
+                        onChange={(e) => setDebtDueDate(e.target.value)}
+                        className="border-amber-200 focus:border-amber-400"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="debt-interest">Процентная ставка (необязательно)</Label>
+                      <Input
+                        id="debt-interest"
+                        type="number"
+                        placeholder="0"
+                        value={debtInterestRate}
+                        onChange={(e) => setDebtInterestRate(e.target.value)}
+                        className="border-amber-200 focus:border-amber-400"
+                        step="0.1"
+                        min="0"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="debt-notes">Заметки (необязательно)</Label>
+                      <Textarea
+                        id="debt-notes"
+                        placeholder="Дополнительная информация..."
+                        value={debtNotes}
+                        onChange={(e) => setDebtNotes(e.target.value)}
+                        className="border-amber-200 focus:border-amber-400 resize-none"
+                        rows={2}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
               <DialogFooter>
                 <Button 

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { DateRangePicker } from "./DateRangePicker";
-import { TrendingUp, TrendingDown, DollarSign, CalendarIcon, Filter, BarChart3, Sparkles } from "./icons";
+import { TrendingUp, TrendingDown, DollarSign, CalendarIcon, Filter, BarChart3, Sparkles, AlertCircle } from "./icons";
+import accountsService, { type DebtStats } from "../services/accounts.service";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
 import { getCurrencySymbol } from "../constants/currencies";
@@ -24,6 +25,7 @@ export function AnalyticsPage() {
   const [categories, setCategories] = useState<CategoriesResponse | null>(null);
   const [comparison, setComparison] = useState<ComparisonResponse | null>(null);
   const [insights, setInsights] = useState<InsightsResponse | null>(null);
+  const [debtStats, setDebtStats] = useState<DebtStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -75,17 +77,19 @@ export function AnalyticsPage() {
 
       const dateRange = getDateRange();
 
-      const [summaryData, categoriesData, comparisonData, insightsData] = await Promise.all([
+      const [summaryData, categoriesData, comparisonData, insightsData, debtStatsData] = await Promise.all([
         analyticsService.getSummary(dateRange),
         analyticsService.getCategoriesExpenses({ ...dateRange, limit: 6 }),
         selectedPeriod !== 'custom' ? analyticsService.getComparison(dateRange) : Promise.resolve(null),
         analyticsService.getInsights(dateRange),
+        accountsService.getDebtStats().catch(() => null),
       ]);
 
       setSummary(summaryData);
       setCategories(categoriesData);
       setComparison(comparisonData);
       setInsights(insightsData);
+      setDebtStats(debtStatsData);
     } catch (err) {
       console.error('Failed to load analytics:', err);
       setError('Не удалось загрузить данные аналитики');
@@ -463,6 +467,77 @@ export function AnalyticsPage() {
                     )}
                   </div>
                 </OptimizedMotion>
+              </CardContent>
+            </Card>
+          </OptimizedMotion>
+        )}
+
+        {/* Debts Section */}
+        {debtStats && debtStats.debts.length > 0 && (
+          <OptimizedMotion
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.53 }}
+          >
+            <Card className="border-amber-200 bg-gradient-to-br from-amber-50 via-white to-orange-50 shadow-sm hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-amber-100 to-orange-200 rounded-full flex items-center justify-center shadow-sm">
+                    <AlertCircle className="w-4 h-4 text-amber-600" />
+                  </div>
+                  <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                    Статистика по долгам
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-gradient-to-br from-red-50 to-red-100/50 rounded-lg border border-red-200">
+                    <p className="text-xs text-red-600/70 mb-1">Общий долг</p>
+                    <p className="text-lg font-bold text-red-700">{formatCurrency(debtStats.total_debt)}</p>
+                  </div>
+                  <div className="p-3 bg-gradient-to-br from-green-50 to-green-100/50 rounded-lg border border-green-200">
+                    <p className="text-xs text-green-600/70 mb-1">Погашено</p>
+                    <p className="text-lg font-bold text-green-700">{formatCurrency(debtStats.total_paid)}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-slate-600">Общий прогресс</span>
+                    <span className="font-medium text-slate-700">{debtStats.overall_progress.toFixed(1)}%</span>
+                  </div>
+                  <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                    <OptimizedMotion
+                      className="h-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-green-500"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${debtStats.overall_progress}%` }}
+                      transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2 space-y-2">
+                  <p className="text-xs text-slate-600 font-medium">Активные долги ({debtStats.debts.length})</p>
+                  {debtStats.debts.slice(0, 3).map((debt, index) => (
+                    <OptimizedMotion
+                      key={debt.id}
+                      className="flex items-center justify-between p-2 bg-amber-50/50 rounded border border-amber-100"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: 0.65 + index * 0.05 }}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-800 truncate">{debt.name}</p>
+                        <p className="text-xs text-slate-500">{debt.creditor}</p>
+                      </div>
+                      <div className="text-right ml-2">
+                        <p className="text-sm font-medium text-amber-700">{formatCurrency(debt.balance)}</p>
+                        <p className="text-xs text-emerald-600">{debt.progress.toFixed(0)}% ✓</p>
+                      </div>
+                    </OptimizedMotion>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </OptimizedMotion>
