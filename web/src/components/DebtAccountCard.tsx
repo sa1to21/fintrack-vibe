@@ -38,9 +38,13 @@ export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
   const isOverdue = daysUntilDue < 0;
   const isUrgent = daysUntilDue >= 0 && daysUntilDue <= 30;
 
-  const progress = typeof account.debt_progress === 'number' ? account.debt_progress : 0;
   const remaining = Math.abs(account.balance);
   const initialAmount = account.debt_info.initialAmount || 0;
+
+  // Вычисляем процент погашения: (изначальный долг - текущий долг) / изначальный долг * 100
+  const progress = initialAmount > 0
+    ? Math.max(0, Math.min(100, ((initialAmount - remaining) / initialAmount) * 100))
+    : 0;
 
   return (
     <OptimizedMotion
