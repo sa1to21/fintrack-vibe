@@ -501,35 +501,6 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           </div>
         </OptimizedMotion>
 
-        {/* Debts Section */}
-        {debtAccounts.length > 0 && (
-          <OptimizedMotion
-            className="mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.48 }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-amber-600" />
-                <h2 className="font-medium text-foreground">Долги</h2>
-              </div>
-              <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300">
-                {debtAccounts.length}
-              </Badge>
-            </div>
-            <div className="space-y-3">
-              {debtAccounts.map((debt) => (
-                <DebtAccountCard
-                  key={debt.id}
-                  account={debt}
-                  onClick={onManageAccounts}
-                />
-              ))}
-            </div>
-          </OptimizedMotion>
-        )}
-
         {/* Recent Transactions */}
         <OptimizedMotion
           initial={{ opacity: 0, y: 20 }}
@@ -686,6 +657,35 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             </Card>
           )}
         </OptimizedMotion>
+
+        {/* Debts Section */}
+        {debtAccounts.length > 0 && (
+          <OptimizedMotion
+            className="mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.52 }}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-amber-600" />
+                <h2 className="font-medium text-foreground">Долги</h2>
+              </div>
+              <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300">
+                {debtAccounts.length}
+              </Badge>
+            </div>
+            <div className="space-y-3">
+              {debtAccounts.map((debt) => (
+                <DebtAccountCard
+                  key={debt.id}
+                  account={debt}
+                  onClick={onManageAccounts}
+                />
+              ))}
+            </div>
+          </OptimizedMotion>
+        )}
       </OptimizedMotion>
     </div>
   );
