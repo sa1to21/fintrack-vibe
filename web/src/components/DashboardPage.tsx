@@ -381,7 +381,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
       {/* Content */}
       <OptimizedMotion
-        className="px-4 pt-6.5 pb-5 max-w-md mx-auto"
+        className="px-4 pt-8 pb-5 max-w-md mx-auto"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.35 }}
