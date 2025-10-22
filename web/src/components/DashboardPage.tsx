@@ -503,7 +503,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
         {/* Recent Transactions */}
         <OptimizedMotion
-          className="mb-5"
+          className={debtAccounts.length > 0 ? "mb-5" : ""}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.5 }}
