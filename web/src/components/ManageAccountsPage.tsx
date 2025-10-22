@@ -370,17 +370,16 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 <span className="relative z-10">Добавить новый счёт</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 p-0 gap-0 max-h-[600px] h-auto">
-              <div className="flex flex-col max-h-[600px]">
-                <DialogHeader className="flex-shrink-0 px-6 pt-6 pb-2">
-                  <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                    Создать новый счёт
-                  </DialogTitle>
-                  <DialogDescription className="text-slate-600">
-                    Добавьте новый счёт для отслеживания ваших финансов
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="overflow-y-scroll px-6 py-2 flex-1 min-h-0" style={{ WebkitOverflowScrolling: 'touch', maxHeight: 'calc(600px - 200px)' }}>
+            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 p-0 gap-0 flex flex-col max-h-[85vh]">
+              <DialogHeader className="flex-shrink-0 px-4 sm:px-6 pt-4 sm:pt-6 pb-2">
+                <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  Создать новый счёт
+                </DialogTitle>
+                <DialogDescription className="text-slate-600">
+                  Добавьте новый счёт для отслеживания ваших финансов
+                </DialogDescription>
+              </DialogHeader>
+              <div className="overflow-y-auto px-4 sm:px-6 py-2 flex-1 min-h-0" style={{ WebkitOverflowScrolling: 'touch' }}>
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="account-name">Название счёта</Label>
@@ -508,7 +507,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 )}
                   </div>
                 </div>
-                <DialogFooter className="flex-shrink-0 px-6 pb-6 pt-4">
+                <DialogFooter className="flex-shrink-0 px-4 sm:px-6 pb-4 sm:pb-6 pt-3 border-t border-blue-100">
                   <Button
                     variant="outline"
                     onClick={() => setIsAddDialogOpen(false)}
@@ -523,7 +522,6 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     Создать
                   </Button>
                 </DialogFooter>
-              </div>
             </DialogContent>
           </Dialog>
         </LightMotion>
