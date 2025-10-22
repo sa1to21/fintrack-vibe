@@ -201,13 +201,16 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
     // Фильтруем транзакции: для переводов берем только расходную часть (originalType === 'expense')
     const uniqueTransactions = transactions.filter(t => {
       if (t.type === 'transfer' && t.transferId) {
+        // Показываем только транзакцию с originalType === 'expense' (списание = "откуда")
+        if (t.originalType !== 'expense') {
+          return false; // Пропускаем доходную часть перевода
+        }
+
         if (seenTransferIds.has(t.transferId)) {
           return false; // Пропускаем дубликат перевода
         }
         seenTransferIds.add(t.transferId);
-
-        // Показываем только транзакцию с originalType === 'expense' (списание = "откуда")
-        return t.originalType === 'expense';
+        return true;
       }
       return true;
     });
