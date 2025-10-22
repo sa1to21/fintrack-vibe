@@ -441,7 +441,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
         {/* Quick Stats */}
         <OptimizedMotion
-          className="mb-6"
+          className="mb-5"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.45 }}
@@ -503,6 +503,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
         {/* Recent Transactions */}
         <OptimizedMotion
+          className="mb-5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.5 }}
@@ -661,10 +662,9 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         {/* Debts Section */}
         {debtAccounts.length > 0 && (
           <OptimizedMotion
-            className="mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.52 }}
+            transition={{ duration: 0.4, delay: 0.55 }}
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
