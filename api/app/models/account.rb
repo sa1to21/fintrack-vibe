@@ -7,12 +7,15 @@ class Account < ApplicationRecord
   validates :balance, presence: true, numericality: true
   validates :currency, presence: true
   validate :debt_info_structure, if: :is_debt?
-  validate :debt_balance_must_be_negative, if: :is_debt?
+  validate :debt_balance_must_be_negative, if: -> { is_debt? && !marked_for_destruction? }
 
   scope :regular, -> { where(is_debt: false) }
   scope :debts, -> { where(is_debt: true) }
 
   def update_balance!
+    # Skip if account is being deleted
+    return if destroyed? || marked_for_destruction?
+
     self.balance = transactions.sum do |transaction|
       transaction.transaction_type == 'income' ? transaction.amount : -transaction.amount
     end
