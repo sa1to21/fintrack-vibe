@@ -69,7 +69,6 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const [debtCreditor, setDebtCreditor] = useState("");
   const [debtInitialAmount, setDebtInitialAmount] = useState("");
   const [debtDueDate, setDebtDueDate] = useState("");
-  const [debtInterestRate, setDebtInterestRate] = useState("");
   const [debtNotes, setDebtNotes] = useState("");
 
   // Загрузка счетов и категорий из API
@@ -160,7 +159,6 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
           initialAmount: parseFloat(debtInitialAmount),
           creditorName: debtCreditor.trim(),
           dueDate: debtDueDate,
-          interestRate: debtInterestRate ? parseFloat(debtInterestRate) : undefined,
           notes: debtNotes.trim() || undefined
         };
       }
@@ -188,7 +186,6 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
     setDebtCreditor("");
     setDebtInitialAmount("");
     setDebtDueDate("");
-    setDebtInterestRate("");
     setDebtNotes("");
   };
 
@@ -373,7 +370,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 <span className="relative z-10">Добавить новый счёт</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30">
+            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 max-h-[90vh] overflow-hidden flex flex-col">
               <DialogHeader>
                 <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   Создать новый счёт
@@ -382,7 +379,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   Добавьте новый счёт для отслеживания ваших финансов
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4">
+              <div className="space-y-4 overflow-y-auto pr-2 flex-1">
                 <div className="space-y-2">
                   <Label htmlFor="account-name">Название счёта</Label>
                   <Input
@@ -460,7 +457,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 </div>
 
                 {isDebt && (
-                  <div className="space-y-3 p-4 bg-amber-50/50 rounded-lg border border-amber-200">
+                  <div className="space-y-3 p-3 bg-amber-50/50 rounded-lg border border-amber-200">
                     <div className="space-y-2">
                       <Label htmlFor="debt-creditor">Кредитор *</Label>
                       <Input
@@ -492,19 +489,6 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                         value={debtDueDate}
                         onChange={(e) => setDebtDueDate(e.target.value)}
                         className="border-amber-200 focus:border-amber-400"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="debt-interest">Процентная ставка (необязательно)</Label>
-                      <Input
-                        id="debt-interest"
-                        type="number"
-                        placeholder="0"
-                        value={debtInterestRate}
-                        onChange={(e) => setDebtInterestRate(e.target.value)}
-                        className="border-amber-200 focus:border-amber-400"
-                        step="0.1"
-                        min="0"
                       />
                     </div>
                     <div className="space-y-2">

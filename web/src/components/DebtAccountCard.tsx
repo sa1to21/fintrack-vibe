@@ -1,7 +1,7 @@
 import { Card, CardContent } from "./ui/card";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { Progress } from "./ui/progress";
-import { Calendar, User, TrendingDown } from "./icons";
+import { Calendar, User } from "./icons";
 import { getCurrencySymbol } from "../constants/currencies";
 import type { Account } from "../services/accounts.service";
 
@@ -126,14 +126,6 @@ export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
               }
             </span>
           </div>
-
-          {/* Interest Rate (if available) */}
-          {account.debt_info.interestRate && (
-            <div className="flex items-center gap-2 text-xs text-slate-500 pt-0.5">
-              <TrendingDown className="w-3.5 h-3.5" />
-              <span>Ставка: {account.debt_info.interestRate}% годовых</span>
-            </div>
-          )}
         </CardContent>
       </Card>
     </OptimizedMotion>
