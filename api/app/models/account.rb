@@ -16,10 +16,23 @@ class Account < ApplicationRecord
     # Skip if account is being deleted
     return if destroyed? || marked_for_destruction?
 
-    self.balance = transactions.sum do |transaction|
-      transaction.transaction_type == 'income' ? transaction.amount : -transaction.amount
+    if is_debt?
+      # For debt accounts, start with initial debt (negative) and adjust with transactions
+      # Income = debt repayment (reduces absolute debt value, makes balance less negative)
+      # Expense = additional debt (increases absolute debt value, makes balance more negative)
+      initial_debt = -(debt_info['initialAmount'].to_f)
+      transaction_sum = transactions.sum do |transaction|
+        transaction.transaction_type == 'income' ? transaction.amount : -transaction.amount
+      end
+      self.balance = initial_debt + transaction_sum
+    else
+      # For regular accounts, calculate balance from transactions
+      self.balance = transactions.sum do |transaction|
+        transaction.transaction_type == 'income' ? transaction.amount : -transaction.amount
+      end
     end
-    save!
+
+    save!(validate: false)
   end
 
   def debt_progress
