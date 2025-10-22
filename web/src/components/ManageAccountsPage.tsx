@@ -370,7 +370,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 <span className="relative z-10">Добавить новый счёт</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 p-0 gap-0 flex flex-col h-[85vh] max-h-[85vh]">
+            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 p-0 gap-0 max-h-[85vh]" style={{ display: 'flex', flexDirection: 'column', height: '85vh' }}>
               <DialogHeader className="flex-shrink-0 px-4 sm:px-6 pt-4 sm:pt-6 pb-2">
                 <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   Создать новый счёт
@@ -379,7 +379,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   Добавьте новый счёт для отслеживания ваших финансов
                 </DialogDescription>
               </DialogHeader>
-              <div className="overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-2 flex-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+              <div className="px-4 sm:px-6 py-2" style={{ flex: '1 1 0%', overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch', minHeight: 0 }}>
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="account-name">Название счёта</Label>
@@ -507,7 +507,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 )}
                   </div>
                 </div>
-                <DialogFooter className="flex-shrink-0 px-4 sm:px-6 pb-4 sm:pb-6 pt-3 border-t border-blue-100">
+                <DialogFooter className="px-4 sm:px-6 pb-4 sm:pb-6 pt-3 border-t border-blue-100" style={{ flexShrink: 0 }}>
                   <Button
                     variant="outline"
                     onClick={() => setIsAddDialogOpen(false)}
