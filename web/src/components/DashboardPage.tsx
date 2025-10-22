@@ -327,7 +327,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           </OptimizedMotion>
 
           {/* Accounts */}
-          <div>
+          <div className="mb-4">
             {/* First 4 accounts in 2x2 grid */}
             {accounts.length > 0 && (
               <OptimizedMotion
