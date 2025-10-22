@@ -26,6 +26,7 @@ interface Transaction {
   id: string;
   amount: number;
   type: 'income' | 'expense' | 'transfer';
+  originalType?: 'income' | 'expense'; // Оригинальный тип до преобразования в transfer
   category: string;
   categoryName: string;
   description: string;
@@ -92,6 +93,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
               id: String(t.id),
               amount: parseFloat(t.amount.toString()),
               type: type as 'income' | 'expense' | 'transfer',
+              originalType: isTransfer ? (t.transaction_type as 'income' | 'expense') : undefined,
               category: String(t.category_id),
               categoryName: t.category?.name || 'Без категории',
               description: t.description || '',
@@ -142,6 +144,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             id: String(t.id),
             amount: parseFloat(t.amount.toString()),
             type: type as 'income' | 'expense' | 'transfer',
+            originalType: isTransfer ? (t.transaction_type as 'income' | 'expense') : undefined,
             category: String(t.category_id),
             categoryName: t.category?.name || 'Без категории',
             description: t.description || '',
@@ -192,14 +195,19 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
   // Recent transactions (показываем только последние 3) - memoized for performance
   const recentTransactions = useMemo(() => {
-    // Дедупликация переводов: каждый перевод = 2 транзакции, показываем только одну
+    // Дедупликация переводов: каждый перевод = 2 транзакции, показываем только расходную
     const seenTransferIds = new Set<string>();
+
+    // Фильтруем транзакции: для переводов берем только расходную часть (originalType === 'expense')
     const uniqueTransactions = transactions.filter(t => {
       if (t.type === 'transfer' && t.transferId) {
         if (seenTransferIds.has(t.transferId)) {
           return false; // Пропускаем дубликат перевода
         }
         seenTransferIds.add(t.transferId);
+
+        // Показываем только транзакцию с originalType === 'expense' (списание = "откуда")
+        return t.originalType === 'expense';
       }
       return true;
     });
