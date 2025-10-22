@@ -16,6 +16,7 @@ export {
   X,
   Search,
   Calendar as CalendarIcon,
+  Calendar,
 
   // Actions
   Plus,
