@@ -7,6 +7,7 @@ class Account < ApplicationRecord
   validates :balance, presence: true, numericality: true
   validates :currency, presence: true
   validate :debt_info_structure, if: :is_debt?
+  validate :debt_balance_must_be_negative, if: :is_debt?
 
   scope :regular, -> { where(is_debt: false) }
   scope :debts, -> { where(is_debt: true) }
@@ -42,6 +43,12 @@ class Account < ApplicationRecord
 
     if debt_info['initialAmount'].present? && debt_info['initialAmount'].to_f <= 0
       errors.add(:debt_info, 'initialAmount must be positive')
+    end
+  end
+
+  def debt_balance_must_be_negative
+    if balance.present? && balance > 0
+      errors.add(:balance, 'debt account balance must be negative or zero')
     end
   end
 end

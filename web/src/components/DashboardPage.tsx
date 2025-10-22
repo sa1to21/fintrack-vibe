@@ -19,6 +19,7 @@ interface Account {
   currency: string;
   icon: typeof Wallet;
   color: string;
+  is_debt?: boolean;
 }
 
 interface Transaction {
@@ -75,7 +76,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   acc.account_type === 'card' ? CreditCard : Wallet,
             color: acc.account_type === 'savings' ? "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700" :
                    acc.account_type === 'card' ? "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700" :
-                   "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700"
+                   "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700",
+            is_debt: acc.is_debt
           }));
 
           const formattedTransactions: Transaction[] = cachedRaw.transactions.map(t => {
@@ -121,7 +123,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 acc.account_type === 'card' ? CreditCard : Wallet,
           color: acc.account_type === 'savings' ? "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700" :
                  acc.account_type === 'card' ? "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700" :
-                 "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700"
+                 "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700",
+          is_debt: acc.is_debt
         }));
 
         // Преобразуем транзакции в формат компонента
@@ -209,8 +212,12 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   // Memoize calculations for performance
   const { balancesByCurrency, currentMonthName } = useMemo(() => {
     // Level 2: Group balances by currency (no conversion)
+    // Exclude debt accounts from total balance
     const balances: Record<string, number> = {};
     accounts.forEach(account => {
+      // Skip debt accounts - they shouldn't be included in total balance
+      if (account.is_debt) return;
+
       if (!balances[account.currency]) {
         balances[account.currency] = 0;
       }
