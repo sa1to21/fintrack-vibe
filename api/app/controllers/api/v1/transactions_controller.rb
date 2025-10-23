@@ -27,6 +27,17 @@ class Api::V1::TransactionsController < Api::V1::BaseController
       end
     end
 
+    # Проверка: долговой счет не может уйти в плюс при добавлении дохода
+    if transaction.transaction_type == 'income' && @account.is_debt
+      new_balance = @account.balance + transaction.amount
+      if new_balance > 0
+        return render json: {
+          error: 'Долговой счет не может иметь положительный баланс',
+          details: ["Максимальная сумма для пополнения: #{(-@account.balance).round(2)} #{@account.currency}"]
+        }, status: :unprocessable_entity
+      end
+    end
+
     if transaction.save
       # Проверяем, был ли полностью погашен долговой счет после добавления дохода
       @account.reload

@@ -36,6 +36,17 @@ module Api
           }, status: :unprocessable_entity
         end
 
+        # Проверка: долговой счет не может уйти в плюс
+        if to_account.is_debt
+          new_balance = to_account.balance + amount
+          if new_balance > 0
+            return render json: {
+              error: 'Долговой счет не может иметь положительный баланс',
+              details: ["Максимальная сумма для пополнения: #{(-to_account.balance).round(2)} #{to_account.currency}"]
+            }, status: :unprocessable_entity
+          end
+        end
+
         # Выполняем перевод в транзакции
         ActiveRecord::Base.transaction do
           # Генерируем уникальный ID для связи двух транзакций

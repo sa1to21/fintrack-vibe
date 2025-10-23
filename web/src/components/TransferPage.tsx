@@ -141,6 +141,9 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
       } else if (error.response?.data?.error === 'Перевод между разными валютами невозможен') {
         const details = error.response?.data?.details?.[0] || 'Счета используют разные валюты';
         toast.error(details, { duration: 5000 });
+      } else if (error.response?.data?.error === 'Долговой счет не может иметь положительный баланс') {
+        const details = error.response?.data?.details?.[0] || 'Долговой счет нельзя пополнить сверх нуля';
+        toast.error(details, { duration: 5000 });
       } else {
         toast.error('Не удалось выполнить перевод');
       }

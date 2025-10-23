@@ -216,6 +216,9 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
       // Проверяем, является ли ошибка связанной с недостатком средств
       if (error.response?.data?.error === 'Недостаточно средств') {
         toast.error('Недостаточно средств на счете');
+      } else if (error.response?.data?.error === 'Долговой счет не может иметь положительный баланс') {
+        const details = error.response?.data?.details?.[0] || 'Долговой счет нельзя пополнить сверх нуля';
+        toast.error(details, { duration: 5000 });
       } else {
         toast.error('Не удалось сохранить транзакцию');
       }
