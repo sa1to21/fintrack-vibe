@@ -42,7 +42,7 @@ module Api
           if new_balance > 0
             return render json: {
               error: 'Долговой счет не может иметь положительный баланс',
-              details: ["Максимальная сумма для пополнения: #{(-to_account.balance).round(2)} #{to_account.currency}"]
+              details: ["\"#{to_account.name}\" — долговой счет. Максимальная сумма для пополнения: #{(-to_account.balance).round(2)} #{to_account.currency}"]
             }, status: :unprocessable_entity
           end
         end

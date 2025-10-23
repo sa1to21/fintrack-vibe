@@ -33,7 +33,7 @@ class Api::V1::TransactionsController < Api::V1::BaseController
       if new_balance > 0
         return render json: {
           error: 'Долговой счет не может иметь положительный баланс',
-          details: ["Максимальная сумма для пополнения: #{(-@account.balance).round(2)} #{@account.currency}"]
+          details: ["\"#{@account.name}\" — долговой счет. Максимальная сумма для пополнения: #{(-@account.balance).round(2)} #{@account.currency}"]
         }, status: :unprocessable_entity
       end
     end
