@@ -16,9 +16,9 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
       .where(date: date_from..date_to)
       .includes(:category, :account)
 
-    # Calculate totals for the period
-    income = transactions.income.sum(:amount)
-    expenses = transactions.expense.sum(:amount)
+    # Calculate totals for the period (excluding regular transfers)
+    income = transactions.income.excluding_transfers.sum(:amount)
+    expenses = transactions.expense.excluding_transfers.sum(:amount)
     savings = income - expenses
 
     # Calculate average expense per day
@@ -29,7 +29,7 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
     total_balance = base_currency_accounts.sum(:balance)
 
     # Find biggest expense in the period
-    biggest_expense_transaction = transactions.expense.order(amount: :desc).first
+    biggest_expense_transaction = transactions.expense.excluding_transfers.order(amount: :desc).first
     biggest_expense = if biggest_expense_transaction
       {
         amount: biggest_expense_transaction.amount,
@@ -62,9 +62,9 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
       months_data << {
         month: month_start.strftime('%Y-%m'),
         month_name: month_start.strftime('%B %Y'),
-        income: month_transactions.income.sum(:amount),
-        expenses: month_transactions.expense.sum(:amount),
-        transactions_count: month_transactions.count
+        income: month_transactions.income.excluding_transfers.sum(:amount),
+        expenses: month_transactions.expense.excluding_transfers.sum(:amount),
+        transactions_count: month_transactions.excluding_transfers.count
       }
     end
 
@@ -83,11 +83,12 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
     # Get accounts with base currency
     base_currency_accounts = current_user.accounts.where(currency: base_currency)
 
-    # Get expense transactions for the period from base currency accounts only
+    # Get expense transactions for the period from base currency accounts only (excluding transfers)
     expense_transactions = Transaction
       .where(account: base_currency_accounts)
       .where(transaction_type: 'expense')
       .where(date: date_from..date_to)
+      .excluding_transfers
       .includes(:category)
 
     # Calculate total expenses
@@ -166,8 +167,8 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
       .where(date: date_from..date_to)
       .includes(:category)
 
-    current_income = current_transactions.where(transaction_type: 'income').sum(:amount)
-    current_expenses = current_transactions.where(transaction_type: 'expense').sum(:amount)
+    current_income = current_transactions.where(transaction_type: 'income').excluding_transfers.sum(:amount)
+    current_expenses = current_transactions.where(transaction_type: 'expense').excluding_transfers.sum(:amount)
 
     # Previous period transactions from base currency accounts
     previous_transactions = Transaction
@@ -175,8 +176,8 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
       .where(date: prev_date_from..prev_date_to)
       .includes(:category)
 
-    previous_income = previous_transactions.where(transaction_type: 'income').sum(:amount)
-    previous_expenses = previous_transactions.where(transaction_type: 'expense').sum(:amount)
+    previous_income = previous_transactions.where(transaction_type: 'income').excluding_transfers.sum(:amount)
+    previous_expenses = previous_transactions.where(transaction_type: 'expense').excluding_transfers.sum(:amount)
 
     # Calculate percentage changes
     income_change = if previous_income > 0
@@ -224,7 +225,7 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
       .where(date: date_from..date_to)
       .includes(:category)
 
-    expense_transactions = transactions.where(transaction_type: 'expense')
+    expense_transactions = transactions.where(transaction_type: 'expense').excluding_transfers
 
     # 1. Biggest expense
     biggest_expense_transaction = expense_transactions.order(amount: :desc).first

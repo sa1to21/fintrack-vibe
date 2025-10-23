@@ -39,9 +39,9 @@ class Api::V1::DashboardController < Api::V1::BaseController
       .where(date: month_start..month_end)
       .includes(:category)
 
-    # Calculate income and expenses
-    income = monthly_transactions.income.sum(:amount)
-    expenses = monthly_transactions.expense.sum(:amount)
+    # Calculate income and expenses (excluding regular transfers)
+    income = monthly_transactions.income.excluding_transfers.sum(:amount)
+    expenses = monthly_transactions.expense.excluding_transfers.sum(:amount)
 
     render json: {
       monthly_income: income,
