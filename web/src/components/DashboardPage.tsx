@@ -165,9 +165,10 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         const stats = await dashboardService.getMonthlyStats();
         setMonthlyStats(stats);
 
-        // Загружаем долговые счета
+        // Загружаем долговые счета (только с отрицательным балансом)
         const debts = await accountsService.getAll('debt');
-        setDebtAccounts(debts);
+        const activeDebts = debts.filter(debt => parseFloat(debt.balance.toString()) < 0);
+        setDebtAccounts(activeDebts);
 
         // Сохраняем RAW данные в кеш (без иконок, только сериализуемые данные)
         cache.set('dashboard-raw', data);
