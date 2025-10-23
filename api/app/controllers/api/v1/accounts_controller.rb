@@ -42,7 +42,8 @@ class Api::V1::AccountsController < Api::V1::BaseController
   end
 
   def debt_stats
-    debts = current_user.accounts.debts
+    # Only include active debts (balance < 0)
+    debts = current_user.accounts.debts.where('balance < 0')
 
     total_debt = debts.sum(&:balance).abs
     total_initial = debts.sum { |d| d.debt_info&.dig('initialAmount').to_f || 0 }
