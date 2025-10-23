@@ -1,7 +1,7 @@
 class Api::V1::DashboardController < Api::V1::BaseController
   def index
-    # Загружаем все счета пользователя
-    accounts = current_user.accounts
+    # Загружаем все счета пользователя (отсортированы по display_order)
+    accounts = current_user.accounts.order(:display_order, :id)
 
     # Загружаем последние 20 транзакций со всех счетов
     transactions = Transaction
