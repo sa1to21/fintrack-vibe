@@ -67,13 +67,29 @@ module Api
           expense.update!(paired_transaction_id: income.id)
           income.update!(paired_transaction_id: expense.id)
 
-          render json: {
+          # Проверяем, был ли полностью погашен долговой счет
+          to_account.reload
+          debt_fully_repaid = to_account.is_debt && to_account.balance >= 0
+
+          response_data = {
             success: true,
             from_transaction: TransactionSerializer.new(expense).as_json,
             to_transaction: TransactionSerializer.new(income).as_json,
-            from_account: { id: from_account.id, balance: from_account.reload.balance },
-            to_account: { id: to_account.id, balance: to_account.reload.balance }
-          }, status: :created
+            from_account: { id: from_account.id, balance: from_account.balance },
+            to_account: { id: to_account.id, balance: to_account.balance }
+          }
+
+          # Добавляем информацию о погашении долга
+          if debt_fully_repaid
+            response_data[:debt_fully_repaid] = true
+            response_data[:debt_account] = {
+              id: to_account.id,
+              name: to_account.name,
+              balance: to_account.balance
+            }
+          end
+
+          render json: response_data, status: :created
         end
       rescue ActiveRecord::RecordInvalid => e
         render json: {

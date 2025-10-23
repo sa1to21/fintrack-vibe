@@ -5,6 +5,16 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
 import { ArrowLeft, ArrowRightLeft, Loader2 } from "./icons";
 import { toast } from "sonner";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
@@ -27,11 +37,33 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
   const [description, setDescription] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [showDebtDialog, setShowDebtDialog] = useState(false);
+  const [debtAccount, setDebtAccount] = useState<{ id: string; name: string; balance: number } | null>(null);
 
   const swapAccounts = () => {
     const temp = fromAccountId;
     setFromAccountId(toAccountId);
     setToAccountId(temp);
+  };
+
+  const handleDeleteDebtAccount = async () => {
+    if (!debtAccount) return;
+
+    try {
+      await accountsService.delete(debtAccount.id);
+      toast.success(`Долговой счет "${debtAccount.name}" удален`);
+      setShowDebtDialog(false);
+      onSuccess();
+    } catch (error) {
+      console.error('Failed to delete account:', error);
+      toast.error('Не удалось удалить счет');
+    }
+  };
+
+  const handleKeepDebtAccount = () => {
+    toast.success('Перевод выполнен успешно!');
+    setShowDebtDialog(false);
+    onSuccess();
   };
 
   useEffect(() => {
@@ -91,8 +123,14 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
         description: description || undefined
       });
 
-      toast.success('Перевод выполнен успешно!');
-      onSuccess();
+      // Проверяем, был ли полностью погашен долг
+      if (result.debt_fully_repaid && result.debt_account) {
+        setDebtAccount(result.debt_account);
+        setShowDebtDialog(true);
+      } else {
+        toast.success('Перевод выполнен успешно!');
+        onSuccess();
+      }
     } catch (error: any) {
       console.error('Transfer failed:', error);
 
@@ -395,6 +433,39 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
           </CardContent>
         </Card>
       </OptimizedMotion>
+
+      {/* Debt Repayment Dialog */}
+      <AlertDialog open={showDebtDialog} onOpenChange={setShowDebtDialog}>
+        <AlertDialogContent className="bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm border-blue-200">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+              🎉 Долг полностью погашен!
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-600 space-y-3 pt-2">
+              <p>
+                Поздравляем! Вы полностью погасили долговой счет <span className="font-semibold text-slate-800">"{debtAccount?.name}"</span>.
+              </p>
+              <p className="text-sm">
+                Хотите удалить этот счет из списка? Вы всегда сможете создать его снова при необходимости.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-2">
+            <AlertDialogCancel
+              onClick={handleKeepDebtAccount}
+              className="border-blue-200 text-slate-700 hover:bg-blue-50"
+            >
+              Оставить счет
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteDebtAccount}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+            >
+              Удалить счет
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
