@@ -448,17 +448,12 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
-    console.log('handleDragEnd called', { active: active.id, over: over?.id });
-
     if (!over || active.id === over.id) {
-      console.log('No reorder needed');
       return;
     }
 
     const oldIndex = accounts.findIndex((acc) => acc.id === active.id);
     const newIndex = accounts.findIndex((acc) => acc.id === over.id);
-
-    console.log('Reordering', { oldIndex, newIndex });
 
     const newAccounts = arrayMove(accounts, oldIndex, newIndex);
 
@@ -472,9 +467,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
         position: index
       }));
 
-      console.log('Sending reorder request:', accountOrders);
       await accountsService.reorder(accountOrders);
-      console.log('Reorder successful');
       toast.success("Порядок счетов обновлён");
     } catch (error) {
       console.error('Failed to reorder accounts:', error);

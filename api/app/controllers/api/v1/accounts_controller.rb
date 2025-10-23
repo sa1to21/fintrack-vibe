@@ -44,24 +44,17 @@ class Api::V1::AccountsController < Api::V1::BaseController
   def reorder
     account_orders = params.require(:accounts)
 
-    Rails.logger.info "=== REORDER REQUEST ==="
-    Rails.logger.info "Params: #{account_orders.inspect}"
-
     ActiveRecord::Base.transaction do
       account_orders.each do |order_data|
         account = current_user.accounts.find_by(id: order_data[:id])
         next unless account
 
-        Rails.logger.info "Updating account #{account.id} (#{account.name}): display_order #{account.display_order} -> #{order_data[:position]}"
         account.update!(display_order: order_data[:position])
-        Rails.logger.info "After update: display_order = #{account.reload.display_order}"
       end
     end
 
-    Rails.logger.info "=== REORDER COMPLETE ==="
     render json: { success: true }
   rescue ActiveRecord::RecordInvalid => e
-    Rails.logger.error "Reorder failed: #{e.message}"
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
