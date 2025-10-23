@@ -100,8 +100,7 @@ module Api
         # Доходы
         { name: 'Зарплата', category_type: 'income', icon: '💰', color: '#95E1D3' },
         { name: 'Фриланс', category_type: 'income', icon: '💼', color: '#6C5CE7' },
-        { name: 'Подарки', category_type: 'income', icon: '🎁', color: '#FDCB6E' },
-        { name: 'Проценты по вкладу', category_type: 'income', icon: '💰', color: '#81C784' }
+        { name: 'Подарки', category_type: 'income', icon: '🎁', color: '#FDCB6E' }
       ]
 
       default_categories.each do |category_attrs|
