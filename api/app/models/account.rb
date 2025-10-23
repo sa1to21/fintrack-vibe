@@ -8,9 +8,11 @@ class Account < ApplicationRecord
   validates :currency, presence: true
   validate :debt_info_structure, if: :is_debt?
   validate :debt_balance_must_be_negative, if: -> { is_debt? && !marked_for_destruction? }
+  validate :savings_account_fields, if: :is_savings_account?
 
   scope :regular, -> { where(is_debt: false) }
   scope :debts, -> { where(is_debt: true) }
+  scope :savings_accounts, -> { where(is_savings_account: true) }
 
   def update_balance!
     # Skip if account is being deleted
@@ -65,6 +67,20 @@ class Account < ApplicationRecord
   def debt_balance_must_be_negative
     if balance.present? && balance > 0
       errors.add(:balance, 'debt account balance must be negative or zero')
+    end
+  end
+
+  def savings_account_fields
+    if interest_rate.present? && (interest_rate <= 0 || interest_rate > 100)
+      errors.add(:interest_rate, 'must be between 0 and 100')
+    end
+
+    if deposit_term_months.present? && deposit_term_months <= 0
+      errors.add(:deposit_term_months, 'must be positive')
+    end
+
+    if deposit_start_date.present? && deposit_end_date.present? && deposit_start_date >= deposit_end_date
+      errors.add(:deposit_end_date, 'must be after start date')
     end
   end
 end

@@ -20,6 +20,15 @@ export interface Account {
   is_debt: boolean;
   debt_info?: DebtInfo;
   debt_progress?: number;
+  is_savings_account: boolean;
+  interest_rate?: number;
+  deposit_term_months?: number;
+  deposit_start_date?: string;
+  deposit_end_date?: string;
+  auto_renewal?: boolean;
+  withdrawal_allowed?: boolean;
+  target_amount?: number;
+  last_interest_date?: string;
 }
 
 export interface CreateAccountData {
@@ -29,6 +38,14 @@ export interface CreateAccountData {
   account_type?: string;
   is_debt?: boolean;
   debt_info?: DebtInfo;
+  is_savings_account?: boolean;
+  interest_rate?: number;
+  deposit_term_months?: number;
+  deposit_start_date?: string;
+  deposit_end_date?: string;
+  auto_renewal?: boolean;
+  withdrawal_allowed?: boolean;
+  target_amount?: number;
 }
 
 export interface UpdateAccountData {
@@ -38,6 +55,14 @@ export interface UpdateAccountData {
   account_type?: string;
   is_debt?: boolean;
   debt_info?: DebtInfo;
+  is_savings_account?: boolean;
+  interest_rate?: number;
+  deposit_term_months?: number;
+  deposit_start_date?: string;
+  deposit_end_date?: string;
+  auto_renewal?: boolean;
+  withdrawal_allowed?: boolean;
+  target_amount?: number;
 }
 
 export interface DebtStats {

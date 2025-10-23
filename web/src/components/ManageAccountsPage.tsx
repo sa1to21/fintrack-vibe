@@ -211,6 +211,13 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const [debtInitialAmount, setDebtInitialAmount] = useState("");
   const [debtDueDate, setDebtDueDate] = useState("");
   const [debtNotes, setDebtNotes] = useState("");
+  const [isSavings, setIsSavings] = useState(false);
+  const [interestRate, setInterestRate] = useState("");
+  const [depositTermMonths, setDepositTermMonths] = useState("");
+  const [depositStartDate, setDepositStartDate] = useState("");
+  const [autoRenewal, setAutoRenewal] = useState(false);
+  const [withdrawalAllowed, setWithdrawalAllowed] = useState(true);
+  const [targetAmount, setTargetAmount] = useState("");
 
   // Drag and drop sensors
   const sensors = useSensors(
@@ -300,7 +307,8 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
         balance: isDebt ? -Math.abs(parseFloat(debtInitialAmount)) : 0,
         currency: selectedCurrency,
         account_type: selectedIcon.type,
-        is_debt: isDebt
+        is_debt: isDebt,
+        is_savings_account: isSavings
       };
 
       if (isDebt) {
@@ -310,6 +318,23 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
           dueDate: debtDueDate,
           notes: debtNotes.trim() || undefined
         };
+      }
+
+      if (isSavings) {
+        accountData.interest_rate = interestRate ? parseFloat(interestRate) : undefined;
+        accountData.deposit_term_months = depositTermMonths ? parseInt(depositTermMonths) : undefined;
+        accountData.deposit_start_date = depositStartDate || undefined;
+
+        if (depositStartDate && depositTermMonths) {
+          const startDate = new Date(depositStartDate);
+          const endDate = new Date(startDate);
+          endDate.setMonth(endDate.getMonth() + parseInt(depositTermMonths));
+          accountData.deposit_end_date = endDate.toISOString().split('T')[0];
+        }
+
+        accountData.auto_renewal = autoRenewal;
+        accountData.withdrawal_allowed = withdrawalAllowed;
+        accountData.target_amount = targetAmount ? parseFloat(targetAmount) : undefined;
       }
 
       await accountsService.create(accountData);
@@ -336,6 +361,13 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
     setDebtInitialAmount("");
     setDebtDueDate("");
     setDebtNotes("");
+    setIsSavings(false);
+    setInterestRate("");
+    setDepositTermMonths("");
+    setDepositStartDate("");
+    setAutoRenewal(false);
+    setWithdrawalAllowed(true);
+    setTargetAmount("");
   };
 
   const handleEditAccount = async () => {
@@ -683,6 +715,95 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                         className="border-amber-200 focus:border-amber-400 resize-none"
                         rows={2}
                       />
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex items-center space-x-2 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                  <Checkbox
+                    id="is-savings"
+                    checked={isSavings}
+                    onCheckedChange={(checked) => setIsSavings(checked as boolean)}
+                  />
+                  <Label
+                    htmlFor="is-savings"
+                    className="text-sm font-medium text-emerald-800 cursor-pointer"
+                  >
+                    🐷 Накопительный счёт (вклад с процентами)
+                  </Label>
+                </div>
+
+                {isSavings && (
+                  <div className="space-y-3 p-3 bg-emerald-50/50 rounded-lg border border-emerald-200">
+                    <div className="space-y-2">
+                      <Label htmlFor="interest-rate">Процентная ставка (% годовых)</Label>
+                      <Input
+                        id="interest-rate"
+                        type="number"
+                        placeholder="Например: 5.5"
+                        value={interestRate}
+                        onChange={(e) => setInterestRate(e.target.value)}
+                        className="border-emerald-200 focus:border-emerald-400"
+                        step="0.01"
+                        min="0"
+                        max="100"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="deposit-term">Срок вклада (месяцев)</Label>
+                      <Input
+                        id="deposit-term"
+                        type="number"
+                        placeholder="Например: 12"
+                        value={depositTermMonths}
+                        onChange={(e) => setDepositTermMonths(e.target.value)}
+                        className="border-emerald-200 focus:border-emerald-400"
+                        step="1"
+                        min="1"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="deposit-start-date">Дата начала вклада</Label>
+                      <Input
+                        id="deposit-start-date"
+                        type="date"
+                        value={depositStartDate}
+                        onChange={(e) => setDepositStartDate(e.target.value)}
+                        className="border-emerald-200 focus:border-emerald-400"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="target-amount">Целевая сумма (необязательно)</Label>
+                      <Input
+                        id="target-amount"
+                        type="number"
+                        placeholder="Например: 100000"
+                        value={targetAmount}
+                        onChange={(e) => setTargetAmount(e.target.value)}
+                        className="border-emerald-200 focus:border-emerald-400"
+                        step="0.01"
+                        min="0"
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="auto-renewal"
+                        checked={autoRenewal}
+                        onCheckedChange={(checked) => setAutoRenewal(checked as boolean)}
+                      />
+                      <Label htmlFor="auto-renewal" className="text-sm cursor-pointer">
+                        Автопродление вклада
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="withdrawal-allowed"
+                        checked={withdrawalAllowed}
+                        onCheckedChange={(checked) => setWithdrawalAllowed(checked as boolean)}
+                      />
+                      <Label htmlFor="withdrawal-allowed" className="text-sm cursor-pointer">
+                        Разрешить снятие средств
+                      </Label>
                     </div>
                   </div>
                 )}
