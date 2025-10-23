@@ -28,7 +28,25 @@ class Api::V1::TransactionsController < Api::V1::BaseController
     end
 
     if transaction.save
-      render json: transaction, serializer: TransactionSerializer, status: :created
+      # Проверяем, был ли полностью погашен долговой счет после добавления дохода
+      @account.reload
+      debt_fully_repaid = @account.is_debt && @account.balance >= 0 && transaction.transaction_type == 'income'
+
+      response_data = {
+        transaction: TransactionSerializer.new(transaction).as_json
+      }
+
+      # Добавляем информацию о погашении долга
+      if debt_fully_repaid
+        response_data[:debt_fully_repaid] = true
+        response_data[:debt_account] = {
+          id: @account.id,
+          name: @account.name,
+          balance: @account.balance
+        }
+      end
+
+      render json: response_data, status: :created
     else
       render_validation_errors(transaction)
     end

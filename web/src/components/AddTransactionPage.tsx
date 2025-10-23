@@ -5,6 +5,16 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
 import { ArrowLeft, Plus, Minus, Home, Car, ShoppingBag, Coffee, Zap, Heart, Wallet, CreditCard, PiggyBank, DollarSign, Briefcase, TrendingUp, Gift, Loader2 } from "./icons";
 import { toast } from "sonner@2.0.3";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
@@ -65,6 +75,8 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
   const [apiCategories, setApiCategories] = useState<Category[]>([]);
   const [apiAccounts, setApiAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showDebtDialog, setShowDebtDialog] = useState(false);
+  const [debtAccount, setDebtAccount] = useState<{ id: string; name: string; balance: number } | null>(null);
 
   const formatCurrency = (amount: number, currency: string = 'RUB') => {
     const symbol = getCurrencySymbol(currency);
@@ -148,7 +160,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
 
     try {
       // Создать транзакцию через API (account_id передается в URL, не в теле)
-      const newTransaction = await transactionsService.create(account, {
+      const response = await transactionsService.create(account, {
         amount: parseFloat(amount),
         transaction_type: type,
         description: description || '',
@@ -173,18 +185,31 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
       };
 
       onAddTransaction(transaction);
-      toast.success(`${type === 'income' ? 'Доход' : 'Расход'} добавлен!`);
 
-      // Reset form
-      setAmount('');
-      setCategory('');
-      setAccount('');
-      setDescription('');
+      // Проверяем, был ли полностью погашен долг
+      if (response.debt_fully_repaid && response.debt_account) {
+        setDebtAccount(response.debt_account);
+        setShowDebtDialog(true);
 
-      // Navigate back after successful submission
-      setTimeout(() => {
-        onBack();
-      }, 1500);
+        // Reset form
+        setAmount('');
+        setCategory('');
+        setAccount('');
+        setDescription('');
+      } else {
+        toast.success(`${type === 'income' ? 'Доход' : 'Расход'} добавлен!`);
+
+        // Reset form
+        setAmount('');
+        setCategory('');
+        setAccount('');
+        setDescription('');
+
+        // Navigate back after successful submission
+        setTimeout(() => {
+          onBack();
+        }, 1500);
+      }
     } catch (error: any) {
       console.error('Failed to create transaction:', error);
 
@@ -196,6 +221,28 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
       }
     }
   }, [amount, category, account, type, description, currentCategories, onAddTransaction, onBack]);
+
+  const handleDeleteDebtAccount = async () => {
+    if (!debtAccount) return;
+
+    try {
+      await accountsService.delete(debtAccount.id);
+      toast.success(`Долговой счет "${debtAccount.name}" удален`);
+      setShowDebtDialog(false);
+      onBack();
+    } catch (error) {
+      console.error('Failed to delete account:', error);
+      toast.error('Не удалось удалить счет');
+    }
+  };
+
+  const handleKeepDebtAccount = () => {
+    toast.success('Транзакция добавлена!');
+    setShowDebtDialog(false);
+    setTimeout(() => {
+      onBack();
+    }, 1500);
+  };
 
   // Показываем экран загрузки
   if (loading) {
@@ -476,6 +523,39 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
           </CardContent>
         </Card>
       </OptimizedMotion>
+
+      {/* Debt Repayment Dialog */}
+      <AlertDialog open={showDebtDialog} onOpenChange={setShowDebtDialog}>
+        <AlertDialogContent className="bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm border-blue-200">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+              🎉 Долг полностью погашен!
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-600 space-y-3 pt-2">
+              <p>
+                Поздравляем! Вы полностью погасили долговой счет <span className="font-semibold text-slate-800">"{debtAccount?.name}"</span>.
+              </p>
+              <p className="text-sm">
+                Хотите удалить этот счет из списка? Вы всегда сможете создать его снова при необходимости.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-2">
+            <AlertDialogCancel
+              onClick={handleKeepDebtAccount}
+              className="border-blue-200 text-slate-700 hover:bg-blue-50"
+            >
+              Оставить счет
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteDebtAccount}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+            >
+              Удалить счет
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
