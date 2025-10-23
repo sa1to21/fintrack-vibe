@@ -680,7 +680,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-amber-600" />
-                <h2 className="font-medium text-foreground">Долги</h2>
+                <h2 className="font-medium text-foreground">Задолженности</h2>
               </div>
               <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300">
                 {debtAccounts.length}

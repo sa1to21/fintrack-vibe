@@ -101,7 +101,7 @@ export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
           {/* Amounts */}
           <div className="grid grid-cols-2 gap-3 pt-1">
             <div>
-              <p className="text-xs text-slate-500">Осталось</p>
+              <p className="text-xs text-slate-500">Задолженность</p>
               <p className={`text-lg font-bold ${
                 isOverdue ? 'text-red-600' : isUrgent ? 'text-amber-600' : 'text-blue-600'
               }`}>

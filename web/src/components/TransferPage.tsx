@@ -51,7 +51,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
 
     try {
       await accountsService.delete(debtAccount.id);
-      toast.success(`Долговой счет "${debtAccount.name}" удален`);
+      toast.success(`Счёт задолженности "${debtAccount.name}" удалён`);
       setShowDebtDialog(false);
       onSuccess();
     } catch (error) {
@@ -347,11 +347,11 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                                   <Icon className={`w-4 h-4 ${isDebt ? 'text-amber-600' : 'text-blue-600'}`} />
                                   <span className={isDebt ? 'text-amber-700' : ''}>
                                     {account.name}
-                                    {isDebt && ' 💳'}
+                                    {isDebt && ' 📋'}
                                   </span>
                                 </div>
                                 <span className={`text-xs ${isDebt ? 'text-amber-600 font-medium' : 'text-muted-foreground'}`}>
-                                  {isDebt ? `Долг: ${formatCurrency(Math.abs(parseFloat(account.balance.toString())), account.currency)}` : formatCurrency(parseFloat(account.balance.toString()), account.currency)}
+                                  {isDebt ? `Задолженность: ${formatCurrency(Math.abs(parseFloat(account.balance.toString())), account.currency)}` : formatCurrency(parseFloat(account.balance.toString()), account.currency)}
                                 </span>
                               </div>
                             </SelectItem>
@@ -442,11 +442,11 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
         <AlertDialogContent className="bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm border-blue-200">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-              🎉 Долг полностью погашен!
+              🎉 Задолженность полностью погашена!
             </AlertDialogTitle>
             <AlertDialogDescription className="text-slate-600 space-y-3 pt-2">
               <p>
-                Поздравляем! Вы полностью погасили долговой счет <span className="font-semibold text-slate-800">"{debtAccount?.name}"</span>.
+                Поздравляем! Вы полностью погасили задолженность по счёту <span className="font-semibold text-slate-800">"{debtAccount?.name}"</span>.
               </p>
               <p className="text-sm">
                 Хотите удалить этот счет из списка? Вы всегда сможете создать его снова при необходимости.

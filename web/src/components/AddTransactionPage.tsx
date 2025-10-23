@@ -237,7 +237,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
 
     try {
       await accountsService.delete(debtAccount.id);
-      toast.success(`Долговой счет "${debtAccount.name}" удален`);
+      toast.success(`Счёт задолженности "${debtAccount.name}" удалён`);
       setShowDebtDialog(false);
       onBack();
     } catch (error) {
@@ -539,11 +539,11 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
         <AlertDialogContent className="bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm border-blue-200">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-              🎉 Долг полностью погашен!
+              🎉 Задолженность полностью погашена!
             </AlertDialogTitle>
             <AlertDialogDescription className="text-slate-600 space-y-3 pt-2">
               <p>
-                Поздравляем! Вы полностью погасили долговой счет <span className="font-semibold text-slate-800">"{debtAccount?.name}"</span>.
+                Поздравляем! Вы полностью погасили задолженность по счёту <span className="font-semibold text-slate-800">"{debtAccount?.name}"</span>.
               </p>
               <p className="text-sm">
                 Хотите удалить этот счет из списка? Вы всегда сможете создать его снова при необходимости.

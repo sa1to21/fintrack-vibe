@@ -634,7 +634,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     htmlFor="is-debt"
                     className="text-sm font-medium text-amber-800 cursor-pointer"
                   >
-                    💳 Это долговой счёт (кредит, займ)
+                    💳 Это счёт задолженности (кредит, займ)
                   </Label>
                 </div>
 
@@ -651,7 +651,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="debt-amount">Сумма долга *</Label>
+                      <Label htmlFor="debt-amount">Сумма задолженности *</Label>
                       <Input
                         id="debt-amount"
                         type="number"
