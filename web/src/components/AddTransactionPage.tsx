@@ -219,6 +219,13 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
       } else if (error.response?.data?.error === 'Долговой счет не может иметь положительный баланс') {
         const details = error.response?.data?.details?.[0] || 'Долговой счет нельзя пополнить сверх нуля';
         toast.error(details, { duration: 5000 });
+      } else if (error.response?.data?.error === 'Нельзя напрямую добавить доход на долговой счет') {
+        // Показываем инструкцию по погашению долга
+        const details = error.response?.data?.details || [];
+        const message = details.length > 0
+          ? details.join('\n\n')
+          : 'Для погашения долга используйте перевод с обычного счета';
+        toast.error(message, { duration: 8000 });
       } else {
         toast.error('Не удалось сохранить транзакцию');
       }
