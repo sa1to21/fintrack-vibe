@@ -52,6 +52,9 @@ module Api
           # Генерируем уникальный ID для связи двух транзакций
           transfer_id = SecureRandom.uuid
 
+          # Определяем категорию в зависимости от типа счета получателя
+          category = to_account.is_debt ? get_debt_repayment_category : get_transfer_category
+
           # Создаем расход на счете отправителя
           expense = from_account.transactions.create!(
             amount: amount,
@@ -59,7 +62,7 @@ module Api
             description: transfer_params[:description] || '',
             date: Date.today,
             time: Time.current,
-            category_id: get_transfer_category.id,
+            category_id: category.id,
             transfer_id: transfer_id
           )
 
@@ -70,7 +73,7 @@ module Api
             description: transfer_params[:description] || '',
             date: Date.today,
             time: Time.current,
-            category_id: get_transfer_category.id,
+            category_id: category.id,
             transfer_id: transfer_id
           )
 
@@ -167,12 +170,16 @@ module Api
 
         # Выполняем обновление в транзакции
         ActiveRecord::Base.transaction do
+          # Определяем категорию в зависимости от типа счета получателя
+          category = new_to_account.is_debt ? get_debt_repayment_category : get_transfer_category
+
           # Обновляем expense транзакцию
           expense_transaction.update!(
             amount: new_amount,
             account_id: new_from_account.id,
             description: params[:transfer][:description] || expense_transaction.description,
-            date: params[:transfer][:date] || expense_transaction.date
+            date: params[:transfer][:date] || expense_transaction.date,
+            category_id: category.id
           )
 
           # Обновляем income транзакцию
@@ -180,7 +187,8 @@ module Api
             amount: new_amount,
             account_id: new_to_account.id,
             description: params[:transfer][:description] || income_transaction.description,
-            date: params[:transfer][:date] || income_transaction.date
+            date: params[:transfer][:date] || income_transaction.date,
+            category_id: category.id
           )
 
           render json: {
@@ -232,6 +240,16 @@ module Api
           category_type: 'expense'
         ) do |category|
           category.icon = '🔄'
+        end
+      end
+
+      def get_debt_repayment_category
+        # Находим или создаем категорию "Погашение долга"
+        current_user.categories.find_or_create_by!(
+          name: 'Погашение долга',
+          category_type: 'expense'
+        ) do |category|
+          category.icon = '💳'
         end
       end
     end
