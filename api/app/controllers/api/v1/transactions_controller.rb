@@ -27,37 +27,22 @@ class Api::V1::TransactionsController < Api::V1::BaseController
       end
     end
 
-    # Проверка: долговой счет не может уйти в плюс при добавлении дохода
+    # Проверка: нельзя напрямую добавить доход на долговой счет
     if transaction.transaction_type == 'income' && @account.is_debt
-      new_balance = @account.balance + transaction.amount
-      if new_balance > 0
-        return render json: {
-          error: 'Долговой счет не может иметь положительный баланс',
-          details: ["\"#{@account.name}\" — долговой счет. Максимальная сумма для пополнения: #{(-@account.balance).round(2)} #{@account.currency}"]
-        }, status: :unprocessable_entity
-      end
+      return render json: {
+        error: 'Нельзя напрямую добавить доход на долговой счет',
+        details: [
+          'Для погашения долга используйте перевод с обычного счета.',
+          'Перейдите в раздел "Переводы" и выберите долговой счет как получателя.',
+          'Перевод автоматически будет учтён как расход в категории "Погашение долга".'
+        ]
+      }, status: :unprocessable_entity
     end
 
     if transaction.save
-      # Проверяем, был ли полностью погашен долговой счет после добавления дохода
-      @account.reload
-      debt_fully_repaid = @account.is_debt && @account.balance >= 0 && transaction.transaction_type == 'income'
-
-      response_data = {
+      render json: {
         transaction: TransactionSerializer.new(transaction).as_json
-      }
-
-      # Добавляем информацию о погашении долга
-      if debt_fully_repaid
-        response_data[:debt_fully_repaid] = true
-        response_data[:debt_account] = {
-          id: @account.id,
-          name: @account.name,
-          balance: @account.balance
-        }
-      end
-
-      render json: response_data, status: :created
+      }, status: :created
     else
       render_validation_errors(transaction)
     end
