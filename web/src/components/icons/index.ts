@@ -28,6 +28,7 @@ export {
   Copy,
   AlertCircle,
   Loader2,
+  GripVertical,
 
   // Financial
   Wallet,

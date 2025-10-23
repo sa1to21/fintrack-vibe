@@ -18,8 +18,26 @@ import {
   TrendingDown,
   Settings,
   Sparkles,
-  Loader2
+  Loader2,
+  GripVertical
 } from "./icons";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { toast } from "sonner";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
@@ -51,6 +69,129 @@ const accountIcons = [
   { icon: PiggyBank, name: "Накопления", color: "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700", type: "savings" },
 ];
 
+interface SortableAccountItemProps {
+  account: Account;
+  accounts: Account[];
+  formatCurrency: (amount: number, currency: string) => string;
+  openBalanceDialog: (account: Account) => void;
+  openEditDialog: (account: Account) => void;
+  handleDeleteAccount: (accountId: string) => void;
+}
+
+function SortableAccountItem({ account, accounts, formatCurrency, openBalanceDialog, openEditDialog, handleDeleteAccount }: SortableAccountItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: account.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const Icon = account.icon;
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <Card className={`border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm hover:shadow-lg transition-all duration-300 ${isDragging ? 'ring-2 ring-blue-400' : ''}`}>
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              {/* Drag Handle */}
+              <div
+                {...attributes}
+                {...listeners}
+                className="cursor-grab active:cursor-grabbing text-slate-400 hover:text-blue-600 transition-colors flex-shrink-0"
+              >
+                <GripVertical className="w-5 h-5" />
+              </div>
+
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${account.color}`}>
+                <Icon className="w-6 h-6" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-medium text-slate-800 truncate">{account.name}</h3>
+                <p className="text-lg font-medium text-slate-700">
+                  {formatCurrency(account.balance, account.currency)}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* Balance Change Button */}
+              <LightMotion whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => openBalanceDialog(account)}
+                  className="border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400 transition-all duration-200"
+                >
+                  <DollarSign className="w-4 h-4" />
+                </Button>
+              </LightMotion>
+
+              {/* Edit Button */}
+              <LightMotion whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => openEditDialog(account)}
+                  className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-all duration-200"
+                >
+                  <Edit className="w-4 h-4" />
+                </Button>
+              </LightMotion>
+
+              {/* Delete Button */}
+              {accounts.length > 1 && (
+                <LightMotion whileTap={{ scale: 0.95 }}>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 transition-all duration-200"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="border-red-200 bg-gradient-to-br from-white to-red-50/30">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="text-red-700">
+                          Удалить счёт?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="text-red-600">
+                          Это действие нельзя отменить. Счёт "{account.name}" и все связанные операции будут удалены.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="border-red-300">
+                          Отмена
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDeleteAccount(account.id)}
+                          className="bg-red-600 hover:bg-red-700"
+                        >
+                          Удалить
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </LightMotion>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -70,6 +211,14 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const [debtInitialAmount, setDebtInitialAmount] = useState("");
   const [debtDueDate, setDebtDueDate] = useState("");
   const [debtNotes, setDebtNotes] = useState("");
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Загрузка счетов и категорий из API
   useEffect(() => {
@@ -294,6 +443,38 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const openBalanceDialog = (account: Account) => {
     setEditingAccount(account);
     setIsBalanceDialogOpen(true);
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    const oldIndex = accounts.findIndex((acc) => acc.id === active.id);
+    const newIndex = accounts.findIndex((acc) => acc.id === over.id);
+
+    const newAccounts = arrayMove(accounts, oldIndex, newIndex);
+
+    // Оптимистичное обновление UI
+    setAccounts(newAccounts);
+
+    try {
+      // Отправляем обновленный порядок на сервер
+      const accountOrders = newAccounts.map((acc, index) => ({
+        id: acc.id,
+        position: index
+      }));
+
+      await accountsService.reorder(accountOrders);
+      toast.success("Порядок счетов обновлён");
+    } catch (error) {
+      console.error('Failed to reorder accounts:', error);
+      toast.error("Не удалось сохранить порядок счетов");
+      // Откатываем изменения при ошибке
+      await loadAccounts();
+    }
   };
 
   if (loading) {
@@ -526,107 +707,31 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
           </Dialog>
         </LightMotion>
 
-        {/* Accounts List */}
-        <div className="space-y-3">
-          {accounts.map((account, index) => {
-            const Icon = account.icon;
-            return (
-              <OptimizedMotion
-                key={account.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: 0.25 + index * 0.05 }}
-                whileHover={{ scale: 1.01, y: -2 }}
-              >
-                <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm hover:shadow-lg transition-all duration-300">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <OptimizedMotion
-                          className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${account.color}`}
-                          whileHover={{ scale: 1.1, rotate: 5 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <Icon className="w-6 h-6" />
-                        </OptimizedMotion>
-                        <div className="min-w-0 flex-1">
-                          <h3 className="font-medium text-slate-800 truncate">{account.name}</h3>
-                          <p className="text-lg font-medium text-slate-700">
-                            {formatCurrency(account.balance, account.currency)}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        {/* Balance Change Button */}
-                        <LightMotion whileTap={{ scale: 0.95 }}>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openBalanceDialog(account)}
-                            className="border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400 transition-all duration-200"
-                          >
-                            <DollarSign className="w-4 h-4" />
-                          </Button>
-                        </LightMotion>
-
-                        {/* Edit Button */}
-                        <LightMotion whileTap={{ scale: 0.95 }}>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openEditDialog(account)}
-                            className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-all duration-200"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                        </LightMotion>
-
-                        {/* Delete Button */}
-                        {accounts.length > 1 && (
-                          <LightMotion whileTap={{ scale: 0.95 }}>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 transition-all duration-200"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent className="border-red-200 bg-gradient-to-br from-white to-red-50/30">
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle className="text-red-700">
-                                    Удалить счёт?
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription className="text-red-600">
-                                    Это действие нельзя отменить. Счёт "{account.name}" и все связанные операции будут удалены.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel className="border-red-300">
-                                    Отмена
-                                  </AlertDialogCancel>
-                                  <AlertDialogAction 
-                                    onClick={() => handleDeleteAccount(account.id)}
-                                    className="bg-red-600 hover:bg-red-700"
-                                  >
-                                    Удалить
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </LightMotion>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </OptimizedMotion>
-            );
-          })}
-        </div>
+        {/* Accounts List with Drag and Drop */}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={accounts.map(acc => acc.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-3">
+              {accounts.map((account) => (
+                <SortableAccountItem
+                  key={account.id}
+                  account={account}
+                  accounts={accounts}
+                  formatCurrency={formatCurrency}
+                  openBalanceDialog={openBalanceDialog}
+                  openEditDialog={openEditDialog}
+                  handleDeleteAccount={handleDeleteAccount}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
 
         {/* Edit Account Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>

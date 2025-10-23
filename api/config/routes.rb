@@ -26,6 +26,7 @@ Rails.application.routes.draw do
         resources :transactions, only: [:index, :create]
         collection do
           get :debt_stats
+          post :reorder
         end
       end
 

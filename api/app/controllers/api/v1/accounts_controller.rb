@@ -2,7 +2,7 @@ class Api::V1::AccountsController < Api::V1::BaseController
   before_action :set_account, only: [:show, :update, :destroy]
 
   def index
-    accounts = current_user.accounts.includes(:transactions)
+    accounts = current_user.accounts.includes(:transactions).order(:display_order, :id)
 
     # Filter by debt type if requested
     if params[:type] == 'debt'
@@ -39,6 +39,23 @@ class Api::V1::AccountsController < Api::V1::BaseController
   def destroy
     @account.destroy
     head :no_content
+  end
+
+  def reorder
+    account_orders = params.require(:accounts)
+
+    ActiveRecord::Base.transaction do
+      account_orders.each do |order_data|
+        account = current_user.accounts.find_by(id: order_data[:id])
+        next unless account
+
+        account.update!(display_order: order_data[:position])
+      end
+    end
+
+    render json: { success: true }
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   def debt_stats

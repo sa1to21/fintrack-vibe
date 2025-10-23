@@ -87,6 +87,10 @@ class AccountsService {
     const response = await api.get('/accounts/debt_stats');
     return response.data;
   }
+
+  async reorder(accountOrders: Array<{ id: string; position: number }>): Promise<void> {
+    await api.post('/accounts/reorder', { accounts: accountOrders });
+  }
 }
 
 export default new AccountsService();
