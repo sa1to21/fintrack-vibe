@@ -17,10 +17,10 @@ class Transaction < ApplicationRecord
   scope :transfers, -> { where.not(transfer_id: nil) }
   scope :by_date_range, ->(start_date, end_date) { where(date: start_date..end_date) }
 
-  # Exclude regular transfers from statistics (keep only debt repayments)
+  # Exclude regular transfers from statistics (keep only debt repayment expenses)
   scope :excluding_transfers, -> {
     left_joins(:category)
-      .where('transfer_id IS NULL OR categories.name = ?', 'Погашение долга')
+      .where('transfer_id IS NULL OR (categories.name = ? AND transaction_type = ?)', 'Погашение долга', 'expense')
   }
 
   # Проверка, является ли транзакция переводом
