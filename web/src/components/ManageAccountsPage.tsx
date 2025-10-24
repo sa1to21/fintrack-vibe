@@ -64,9 +64,12 @@ interface Account {
 }
 
 const accountIcons = [
-  { icon: Wallet, name: "Кошелёк", color: "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700", type: "cash" },
-  { icon: CreditCard, name: "Карта", color: "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700", type: "card" },
-  { icon: PiggyBank, name: "Накопления", color: "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700", type: "savings" },
+  { icon: Wallet, name: "💰 Кошелёк", emoji: "💰", color: "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700", type: "cash" },
+  { icon: CreditCard, name: "💳 Карта", emoji: "💳", color: "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700", type: "card" },
+  { icon: PiggyBank, name: "🐷 Накопления", emoji: "🐷", color: "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700", type: "savings" },
+  { icon: DollarSign, name: "💵 Наличные", emoji: "💵", color: "bg-gradient-to-br from-green-100 to-green-200 text-green-700", type: "cash" },
+  { icon: Wallet, name: "🏦 Банковский счёт", emoji: "🏦", color: "bg-gradient-to-br from-indigo-100 to-indigo-200 text-indigo-700", type: "card" },
+  { icon: CreditCard, name: "💎 Инвестиции", emoji: "💎", color: "bg-gradient-to-br from-amber-100 to-amber-200 text-amber-700", type: "savings" },
 ];
 
 interface SortableAccountItemProps {
@@ -592,36 +595,30 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Выберите иконку</Label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {accountIcons.map((iconData, index) => {
-                      const Icon = iconData.icon;
-                      return (
-                        <OptimizedMotion as="button"
-                          key={index}
-                          type="button"
-                          className={`p-3 rounded-lg border text-center transition-all duration-200 ${
-                            selectedIcon.icon === iconData.icon
-                              ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
-                              : 'border-blue-200 hover:border-blue-400 hover:bg-blue-50/30'
-                          }`}
-                        >
-                          <LightMotion whileTap={{ scale: 0.95 }}>
-                            <button
-                              type="button"
-                              onClick={() => setSelectedIcon(iconData)}
-                              className="w-full"
-                            >
-                              <div className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 ${iconData.color}`}>
-                                <Icon className="w-4 h-4" />
-                              </div>
-                              <span className="text-xs">{iconData.name}</span>
-                            </button>
-                          </LightMotion>
-                        </OptimizedMotion>
-                      );
-                    })}
-                  </div>
+                  <Label htmlFor="account-icon">Иконка счёта</Label>
+                  <Select
+                    value={accountIcons.findIndex(icon => icon.type === selectedIcon.type && icon.name === selectedIcon.name).toString()}
+                    onValueChange={(value) => setSelectedIcon(accountIcons[parseInt(value)])}
+                  >
+                    <SelectTrigger className="border-blue-200 focus:border-blue-400">
+                      <SelectValue>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{selectedIcon.emoji}</span>
+                          <span>{selectedIcon.name}</span>
+                        </div>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {accountIcons.map((iconData, index) => (
+                        <SelectItem key={index} value={index.toString()} className="cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xl">{iconData.emoji}</span>
+                            <span>{iconData.name}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="flex items-center space-x-2 p-3 bg-amber-50 rounded-lg border border-amber-200">
@@ -775,31 +772,30 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Выберите иконку</Label>
-                <div className="grid grid-cols-3 gap-2">
-                  {accountIcons.map((iconData, index) => {
-                    const Icon = iconData.icon;
-                    return (
-                      <OptimizedMotion as="button"
-                        key={index}
-                        type="button"
-                        className={`p-3 rounded-lg border text-center transition-all duration-200 ${
-                          selectedIcon.icon === iconData.icon
-                            ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-md'
-                            : 'border-blue-200 hover:border-blue-400 hover:bg-blue-50/30'
-                        }`}
-                        onClick={() => setSelectedIcon(iconData)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <div className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 ${iconData.color}`}>
-                          <Icon className="w-4 h-4" />
+                <Label htmlFor="edit-account-icon">Иконка счёта</Label>
+                <Select
+                  value={accountIcons.findIndex(icon => icon.type === selectedIcon.type && icon.name === selectedIcon.name).toString()}
+                  onValueChange={(value) => setSelectedIcon(accountIcons[parseInt(value)])}
+                >
+                  <SelectTrigger className="border-blue-200 focus:border-blue-400">
+                    <SelectValue>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{selectedIcon.emoji}</span>
+                        <span>{selectedIcon.name}</span>
+                      </div>
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {accountIcons.map((iconData, index) => (
+                      <SelectItem key={index} value={index.toString()} className="cursor-pointer">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{iconData.emoji}</span>
+                          <span>{iconData.name}</span>
                         </div>
-                        <span className="text-xs">{iconData.name}</span>
-                      </OptimizedMotion>
-                    );
-                  })}
-                </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <DialogFooter>
