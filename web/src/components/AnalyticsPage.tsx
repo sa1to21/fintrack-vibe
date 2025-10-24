@@ -486,14 +486,14 @@ export function AnalyticsPage() {
                     <AlertCircle className="w-4 h-4 text-amber-600" />
                   </div>
                   <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
-                    Статистика по долгам
+                    Статистика по задолженностям
                   </span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 bg-gradient-to-br from-red-50 to-red-100/50 rounded-lg border border-red-200">
-                    <p className="text-xs text-red-600/70 mb-1">Общий долг</p>
+                    <p className="text-xs text-red-600/70 mb-1">Общая задолженность</p>
                     <p className="text-lg font-bold text-red-700">{formatCurrency(debtStats.total_debt)}</p>
                   </div>
                   <div className="p-3 bg-gradient-to-br from-green-50 to-green-100/50 rounded-lg border border-green-200">
@@ -518,7 +518,7 @@ export function AnalyticsPage() {
                 </div>
 
                 <div className="pt-2 space-y-2">
-                  <p className="text-xs text-slate-600 font-medium">Активные долги ({debtStats.debts.length})</p>
+                  <p className="text-xs text-slate-600 font-medium">Активные задолженности ({debtStats.debts.length})</p>
                   {debtStats.debts.slice(0, 3).map((debt, index) => (
                     <OptimizedMotion
                       key={debt.id}
