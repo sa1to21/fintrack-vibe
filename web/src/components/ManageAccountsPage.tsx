@@ -64,12 +64,12 @@ interface Account {
 }
 
 const accountIcons = [
-  { icon: Wallet, name: "💰 Кошелёк", emoji: "💰", color: "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700", type: "cash" },
-  { icon: CreditCard, name: "💳 Карта", emoji: "💳", color: "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700", type: "card" },
-  { icon: PiggyBank, name: "🐷 Накопления", emoji: "🐷", color: "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700", type: "savings" },
-  { icon: DollarSign, name: "💵 Наличные", emoji: "💵", color: "bg-gradient-to-br from-green-100 to-green-200 text-green-700", type: "cash" },
-  { icon: Wallet, name: "🏦 Банковский счёт", emoji: "🏦", color: "bg-gradient-to-br from-indigo-100 to-indigo-200 text-indigo-700", type: "card" },
-  { icon: CreditCard, name: "💎 Инвестиции", emoji: "💎", color: "bg-gradient-to-br from-amber-100 to-amber-200 text-amber-700", type: "savings" },
+  { icon: Wallet, name: "Кошелёк", emoji: "💰", color: "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700", type: "cash" },
+  { icon: CreditCard, name: "Карта", emoji: "💳", color: "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700", type: "card" },
+  { icon: PiggyBank, name: "Накопления", emoji: "🐷", color: "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700", type: "savings" },
+  { icon: DollarSign, name: "Наличные", emoji: "💵", color: "bg-gradient-to-br from-green-100 to-green-200 text-green-700", type: "cash" },
+  { icon: Wallet, name: "Банковский счёт", emoji: "🏦", color: "bg-gradient-to-br from-indigo-100 to-indigo-200 text-indigo-700", type: "card" },
+  { icon: CreditCard, name: "Инвестиции", emoji: "💎", color: "bg-gradient-to-br from-amber-100 to-amber-200 text-amber-700", type: "savings" },
 ];
 
 interface SortableAccountItemProps {
