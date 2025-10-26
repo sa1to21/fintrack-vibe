@@ -77,6 +77,10 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
     return savedTheme || 'light';
   });
+  const [isManualTheme, setIsManualTheme] = useState(() => {
+    // Проверяем, была ли тема установлена вручную
+    return localStorage.getItem('theme') !== null;
+  });
 
   useEffect(() => {
     // Функция ожидания загрузки Telegram SDK с таймаутом
@@ -229,14 +233,20 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
 
+    // Только синхронизируем с Telegram, если пользователь не выбирал тему вручную
+    if (isManualTheme) return;
+
     // Устанавливаем начальную тему из Telegram
     const telegramTheme = tg.colorScheme || 'light';
     setThemeState(telegramTheme);
 
     // Слушаем изменения темы в Telegram
     const handleThemeChange = () => {
-      const newTheme = tg.colorScheme || 'light';
-      setThemeState(newTheme);
+      // Только если тема не установлена вручную
+      if (!isManualTheme) {
+        const newTheme = tg.colorScheme || 'light';
+        setThemeState(newTheme);
+      }
     };
 
     tg.onEvent('themeChanged', handleThemeChange);
@@ -244,10 +254,11 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
     return () => {
       tg.offEvent('themeChanged', handleThemeChange);
     };
-  }, [isTelegramReady]);
+  }, [isTelegramReady, isManualTheme]);
 
   const setTheme = (newTheme: 'light' | 'dark') => {
     setThemeState(newTheme);
+    setIsManualTheme(true); // Отмечаем, что тема установлена вручную
   };
 
   const logout = () => {
