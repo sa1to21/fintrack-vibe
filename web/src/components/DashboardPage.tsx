@@ -11,7 +11,9 @@ import dashboardService, { MonthlyStats } from "../services/dashboard.service";
 import { cache } from "../utils/cache";
 import { getCurrencySymbol, DEFAULT_CURRENCY } from "../constants/currencies";
 import usersService from "../services/users.service";
+import { useTelegramAuth } from "../contexts/TelegramAuthContext";
 import logo from "../assets/logo.png";
+import logoWhite from "../assets/logo-white.png";
 
 interface Account {
   id: string;
@@ -49,6 +51,7 @@ interface DashboardPageProps {
 }
 
 export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTransactions, onTransactionClick, onTransfer }: DashboardPageProps) {
+  const { theme } = useTelegramAuth();
   const [showBalance, setShowBalance] = useState(true);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -56,6 +59,9 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   const [baseCurrency, setBaseCurrency] = useState<string>(DEFAULT_CURRENCY);
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats | null>(null);
   const [debtAccounts, setDebtAccounts] = useState<ApiAccount[]>([]);
+
+  // Выбираем логотип в зависимости от темы
+  const currentLogo = theme === 'dark' ? logoWhite : logo;
 
   // Загрузить данные дашборда одним запросом (счета + транзакции)
   useEffect(() => {
@@ -271,7 +277,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         <div className="max-w-md mx-auto relative">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <img src={logo} alt="Finance Tracker" className="w-10 h-10" />
+              <img src={currentLogo} alt="Finance Tracker" className="w-10 h-10" />
               <h1 className="text-white font-medium">Finance Tracker</h1>
             </div>
             <LightMotion whileTap={{ scale: 0.95 }}>
