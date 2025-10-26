@@ -15,6 +15,8 @@ import { CURRENCIES, getCurrency } from "../constants/currencies";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useEffect } from "react";
 import DonateDialog from "./DonateDialog";
+import logo from "../assets/logo.png";
+import logoWhite from "../assets/logo-white.png";
 
 interface SettingsPageProps {
   onNavigate?: (screen: string) => void;
@@ -28,6 +30,9 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
   const [baseCurrency, setBaseCurrency] = useState<string>('RUB');
   const [isLoadingCurrency, setIsLoadingCurrency] = useState(true);
   const [isDonateDialogOpen, setIsDonateDialogOpen] = useState(false);
+
+  // Выбираем логотип в зависимости от темы
+  const currentLogo = theme === 'dark' ? logoWhite : logo;
 
   useEffect(() => {
     loadBaseCurrency();
@@ -381,30 +386,37 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         </AlertDialog>
 
         {/* App Info */}
-        <div className="text-center pt-4 space-y-1">
-          <p className="text-xs text-slate-500">
-            FinanceTracker v1.0 <span className="text-orange-500 font-medium">(BETA)</span>
-          </p>
-          <p className="text-xs text-slate-500">
-            Сделано с ❤️ для вашего финансового благополучия
-          </p>
-          <p className="text-xs text-slate-500">
-            Создатель:{' '}
-            <a
-              href="https://t.me/sa1to21"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:text-blue-600 underline transition-colors"
+        <div className="text-center pt-4 space-y-3">
+          {/* Logo */}
+          <div className="flex justify-center mb-2">
+            <img src={currentLogo} alt="Finance Tracker" className="w-16 h-16" />
+          </div>
+
+          <div className="space-y-1">
+            <p className="text-xs text-slate-500">
+              Finance Tracker v1.0 <span className="text-orange-500 font-medium">(BETA)</span>
+            </p>
+            <p className="text-xs text-slate-500">
+              Сделано с ❤️ для вашего финансового благополучия
+            </p>
+            <p className="text-xs text-slate-500">
+              Создатель:{' '}
+              <a
+                href="https://t.me/sa1to21"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:text-blue-600 underline transition-colors"
+              >
+                @sa1to21
+              </a>
+            </p>
+            <button
+              onClick={() => setIsDonateDialogOpen(true)}
+              className="text-xs text-blue-500 hover:text-blue-600 underline transition-colors cursor-pointer"
             >
-              @sa1to21
-            </a>
-          </p>
-          <button
-            onClick={() => setIsDonateDialogOpen(true)}
-            className="text-xs text-blue-500 hover:text-blue-600 underline transition-colors cursor-pointer"
-          >
-            Проект работает на донатной основе
-          </button>
+              Проект работает на донатной основе
+            </button>
+          </div>
         </div>
 
         {/* Donate Dialog */}
