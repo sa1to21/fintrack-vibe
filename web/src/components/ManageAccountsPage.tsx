@@ -635,10 +635,10 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                         placeholder=""
                         value={initialBalance}
                         onChange={(e) => setInitialBalance(e.target.value)}
-                        className="border-blue-200 focus:border-blue-400 pr-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="border-blue-200 focus:border-blue-400 pr-10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         step="0.01"
                       />
-                      <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-sm font-medium pointer-events-none">
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none">
                         {getCurrencySymbol(selectedCurrency)}
                       </span>
                     </div>
