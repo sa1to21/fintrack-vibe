@@ -485,33 +485,30 @@ export function AnalyticsPage() {
                   <div className="w-8 h-8 bg-gradient-to-br from-amber-100 to-orange-200 rounded-full flex items-center justify-center shadow-sm">
                     <AlertCircle className="w-4 h-4 text-amber-600" />
                   </div>
-                  <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                  <span className="text-amber-800 font-medium">
                     Статистика по задолженностям
                   </span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 bg-gradient-to-br from-red-50 to-red-100/50 rounded-lg border border-red-200">
-                    <p className="text-xs text-red-600/70 mb-1">Общая задолженность</p>
-                    <p className="text-lg font-bold text-red-700">{formatCurrency(debtStats.total_debt)}</p>
-                  </div>
-                  <div className="p-3 bg-gradient-to-br from-green-50 to-green-100/50 rounded-lg border border-green-200">
-                    <p className="text-xs text-green-600/70 mb-1">Погашено</p>
-                    <p className="text-lg font-bold text-green-700">{formatCurrency(debtStats.total_paid)}</p>
-                  </div>
-                </div>
-
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs">
                     <span className="text-slate-600">Общий прогресс</span>
-                    <span className="font-medium text-slate-700">{(parseFloat(String(debtStats.overall_progress || 0))).toFixed(1)}%</span>
+                    <span className="font-medium text-slate-700">
+                      {debtStats.debts.length > 0
+                        ? (debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length).toFixed(1)
+                        : 0}%
+                    </span>
                   </div>
                   <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
                     <OptimizedMotion
                       className="h-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-green-500"
                       initial={{ width: 0 }}
-                      animate={{ width: `${parseFloat(String(debtStats.overall_progress || 0))}%` }}
+                      animate={{
+                        width: debtStats.debts.length > 0
+                          ? `${(debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length)}%`
+                          : '0%'
+                      }}
                       transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
                     />
                   </div>
@@ -522,7 +519,7 @@ export function AnalyticsPage() {
                   {debtStats.debts.slice(0, 3).map((debt, index) => (
                     <OptimizedMotion
                       key={debt.id}
-                      className="flex items-center justify-between p-2 bg-amber-50/50 rounded border border-amber-100"
+                      className="flex items-center justify-between p-2 bg-amber-50/50 rounded"
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: 0.65 + index * 0.05 }}
