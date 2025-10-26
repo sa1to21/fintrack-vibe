@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingDown, CalendarIcon, Filter, Sparkles, ArrowRightLeft, AlertCircle } from "./icons";
+import { Plus, Wallet, CreditCard, PiggyBank, Eye, EyeOff, TrendingUp, TrendingDown, CalendarIcon, Filter, ArrowRightLeft, AlertCircle } from "./icons";
 import { DebtAccountCard } from "./DebtAccountCard";
 import accountsService, { type Account as ApiAccount } from "../services/accounts.service";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
@@ -11,6 +11,7 @@ import dashboardService, { MonthlyStats } from "../services/dashboard.service";
 import { cache } from "../utils/cache";
 import { getCurrencySymbol, DEFAULT_CURRENCY } from "../constants/currencies";
 import usersService from "../services/users.service";
+import logo from "../assets/logo.png";
 
 interface Account {
   id: string;
@@ -270,8 +271,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         <div className="max-w-md mx-auto relative">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-yellow-300" />
-              <h1 className="text-white font-medium">FinanceTracker</h1>
+              <img src={logo} alt="FinTrack" className="w-8 h-8" />
+              <h1 className="text-white font-medium">FinTrack</h1>
             </div>
             <LightMotion whileTap={{ scale: 0.95 }}>
               <Button
