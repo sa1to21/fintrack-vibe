@@ -214,6 +214,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const [debtInitialAmount, setDebtInitialAmount] = useState("");
   const [debtDueDate, setDebtDueDate] = useState("");
   const [debtNotes, setDebtNotes] = useState("");
+  const [initialBalance, setInitialBalance] = useState("");
 
   // Drag and drop sensors
   const sensors = useSensors(
@@ -300,7 +301,9 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
 
       const accountData: any = {
         name: newAccountName.trim(),
-        balance: isDebt ? -Math.abs(parseFloat(debtInitialAmount)) : 0,
+        balance: isDebt
+          ? -Math.abs(parseFloat(debtInitialAmount))
+          : (initialBalance ? parseFloat(initialBalance) : 0),
         currency: selectedCurrency,
         account_type: selectedIcon.type,
         is_debt: isDebt
@@ -339,6 +342,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
     setDebtInitialAmount("");
     setDebtDueDate("");
     setDebtNotes("");
+    setInitialBalance("");
   };
 
   const handleEditAccount = async () => {
@@ -620,6 +624,26 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {!isDebt && (
+                  <div className="space-y-2">
+                    <Label htmlFor="initial-balance">Начальный баланс</Label>
+                    <div className="relative">
+                      <Input
+                        id="initial-balance"
+                        type="number"
+                        placeholder="0"
+                        value={initialBalance}
+                        onChange={(e) => setInitialBalance(e.target.value)}
+                        className="border-blue-200 focus:border-blue-400"
+                        step="0.01"
+                      />
+                      <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-sm">
+                        {getCurrencySymbol(selectedCurrency)}
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex items-center space-x-2 p-3 bg-amber-50 rounded-lg border border-amber-200">
                   <Checkbox
