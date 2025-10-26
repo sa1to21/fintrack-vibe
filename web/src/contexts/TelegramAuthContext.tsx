@@ -33,6 +33,8 @@ interface TelegramAuthContextType {
   isAuthenticated: boolean;
   isTelegramReady: boolean;
   isNewUser: boolean;
+  theme: 'light' | 'dark';
+  setTheme: (theme: 'light' | 'dark') => void;
 }
 
 const TelegramAuthContext = createContext<TelegramAuthContextType | undefined>(undefined);
@@ -55,6 +57,9 @@ declare global {
         };
         ready: () => void;
         expand: () => void;
+        colorScheme: 'light' | 'dark';
+        onEvent: (eventType: string, callback: () => void) => void;
+        offEvent: (eventType: string, callback: () => void) => void;
       };
     };
   }
@@ -67,6 +72,11 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [isTelegramReady, setIsTelegramReady] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
+  const [theme, setThemeState] = useState<'light' | 'dark'>(() => {
+    // Читаем тему из localStorage или дефолтная
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    return savedTheme || 'light';
+  });
 
   useEffect(() => {
     // Функция ожидания загрузки Telegram SDK с таймаутом
@@ -204,6 +214,42 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
     initializeTelegram();
   }, []);
 
+  // Эффект для применения темы к DOM и синхронизации с Telegram
+  useEffect(() => {
+    // Применяем класс к document
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(theme);
+
+    // Сохраняем в localStorage
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  // Эффект для синхронизации с темой Telegram
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+
+    // Устанавливаем начальную тему из Telegram
+    const telegramTheme = tg.colorScheme || 'light';
+    setThemeState(telegramTheme);
+
+    // Слушаем изменения темы в Telegram
+    const handleThemeChange = () => {
+      const newTheme = tg.colorScheme || 'light';
+      setThemeState(newTheme);
+    };
+
+    tg.onEvent('themeChanged', handleThemeChange);
+
+    return () => {
+      tg.offEvent('themeChanged', handleThemeChange);
+    };
+  }, [isTelegramReady]);
+
+  const setTheme = (newTheme: 'light' | 'dark') => {
+    setThemeState(newTheme);
+  };
+
   const logout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
@@ -221,6 +267,8 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: !!user,
         isTelegramReady,
         isNewUser,
+        theme,
+        setTheme,
       }}
     >
       {children}

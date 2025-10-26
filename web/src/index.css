@@ -4036,3 +4036,16 @@ html {
   width: 0 !important;
   height: 0 !important;
 }
+
+/* Theme variables */
+:root {
+  --bg-header: linear-gradient(to right, #2563eb, #9333ea);
+}
+
+.dark {
+  --bg-header: linear-gradient(to right, #1e293b, #334155);
+}
+
+.light {
+  --bg-header: linear-gradient(to right, #3b82f6, #a855f7);
+}

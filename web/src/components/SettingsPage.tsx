@@ -21,6 +21,7 @@ interface SettingsPageProps {
 }
 
 export function SettingsPage({ onNavigate }: SettingsPageProps) {
+  const { theme, setTheme } = useTelegramAuth();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -125,8 +126,8 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
           icon: Moon,
           label: "Тёмная тема",
           description: "Переключить на тёмное оформление",
-          action: "toggle",
-          value: false,
+          action: "theme-toggle",
+          value: theme === 'dark',
           color: "bg-gray-100 text-gray-600"
         },
         {
@@ -271,6 +272,12 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                       <div className="flex items-center">
                         {item.action === 'toggle' && (
                           <Switch checked={item.value} />
+                        )}
+                        {item.action === 'theme-toggle' && (
+                          <Switch
+                            checked={item.value}
+                            onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                          />
                         )}
                         {item.action === 'navigate' && (
                           <ChevronRight className="w-5 h-5 text-slate-500" />
