@@ -490,11 +490,11 @@ export function AnalyticsPage() {
                   </span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-slate-600">Общий прогресс</span>
-                    <span className="font-medium text-slate-700">
+              <CardContent className="space-y-3">
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-700 font-medium">Общий прогресс</span>
+                    <span className="font-semibold text-slate-800">
                       {debtStats.debts.length > 0
                         ? (debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length).toFixed(1)
                         : 0}%
@@ -514,7 +514,7 @@ export function AnalyticsPage() {
                   </div>
                 </div>
 
-                <div className="pt-2 space-y-2">
+                <div className="space-y-2">
                   <p className="text-xs text-slate-600 font-medium">Активные задолженности ({debtStats.debts.length})</p>
                   {debtStats.debts.slice(0, 3).map((debt, index) => (
                     <OptimizedMotion
@@ -529,7 +529,7 @@ export function AnalyticsPage() {
                         <p className="text-xs text-slate-500">{debt.creditor}</p>
                       </div>
                       <div className="text-right ml-2">
-                        <p className="text-sm font-medium text-amber-700">{formatCurrency(debt.balance)}</p>
+                        <p className="text-sm font-medium text-amber-700">{formatCurrency(debt.balance, debt.currency)}</p>
                         <p className="text-xs text-emerald-600">{(parseFloat(String(debt.progress || 0))).toFixed(0)}% ✓</p>
                       </div>
                     </OptimizedMotion>
