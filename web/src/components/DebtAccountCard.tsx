@@ -103,31 +103,21 @@ export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
         `}>
         <CardContent className="p-3 space-y-3">
           {/* Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5 flex-1 min-w-0">
-              <div className={`
-                w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
-                ${colorScheme.iconBg} shadow-sm
-              `}>
-                <TrendingDown className={`w-4 h-4 ${colorScheme.iconColor}`} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className={`font-medium text-sm ${colorScheme.textPrimary} truncate`}>
-                  {account.name}
-                </h3>
-                <p className={`text-xs ${colorScheme.textSecondary} truncate`}>
-                  {account.debt_info.creditorName}
-                </p>
-              </div>
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className={`
+              w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
+              ${colorScheme.iconBg} shadow-sm
+            `}>
+              <TrendingDown className={`w-4 h-4 ${colorScheme.iconColor}`} />
             </div>
-            {(isOverdue || isUrgent) && (
-              <span className={`
-                px-2 py-0.5 ${colorScheme.badgeBg} ${colorScheme.badgeText}
-                text-xs font-bold rounded-full whitespace-nowrap shadow-sm
-              `}>
-                {isOverdue ? 'Просрочен' : 'Срочно'}
-              </span>
-            )}
+            <div className="flex-1 min-w-0">
+              <h3 className={`font-medium text-sm ${colorScheme.textPrimary} truncate`}>
+                {account.name}
+              </h3>
+              <p className={`text-xs ${colorScheme.textSecondary} truncate`}>
+                {account.debt_info.creditorName}
+              </p>
+            </div>
           </div>
 
           {/* Суммы */}
