@@ -632,13 +632,13 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                       <Input
                         id="initial-balance"
                         type="number"
-                        placeholder="0"
+                        placeholder=""
                         value={initialBalance}
                         onChange={(e) => setInitialBalance(e.target.value)}
                         className="border-blue-200 focus:border-blue-400 pr-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         step="0.01"
                       />
-                      <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-sm font-medium">
+                      <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-sm font-medium pointer-events-none">
                         {getCurrencySymbol(selectedCurrency)}
                       </span>
                     </div>
