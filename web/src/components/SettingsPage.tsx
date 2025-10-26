@@ -175,7 +175,6 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
           <div className="flex items-center justify-center gap-2">
             <Settings className="w-6 h-6 text-yellow-300" />
             <h1 className="text-white font-medium">Настройки</h1>
-            <Sparkles className="w-5 h-5 text-yellow-300" />
           </div>
         </div>
       </OptimizedMotion>

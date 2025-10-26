@@ -187,7 +187,7 @@ export function AnalyticsPage() {
         <div className="absolute bottom-4 left-8 w-24 h-24 bg-white/5 rounded-full blur-2xl"></div>
         
         <div className="max-w-md mx-auto relative">
-          <OptimizedMotion 
+          <OptimizedMotion
             className="flex items-center justify-center gap-2 mb-4"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -195,7 +195,6 @@ export function AnalyticsPage() {
           >
             <BarChart3 className="w-6 h-6 text-yellow-300" />
             <h1 className="text-white font-medium">Аналитика</h1>
-            <Sparkles className="w-5 h-5 text-yellow-300" />
           </OptimizedMotion>
           
           {/* Period Filter */}
