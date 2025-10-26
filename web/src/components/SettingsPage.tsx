@@ -386,9 +386,9 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         </AlertDialog>
 
         {/* App Info */}
-        <div className="text-center pt-4 space-y-3">
+        <div className="text-center pt-2 space-y-2">
           {/* Logo */}
-          <div className="flex justify-center mb-2">
+          <div className="flex justify-center">
             <img src={currentLogo} alt="Finance Tracker" className="w-16 h-16" />
           </div>
 
