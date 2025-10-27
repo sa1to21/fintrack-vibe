@@ -685,23 +685,46 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             transition={{ duration: 0.4, delay: 0.55 }}
           >
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-amber-600" />
-                <h2 className="font-medium text-foreground">Задолженности</h2>
-              </div>
+              <h2 className="font-medium text-foreground">Задолженности</h2>
               <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300">
                 {debtAccounts.length}
               </Badge>
             </div>
-            <div className="space-y-3">
-              {debtAccounts.map((debt) => (
-                <DebtAccountCard
-                  key={debt.id}
-                  account={debt}
-                  onClick={onManageAccounts}
-                />
-              ))}
-            </div>
+            <Card className="border-amber-200 bg-gradient-to-br from-white to-amber-50/30 shadow-sm hover:shadow-md transition-all duration-300">
+              <CardContent className="p-0">
+                {debtAccounts.map((debt, index) => (
+                  <OptimizedMotion
+                    key={debt.id}
+                    className={`p-4 hover:bg-amber-50/50 transition-colors duration-200 cursor-pointer ${
+                      index !== debtAccounts.length - 1 ? 'border-b border-amber-100' : ''
+                    }`}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
+                    onClick={onManageAccounts}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 bg-gradient-to-br from-amber-100 to-amber-200">
+                          <AlertCircle className="w-5 h-5 text-amber-600" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-medium text-sm truncate">{debt.name}</h3>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {debt.creditor || 'Без описания'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <p className="font-medium text-amber-700">
+                          {formatCurrency(Math.abs(parseFloat(debt.balance.toString())), debt.currency)}
+                        </p>
+                      </div>
+                    </div>
+                  </OptimizedMotion>
+                ))}
+              </CardContent>
+            </Card>
           </OptimizedMotion>
         )}
       </OptimizedMotion>

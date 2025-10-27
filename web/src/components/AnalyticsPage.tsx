@@ -478,62 +478,78 @@ export function AnalyticsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.53 }}
           >
-            <Card className="border-amber-200 bg-gradient-to-br from-amber-50 via-white to-orange-50 shadow-sm hover:shadow-lg transition-all duration-300">
+            <Card className="border-amber-200 bg-gradient-to-br from-white to-amber-50/30 shadow-sm hover:shadow-lg transition-all duration-300">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-amber-100 to-orange-200 rounded-full flex items-center justify-center shadow-sm">
-                    <AlertCircle className="w-4 h-4 text-amber-600" />
-                  </div>
-                  <span className="text-amber-800 font-medium">
+                <CardTitle className="flex items-center justify-between">
+                  <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
                     Статистика по задолженностям
                   </span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-700 font-medium">Общий прогресс</span>
-                    <span className="font-semibold text-slate-800">
-                      {debtStats.debts.length > 0
-                        ? (debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length).toFixed(1)
-                        : 0}%
-                    </span>
+              <CardContent className="space-y-4">
+                <OptimizedMotion
+                  className="space-y-2"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: 0.58 }}
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-slate-800">Общий прогресс</span>
+                    <div className="text-right">
+                      <div className="text-sm font-medium text-slate-700">
+                        {debtStats.debts.length > 0
+                          ? (debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length).toFixed(1)
+                          : 0}%
+                      </div>
+                    </div>
                   </div>
-                  <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                  <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                     <OptimizedMotion
-                      className="h-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-green-500"
+                      className="h-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500"
                       initial={{ width: 0 }}
                       animate={{
                         width: debtStats.debts.length > 0
                           ? `${(debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length)}%`
                           : '0%'
                       }}
-                      transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+                      transition={{ duration: 0.6, delay: 0.62, ease: "easeOut" }}
                     />
                   </div>
-                </div>
+                </OptimizedMotion>
 
-                <div className="space-y-2">
-                  <p className="text-xs text-slate-600 font-medium">Активные задолженности ({debtStats.debts.length})</p>
-                  {debtStats.debts.slice(0, 3).map((debt, index) => (
-                    <OptimizedMotion
-                      key={debt.id}
-                      className="flex items-center justify-between p-2 bg-amber-50/50 rounded"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3, delay: 0.65 + index * 0.05 }}
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-800 truncate">{debt.name}</p>
-                        <p className="text-xs text-slate-500">{debt.creditor}</p>
+                {debtStats.debts.slice(0, 3).map((debt, index) => (
+                  <OptimizedMotion
+                    key={debt.id}
+                    className="space-y-2"
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.64 + index * 0.04 }}
+                    whileHover={{ x: 4 }}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">⚠️</span>
+                        <div className="min-w-0">
+                          <span className="text-sm font-medium text-slate-800 block truncate">{debt.name}</span>
+                          <span className="text-xs text-slate-500 block truncate">{debt.creditor}</span>
+                        </div>
                       </div>
-                      <div className="text-right ml-2">
-                        <p className="text-sm font-medium text-amber-700">{formatCurrency(debt.balance, debt.currency)}</p>
-                        <p className="text-xs text-emerald-600">{(parseFloat(String(debt.progress || 0))).toFixed(0)}% ✓</p>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-slate-700">{formatCurrency(debt.balance, debt.currency)}</div>
+                        <div className="text-xs text-slate-500">{(parseFloat(String(debt.progress || 0))).toFixed(0)}%</div>
                       </div>
-                    </OptimizedMotion>
-                  ))}
-                </div>
+                    </div>
+                    <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                      <OptimizedMotion
+                        className="h-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${parseFloat(String(debt.progress || 0))}%` }}
+                        transition={{ duration: 0.6, delay: 0.68 + index * 0.06, ease: "easeOut" }}
+                        style={{ width: `${parseFloat(String(debt.progress || 0))}%` }}
+                      />
+                    </div>
+                  </OptimizedMotion>
+                ))}
               </CardContent>
             </Card>
           </OptimizedMotion>
@@ -546,77 +562,94 @@ export function AnalyticsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.55 }}
           >
-            <Card className="border-yellow-200 bg-gradient-to-br from-yellow-50 via-white to-amber-50 shadow-sm hover:shadow-lg transition-all duration-300">
+            <Card className="border-yellow-200 bg-gradient-to-br from-white to-yellow-50/30 shadow-sm hover:shadow-lg transition-all duration-300">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-yellow-100 to-amber-200 rounded-full flex items-center justify-center shadow-sm">
-                    <Sparkles className="w-4 h-4 text-yellow-600" />
-                  </div>
-                  <span className="text-amber-800 font-medium">
+                <CardTitle className="flex items-center justify-between">
+                  <span className="bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent">
                     Ваша финансовая статистика
                   </span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4">
                 {insights.biggest_expense && (
                   <OptimizedMotion
-                    className="flex items-start gap-2 text-sm"
-                    initial={{ opacity: 0, x: -20 }}
+                    className="space-y-2"
+                    initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: 0.6 }}
+                    whileHover={{ x: 4 }}
                   >
-                    <span className="text-base">🏆</span>
-                    <div>
-                      <span className="text-slate-700">Рекорд дня: </span>
-                      <span className="font-medium text-slate-800">{formatCurrency(insights.biggest_expense.amount)}</span>
-                      <span className="text-slate-500"> ({insights.biggest_expense.category}, {insights.biggest_expense.date})</span>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">🏆</span>
+                        <span className="text-sm font-medium text-slate-800">Рекорд дня</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-slate-700">{formatCurrency(insights.biggest_expense.amount)}</div>
+                        <div className="text-xs text-slate-500">{insights.biggest_expense.category}, {insights.biggest_expense.date}</div>
+                      </div>
                     </div>
                   </OptimizedMotion>
                 )}
 
                 {insights.total_transactions > 0 && (
                   <OptimizedMotion
-                    className="flex items-start gap-2 text-sm"
-                    initial={{ opacity: 0, x: -20 }}
+                    className="space-y-2"
+                    initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: 0.65 }}
+                    transition={{ duration: 0.3, delay: 0.64 }}
+                    whileHover={{ x: 4 }}
                   >
-                    <span className="text-base">📊</span>
-                    <div>
-                      <span className="text-slate-700">Средний чек: </span>
-                      <span className="font-medium text-slate-800">{formatCurrency(insights.avg_transaction)}</span>
-                      <span className="text-slate-500"> ({insights.total_transactions} {insights.total_transactions === 1 ? 'транзакция' : insights.total_transactions < 5 ? 'транзакции' : 'транзакций'})</span>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">📊</span>
+                        <span className="text-sm font-medium text-slate-800">Средний чек</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-slate-700">{formatCurrency(insights.avg_transaction)}</div>
+                        <div className="text-xs text-slate-500">{insights.total_transactions} {insights.total_transactions === 1 ? 'транзакция' : insights.total_transactions < 5 ? 'транзакции' : 'транзакций'}</div>
+                      </div>
                     </div>
                   </OptimizedMotion>
                 )}
 
                 {insights.busiest_day && (
                   <OptimizedMotion
-                    className="flex items-start gap-2 text-sm"
-                    initial={{ opacity: 0, x: -20 }}
+                    className="space-y-2"
+                    initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: 0.7 }}
+                    transition={{ duration: 0.3, delay: 0.68 }}
+                    whileHover={{ x: 4 }}
                   >
-                    <span className="text-base">🔥</span>
-                    <div>
-                      <span className="text-slate-700">Самый активный день: </span>
-                      <span className="font-medium text-slate-800">{insights.busiest_day}</span>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">🔥</span>
+                        <span className="text-sm font-medium text-slate-800">Самый активный день</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-slate-700">{insights.busiest_day}</div>
+                      </div>
                     </div>
                   </OptimizedMotion>
                 )}
 
                 {insights.top_category && (
                   <OptimizedMotion
-                    className="flex items-start gap-2 text-sm"
-                    initial={{ opacity: 0, x: -20 }}
+                    className="space-y-2"
+                    initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: 0.75 }}
+                    transition={{ duration: 0.3, delay: 0.72 }}
+                    whileHover={{ x: 4 }}
                   >
-                    <span className="text-base">⚡</span>
-                    <div>
-                      <span className="text-slate-700">{insights.top_category.name} — </span>
-                      <span className="font-medium text-slate-800">{insights.top_category.percentage}%</span>
-                      <span className="text-slate-500"> от всех расходов</span>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">⚡</span>
+                        <span className="text-sm font-medium text-slate-800">{insights.top_category.name}</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-slate-700">{insights.top_category.percentage}%</div>
+                        <div className="text-xs text-slate-500">от всех расходов</div>
+                      </div>
                     </div>
                   </OptimizedMotion>
                 )}
