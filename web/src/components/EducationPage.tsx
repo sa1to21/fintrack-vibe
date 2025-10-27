@@ -136,7 +136,7 @@ export function EducationPage() {
           <h2 className="font-medium text-foreground bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Советы дня</h2>
           {tips.map((tip, index) => (
             <OptimizedMotion key={index}>
-              <Card className="border-blue-200 bg-gradient-to-br from-blue-100 to-indigo-100 hover:shadow-md transition-all duration-300">
+              <Card className="border-blue-200 bg-gradient-to-br from-blue-50 via-white to-indigo-50 shadow-sm hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-medium text-slate-800">{tip.title}</h3>
