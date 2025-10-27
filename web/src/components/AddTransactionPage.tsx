@@ -313,7 +313,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </LightMotion>
-          <h1 className="text-lg font-medium text-white">Новая операция</h1>
+          <h1 className="font-medium text-white">Новая операция</h1>
           <div className="w-8" />
         </OptimizedMotion>
       </OptimizedMotion>

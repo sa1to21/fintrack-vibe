@@ -242,7 +242,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </OptimizedMotion>
-          <h1 className="text-lg font-medium text-white">Перевод между счетами</h1>
+          <h1 className="font-medium text-white">Перевод между счетами</h1>
           <div className="w-8" />
         </OptimizedMotion>
       </OptimizedMotion>
