@@ -567,9 +567,12 @@ export function AnalyticsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.55 }}
           >
-            <Card className="border-yellow-200 bg-gradient-to-br from-white to-yellow-50/30 shadow-sm hover:shadow-lg transition-all duration-300">
+            <Card className="border-yellow-200 bg-gradient-to-br from-yellow-50 via-white to-amber-50 shadow-sm hover:shadow-lg transition-all duration-300">
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-yellow-100 to-amber-200 rounded-full flex items-center justify-center shadow-sm">
+                    <Sparkles className="w-4 h-4 text-yellow-600" />
+                  </div>
                   <span className="bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent">
                     Ваша финансовая статистика
                   </span>
