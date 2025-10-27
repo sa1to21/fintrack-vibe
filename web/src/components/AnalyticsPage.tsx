@@ -480,7 +480,10 @@ export function AnalyticsPage() {
           >
             <Card className="border-amber-200 bg-gradient-to-br from-white to-amber-50/30 shadow-sm hover:shadow-lg transition-all duration-300">
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-amber-100 to-orange-200 rounded-full flex items-center justify-center shadow-sm">
+                    <AlertCircle className="w-4 h-4 text-amber-700" />
+                  </div>
                   <span className="text-amber-800 font-semibold">
                     Статистика по задолженностям
                   </span>
@@ -503,7 +506,7 @@ export function AnalyticsPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden relative">
+                  <div className="w-full bg-slate-200 rounded-full h-2 relative">
                     <OptimizedMotion
                       className="h-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500"
                       initial={{ width: 0 }}
@@ -515,7 +518,7 @@ export function AnalyticsPage() {
                       transition={{ duration: 0.6, delay: 0.62, ease: "easeOut" }}
                     />
                     <div
-                      className="absolute top-0 w-0.5 h-2 bg-amber-700/60"
+                      className="absolute top-0 w-0.5 h-2 bg-amber-800 rounded-full"
                       style={{
                         left: debtStats.debts.length > 0
                           ? `${(debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length)}%`
@@ -525,43 +528,48 @@ export function AnalyticsPage() {
                   </div>
                 </OptimizedMotion>
 
-                {debtStats.debts.slice(0, 3).map((debt, index) => (
-                  <OptimizedMotion
-                    key={debt.id}
-                    className="space-y-2"
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: 0.64 + index * 0.04 }}
-                    whileHover={{ x: 4 }}
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">⚠️</span>
-                        <div className="min-w-0">
-                          <span className="text-sm font-medium text-slate-800 block truncate">{debt.name}</span>
-                          <span className="text-xs text-slate-500 block truncate">{debt.creditor}</span>
+                {debtStats.debts.slice(0, 3).map((debt, index) => {
+                  const progress = parseFloat(String(debt.progress || 0));
+                  return (
+                    <OptimizedMotion
+                      key={debt.id}
+                      className="space-y-2"
+                      initial={{ opacity: 0, x: -30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: 0.64 + index * 0.04 }}
+                      whileHover={{ x: 4 }}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">⚠️</span>
+                          <div className="min-w-0">
+                            <span className="text-sm font-medium text-slate-800 block truncate">{debt.name}</span>
+                            <span className="text-xs text-slate-500 block truncate">{debt.creditor}</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-semibold text-amber-700">{formatCurrency(debt.balance, debt.currency)}</div>
+                          <div className="text-xs text-slate-500">{progress.toFixed(0)}%</div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-sm font-semibold text-amber-700">{formatCurrency(debt.balance, debt.currency)}</div>
-                        <div className="text-xs text-slate-500">{(parseFloat(String(debt.progress || 0))).toFixed(0)}%</div>
+                      <div className="w-full bg-slate-200 rounded-full h-2 relative">
+                        <OptimizedMotion
+                          className="h-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${progress}%` }}
+                          transition={{ duration: 0.6, delay: 0.68 + index * 0.06, ease: "easeOut" }}
+                          style={{ width: `${progress}%` }}
+                        />
+                        {progress > 0 && (
+                          <div
+                            className="absolute top-0 w-0.5 h-2 bg-amber-800 rounded-full"
+                            style={{ left: `${progress}%` }}
+                          />
+                        )}
                       </div>
-                    </div>
-                    <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden relative">
-                      <OptimizedMotion
-                        className="h-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${parseFloat(String(debt.progress || 0))}%` }}
-                        transition={{ duration: 0.6, delay: 0.68 + index * 0.06, ease: "easeOut" }}
-                        style={{ width: `${parseFloat(String(debt.progress || 0))}%` }}
-                      />
-                      <div
-                        className="absolute top-0 w-0.5 h-2 bg-amber-700/60"
-                        style={{ left: `${parseFloat(String(debt.progress || 0))}%` }}
-                      />
-                    </div>
-                  </OptimizedMotion>
-                ))}
+                    </OptimizedMotion>
+                  );
+                })}
               </CardContent>
             </Card>
           </OptimizedMotion>
