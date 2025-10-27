@@ -490,35 +490,37 @@ export function AnalyticsPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <OptimizedMotion
-                  className="space-y-2"
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.58 }}
-                >
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-slate-800">Общий прогресс</span>
-                    <div className="text-right">
-                      <div className="text-sm font-semibold text-amber-700">
-                        {debtStats.debts.length > 0
-                          ? (debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length).toFixed(1)
-                          : 0}%
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                {(() => {
+                  const avgProgress = debtStats.debts.length > 0
+                    ? debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length
+                    : 0;
+
+                  return (
                     <OptimizedMotion
-                      className="h-2 rounded-full bg-blue-500"
-                      initial={{ width: 0 }}
-                      animate={{
-                        width: debtStats.debts.length > 0
-                          ? `${(debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length)}%`
-                          : '0%'
-                      }}
-                      transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
-                    />
-                  </div>
-                </OptimizedMotion>
+                      className="space-y-2"
+                      initial={{ opacity: 0, x: -30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: 0.58 }}
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-slate-800">Общий прогресс</span>
+                        <div className="text-right">
+                          <div className="text-sm font-semibold text-amber-700">
+                            {avgProgress.toFixed(1)}%
+                          </div>
+                        </div>
+                      </div>
+                      <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                        <OptimizedMotion
+                          className="h-2 rounded-full bg-blue-500"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${avgProgress}%` }}
+                          transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
+                        />
+                      </div>
+                    </OptimizedMotion>
+                  );
+                })()}
 
                 {debtStats.debts.slice(0, 3).map((debt, index) => {
                   const progress = parseFloat(String(debt.progress || 0));
