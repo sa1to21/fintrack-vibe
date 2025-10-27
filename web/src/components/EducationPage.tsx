@@ -136,16 +136,22 @@ export function EducationPage() {
           <h2 className="font-medium text-foreground bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Советы дня</h2>
           {tips.map((tip, index) => (
             <OptimizedMotion key={index}>
-              <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-md transition-all duration-300">
+              <Card className={`border-2 hover:shadow-lg transition-all duration-300 ${
+                index === 0
+                  ? 'border-blue-300 bg-gradient-to-br from-blue-50 via-white to-blue-100/50 hover:border-blue-400'
+                  : index === 1
+                  ? 'border-emerald-300 bg-gradient-to-br from-emerald-50 via-white to-green-100/50 hover:border-emerald-400'
+                  : 'border-indigo-300 bg-gradient-to-br from-indigo-50 via-white to-indigo-100/50 hover:border-indigo-400'
+              }`}>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-medium text-slate-800">{tip.title}</h3>
                     <Badge
                       variant="outline"
-                      className={`text-xs border-blue-300 ${
-                        index === 0 ? 'text-blue-700 bg-blue-50' :
-                        index === 1 ? 'text-green-700 bg-green-50' :
-                        'text-indigo-700 bg-indigo-50'
+                      className={`text-xs font-medium border-2 ${
+                        index === 0 ? 'text-blue-700 bg-blue-100/80 border-blue-400' :
+                        index === 1 ? 'text-emerald-700 bg-emerald-100/80 border-emerald-400' :
+                        'text-indigo-700 bg-indigo-100/80 border-indigo-400'
                       }`}
                     >
                       {tip.category}
