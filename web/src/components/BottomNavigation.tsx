@@ -31,8 +31,8 @@ export function BottomNavigation({ currentPage, onNavigate }: BottomNavigationPr
   ];
 
   return (
-    <motion.div 
-      className="bg-gradient-to-r from-white/95 via-blue-50/95 to-indigo-50/95 backdrop-blur-lg border-t border-blue-200 px-4 py-2 safe-area-inset-bottom shadow-xl flex-shrink-0"
+    <motion.div
+      className="bg-gradient-to-r from-white/95 via-blue-50/95 to-indigo-50/95 dark:from-slate-900/95 dark:via-slate-800/95 dark:to-gray-900/95 backdrop-blur-lg border-t border-blue-200 dark:border-slate-700 px-4 py-2 safe-area-inset-bottom shadow-xl flex-shrink-0"
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.4, type: "spring", stiffness: 300, damping: 30 }}
@@ -48,9 +48,9 @@ export function BottomNavigation({ currentPage, onNavigate }: BottomNavigationPr
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
                 className={`flex flex-col items-center py-2 px-3 rounded-xl transition-all duration-300 relative ${
-                  isActive 
-                    ? 'text-blue-700' 
-                    : 'text-slate-500 hover:text-blue-600'
+                  isActive
+                    ? 'text-blue-700 dark:text-blue-400'
+                    : 'text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400'
                 }`}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
@@ -60,7 +60,7 @@ export function BottomNavigation({ currentPage, onNavigate }: BottomNavigationPr
               >
                 {isActive && (
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 rounded-xl shadow-lg border border-blue-200/50"
+                    className="absolute inset-0 bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 dark:from-slate-700 dark:via-slate-600 dark:to-gray-700 rounded-xl shadow-lg border border-blue-200/50 dark:border-slate-600/50"
                     layoutId="activeTab"
                     transition={{ type: "spring", stiffness: 400, damping: 35 }}
                   />
