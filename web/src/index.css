@@ -4048,10 +4048,10 @@ html {
 
 .dark {
   --bg-header: linear-gradient(to right, #1e293b, #334155);
-  --bg-page-dashboard: linear-gradient(to bottom right, #0f172a, #1e293b, #1e3a8a);
-  --bg-page-analytics: linear-gradient(to bottom right, #111827, #022c22, #134e4a);
-  --bg-page-education: linear-gradient(to bottom right, #0f172a, #1e1b4b, #581c87);
-  --bg-page-settings: linear-gradient(to bottom right, #1c1917, #171717, #451a03);
+  --bg-page-dashboard: #0f172a;  /* Вариант 1: Чистый тёмный slate (slate-900) */
+  --bg-page-analytics: #1e293b;  /* Вариант 2: Мягкий тёмно-синий (slate-800) */
+  --bg-page-education: #0c1220;  /* Вариант 3: Очень тёмный серо-синий */
+  --bg-page-settings: #0a0f1a;   /* Вариант 4: Почти чёрный с синим оттенком */
 }
 
 .light {
