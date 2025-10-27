@@ -94,47 +94,52 @@ export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
       <OptimizedMotion
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        whileHover={{ scale: 1.01, y: -2 }}
+        whileHover={{ scale: 1.02, y: -2 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
       >
         <Card className={`
           border ${colorScheme.border} ${colorScheme.bg}
-          shadow-sm hover:shadow-md transition-all duration-300
+          shadow-md hover:shadow-lg transition-all duration-300
         `}>
         <CardContent className="p-4 space-y-3">
           {/* Основная информация */}
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            <span className="text-lg flex-shrink-0">⚠️</span>
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 ${colorScheme.iconBg} rounded-full flex items-center justify-center shadow-sm flex-shrink-0`}>
+              <AlertCircle className={`w-5 h-5 ${colorScheme.iconColor}`} />
+            </div>
             <div className="min-w-0 flex-1">
-              <h3 className={`font-medium text-sm ${colorScheme.textPrimary} truncate`}>
+              <h3 className={`font-semibold text-base ${colorScheme.textPrimary} truncate`}>
                 {account.name}
               </h3>
-              <p className={`text-xs ${colorScheme.textSecondary} truncate`}>
-                {account.debt_info.creditorName}
-              </p>
+              <div className="flex items-center gap-1.5">
+                <User className={`w-3 h-3 ${colorScheme.textSecondary}`} />
+                <p className={`text-xs ${colorScheme.textSecondary} truncate font-medium`}>
+                  {account.debt_info.creditorName}
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Суммы */}
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <p className={`text-xs ${colorScheme.textSecondary} mb-1`}>Задолженность</p>
-              <p className={`text-lg font-bold ${colorScheme.amountColor}`}>
+            <div className="bg-white/40 rounded-lg p-3 backdrop-blur-sm">
+              <p className={`text-xs ${colorScheme.textSecondary} mb-1 font-medium`}>Задолженность</p>
+              <p className={`text-xl font-bold ${colorScheme.amountColor}`}>
                 {formatCurrency(remaining)}
               </p>
             </div>
-            <div>
-              <p className="text-xs text-slate-500 mb-1">Изначально</p>
-              <p className="text-lg font-bold text-slate-700">
+            <div className="bg-white/40 rounded-lg p-3 backdrop-blur-sm">
+              <p className="text-xs text-slate-500 mb-1 font-medium">Изначально</p>
+              <p className="text-xl font-bold text-slate-700">
                 {formatCurrency(initialAmount)}
               </p>
             </div>
           </div>
 
           {/* Срок погашения */}
-          <div className="flex items-center gap-2 text-xs">
-            <Clock className={`w-3.5 h-3.5 ${colorScheme.iconColor}`} />
-            <span className={colorScheme.textSecondary}>
+          <div className="flex items-center gap-2 text-xs bg-white/30 rounded-lg p-2.5 backdrop-blur-sm">
+            <Clock className={`w-4 h-4 ${colorScheme.iconColor} flex-shrink-0`} />
+            <span className={`${colorScheme.textSecondary} font-medium`}>
               {isOverdue
                 ? `Просрочено на ${Math.abs(daysUntilDue)} дн.`
                 : daysUntilDue === 0
