@@ -275,7 +275,7 @@ export function AnalyticsPage() {
           <Card className="border-indigo-200 bg-gradient-to-br from-white to-indigo-50/30 shadow-sm hover:shadow-lg transition-all duration-300">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
+                <span className="text-foreground">
                   Расходы по категориям
                 </span>
                 <OptimizedMotion 
@@ -339,7 +339,7 @@ export function AnalyticsPage() {
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full flex items-center justify-center shadow-sm">
                     <BarChart3 className="w-4 h-4 text-blue-600" />
                   </div>
-                  <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  <span className="text-foreground">
                     Сравнение с предыдущим периодом
                   </span>
                 </CardTitle>
@@ -438,7 +438,7 @@ export function AnalyticsPage() {
                   <div className="w-8 h-8 bg-gradient-to-br from-amber-100 to-orange-200 rounded-full flex items-center justify-center shadow-sm">
                     <AlertCircle className="w-4 h-4 text-amber-700" />
                   </div>
-                  <span className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
+                  <span className="text-foreground">
                     Статистика по задолженностям
                   </span>
                 </CardTitle>
@@ -526,7 +526,7 @@ export function AnalyticsPage() {
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full flex items-center justify-center shadow-sm">
                     <Sparkles className="w-4 h-4 text-blue-600" />
                   </div>
-                  <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  <span className="text-foreground">
                     Ваша финансовая статистика
                   </span>
                 </CardTitle>
