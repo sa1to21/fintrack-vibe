@@ -102,56 +102,35 @@ export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
           shadow-sm hover:shadow-md transition-all duration-300
         `}>
         <CardContent className="p-4 space-y-3">
-          {/* Header */}
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className={`
-              w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
-              ${colorScheme.iconBg} shadow-sm
-            `}>
-              <TrendingDown className={`w-4 h-4 ${colorScheme.iconColor}`} />
+          {/* Основная информация */}
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <span className="text-lg flex-shrink-0">⚠️</span>
+              <div className="min-w-0 flex-1">
+                <h3 className={`font-medium text-sm ${colorScheme.textPrimary} truncate`}>
+                  {account.name}
+                </h3>
+                <p className={`text-xs ${colorScheme.textSecondary} truncate`}>
+                  {account.debt_info.creditorName}
+                </p>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className={`font-medium text-sm ${colorScheme.textPrimary} truncate`}>
-                {account.name}
-              </h3>
-              <p className={`text-xs ${colorScheme.textSecondary} truncate`}>
-                {account.debt_info.creditorName}
-              </p>
-            </div>
-          </div>
-
-          {/* Суммы */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <p className={`text-xs ${colorScheme.textSecondary} mb-1`}>Задолженность</p>
-              <p className={`text-lg font-bold ${colorScheme.amountColor}`}>
+            <div className="text-right flex-shrink-0 ml-3">
+              <p className={`text-sm font-semibold ${colorScheme.amountColor}`}>
                 {formatCurrency(remaining)}
               </p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-500 mb-1">Изначально</p>
-              <p className="text-lg font-bold text-slate-700">
-                {formatCurrency(initialAmount)}
+              <p className="text-xs text-slate-500">
+                {progress.toFixed(0)}%
               </p>
             </div>
           </div>
 
-          {/* Прогресс */}
-          <div className="space-y-1.5">
-            <div className="flex justify-between text-xs">
-              <span className="text-slate-600">Погашено</span>
-              <span className={`font-medium ${colorScheme.textPrimary}`}>
-                {progress.toFixed(1)}%
-              </span>
-            </div>
-            <div className={`w-full ${colorScheme.progressBg} rounded-full h-2 overflow-hidden`}>
-              <OptimizedMotion
-                className={`h-2 rounded-full bg-gradient-to-r ${colorScheme.progressFill.replace('[&>div]:', '')}`}
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              />
-            </div>
+          {/* Прогресс-бар */}
+          <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+            <div
+              className={`h-2 rounded-full bg-gradient-to-r ${colorScheme.progressFill.replace('[&>div]:', '')} transition-all duration-600 ease-out`}
+              style={{ width: `${progress}%` }}
+            />
           </div>
 
           {/* Срок погашения */}
