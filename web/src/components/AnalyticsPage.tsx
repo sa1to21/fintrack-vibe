@@ -495,6 +495,9 @@ export function AnalyticsPage() {
                     ? debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length
                     : 0;
 
+                  console.log('Debts data:', debtStats.debts);
+                  console.log('Average progress calculated:', avgProgress);
+
                   return (
                     <OptimizedMotion
                       className="space-y-2"
