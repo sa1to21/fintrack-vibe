@@ -506,28 +506,22 @@ export function AnalyticsPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full bg-slate-200 rounded-full h-2 relative">
-                    {(() => {
-                      const avgProgress = debtStats.debts.length > 0
-                        ? (debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length)
-                        : 0;
-                      return (
-                        <>
-                          <OptimizedMotion
-                            className="h-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${avgProgress}%` }}
-                            transition={{ duration: 0.6, delay: 0.62, ease: "easeOut" }}
-                          />
-                          {avgProgress > 0 && (
-                            <div
-                              className="absolute top-0 w-0.5 h-2 bg-amber-800 rounded-full"
-                              style={{ left: `${avgProgress}%` }}
-                            />
-                          )}
-                        </>
-                      );
-                    })()}
+                  <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                    <OptimizedMotion
+                      className="h-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500"
+                      initial={{ width: 0 }}
+                      animate={{
+                        width: debtStats.debts.length > 0
+                          ? `${(debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length)}%`
+                          : '0%'
+                      }}
+                      transition={{ duration: 0.6, delay: 0.62, ease: "easeOut" }}
+                      style={{
+                        width: debtStats.debts.length > 0
+                          ? `${(debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length)}%`
+                          : '0%'
+                      }}
+                    />
                   </div>
                 </OptimizedMotion>
 
@@ -555,19 +549,14 @@ export function AnalyticsPage() {
                           <div className="text-xs text-slate-500">{progress.toFixed(0)}%</div>
                         </div>
                       </div>
-                      <div className="w-full bg-slate-200 rounded-full h-2 relative">
+                      <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                         <OptimizedMotion
                           className="h-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500"
                           initial={{ width: 0 }}
                           animate={{ width: `${progress}%` }}
                           transition={{ duration: 0.6, delay: 0.68 + index * 0.06, ease: "easeOut" }}
+                          style={{ width: `${progress}%` }}
                         />
-                        {progress > 0 && (
-                          <div
-                            className="absolute top-0 w-0.5 h-2 bg-amber-800 rounded-full"
-                            style={{ left: `${progress}%` }}
-                          />
-                        )}
                       </div>
                     </OptimizedMotion>
                   );
