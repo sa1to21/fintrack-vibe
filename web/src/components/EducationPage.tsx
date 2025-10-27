@@ -138,10 +138,10 @@ export function EducationPage() {
             <OptimizedMotion key={index}>
               <Card className={`border-2 hover:shadow-lg transition-all duration-300 ${
                 index === 0
-                  ? 'border-blue-300 bg-gradient-to-br from-blue-50 via-white to-blue-100/50 hover:border-blue-400'
+                  ? 'border-blue-400 bg-gradient-to-br from-blue-100 via-blue-50 to-indigo-100 hover:border-blue-500'
                   : index === 1
-                  ? 'border-emerald-300 bg-gradient-to-br from-emerald-50 via-white to-green-100/50 hover:border-emerald-400'
-                  : 'border-indigo-300 bg-gradient-to-br from-indigo-50 via-white to-indigo-100/50 hover:border-indigo-400'
+                  ? 'border-emerald-400 bg-gradient-to-br from-emerald-100 via-green-50 to-emerald-100 hover:border-emerald-500'
+                  : 'border-indigo-400 bg-gradient-to-br from-indigo-100 via-indigo-50 to-blue-100 hover:border-indigo-500'
               }`}>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-2">
