@@ -103,34 +103,32 @@ export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
         `}>
         <CardContent className="p-4 space-y-3">
           {/* Основная информация */}
-          <div className="flex justify-between items-start">
-            <div className="flex items-center gap-2 flex-1 min-w-0">
-              <span className="text-lg flex-shrink-0">⚠️</span>
-              <div className="min-w-0 flex-1">
-                <h3 className={`font-medium text-sm ${colorScheme.textPrimary} truncate`}>
-                  {account.name}
-                </h3>
-                <p className={`text-xs ${colorScheme.textSecondary} truncate`}>
-                  {account.debt_info.creditorName}
-                </p>
-              </div>
-            </div>
-            <div className="text-right flex-shrink-0 ml-3">
-              <p className={`text-sm font-semibold ${colorScheme.amountColor}`}>
-                {formatCurrency(remaining)}
-              </p>
-              <p className="text-xs text-slate-500">
-                {progress.toFixed(0)}%
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <span className="text-lg flex-shrink-0">⚠️</span>
+            <div className="min-w-0 flex-1">
+              <h3 className={`font-medium text-sm ${colorScheme.textPrimary} truncate`}>
+                {account.name}
+              </h3>
+              <p className={`text-xs ${colorScheme.textSecondary} truncate`}>
+                {account.debt_info.creditorName}
               </p>
             </div>
           </div>
 
-          {/* Прогресс-бар */}
-          <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-            <div
-              className={`h-2 rounded-full bg-gradient-to-r ${colorScheme.progressFill.replace('[&>div]:', '')} transition-all duration-600 ease-out`}
-              style={{ width: `${progress}%` }}
-            />
+          {/* Суммы */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <p className={`text-xs ${colorScheme.textSecondary} mb-1`}>Задолженность</p>
+              <p className={`text-lg font-bold ${colorScheme.amountColor}`}>
+                {formatCurrency(remaining)}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-slate-500 mb-1">Изначально</p>
+              <p className="text-lg font-bold text-slate-700">
+                {formatCurrency(initialAmount)}
+              </p>
+            </div>
           </div>
 
           {/* Срок погашения */}
