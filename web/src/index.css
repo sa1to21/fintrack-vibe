@@ -4040,10 +4040,18 @@ html {
 /* Theme variables */
 :root {
   --bg-header: linear-gradient(to right, #2563eb, #9333ea);
+  --bg-page-dashboard: #f8faff;
+  --bg-page-analytics: #f8faff;
+  --bg-page-education: #f8faff;
+  --bg-page-settings: #f8faff;
 }
 
 .dark {
   --bg-header: linear-gradient(to right, #1e293b, #334155);
+  --bg-page-dashboard: linear-gradient(to bottom right, #0f172a, #1e293b, #1e3a8a);
+  --bg-page-analytics: linear-gradient(to bottom right, #111827, #022c22, #134e4a);
+  --bg-page-education: linear-gradient(to bottom right, #0f172a, #1e1b4b, #581c87);
+  --bg-page-settings: linear-gradient(to bottom right, #1c1917, #171717, #451a03);
 }
 
 .light {

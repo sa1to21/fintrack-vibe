@@ -168,7 +168,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
   ];
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-stone-900 via-neutral-900 to-amber-950 relative overflow-hidden">
+    <div className="min-h-full relative overflow-hidden" style={{ background: 'var(--bg-page-settings)' }}>
       {/* Background decorations removed for performance */}
       
       {/* Header */}

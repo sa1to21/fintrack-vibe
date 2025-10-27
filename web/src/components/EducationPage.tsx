@@ -114,7 +114,7 @@ export function EducationPage() {
   };
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-900 relative overflow-hidden">
+    <div className="min-h-full relative overflow-hidden" style={{ background: 'var(--bg-page-education)' }}>
       {/* Background decorations removed for performance */}
       
       {/* Header */}

@@ -168,7 +168,7 @@ export function AnalyticsPage() {
   }
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-gray-900 via-emerald-950 to-teal-900 relative overflow-hidden">
+    <div className="min-h-full relative overflow-hidden" style={{ background: 'var(--bg-page-analytics)' }}>
       {/* Background decorations */}
       <div className="absolute top-10 left-10 w-32 h-32 bg-blue-200/30 rounded-full blur-3xl"></div>
       <div className="absolute bottom-20 right-10 w-24 h-24 bg-indigo-200/30 rounded-full blur-2xl"></div>
