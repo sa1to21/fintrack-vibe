@@ -573,7 +573,7 @@ export function AnalyticsPage() {
                   <div className="w-8 h-8 bg-gradient-to-br from-yellow-100 to-amber-200 rounded-full flex items-center justify-center shadow-sm">
                     <Sparkles className="w-4 h-4 text-yellow-600" />
                   </div>
-                  <span className="bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent">
+                  <span className="text-yellow-800 font-semibold">
                     Ваша финансовая статистика
                   </span>
                 </CardTitle>
