@@ -553,7 +553,6 @@ export function AnalyticsPage() {
                           initial={{ width: 0 }}
                           animate={{ width: `${progress}%` }}
                           transition={{ duration: 0.6, delay: 0.66 + index * 0.06, ease: "easeOut" }}
-                          style={{ width: `${progress}%` }}
                         />
                       </div>
                     </OptimizedMotion>
