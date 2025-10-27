@@ -527,6 +527,7 @@ export function AnalyticsPage() {
 
                 {debtStats.debts.slice(0, 3).map((debt, index) => {
                   const progress = parseFloat(String(debt.progress || 0));
+                  console.log('Debt progress debug:', { name: debt.name, progress: debt.progress, parsed: progress });
                   return (
                     <OptimizedMotion
                       key={debt.id}
