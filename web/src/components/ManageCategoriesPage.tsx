@@ -184,7 +184,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
   return (
     <div className="min-h-full bg-gradient-to-br from-purple-50 via-white to-blue-50 relative overflow-hidden">
       {/* Header */}
-      <OptimizedMotion className="bg-gradient-to-br from-blue-500 via-indigo-600 to-blue-700 px-4 py-6 relative overflow-hidden">
+      <OptimizedMotion className="px-4 py-6 relative overflow-hidden" style={{ background: 'var(--bg-header)' }}>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-y-12 translate-y-8"></div>
 
         <div className="max-w-md mx-auto relative">

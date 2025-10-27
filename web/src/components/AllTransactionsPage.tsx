@@ -291,7 +291,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
       {/* Background decorations removed for performance */}
       
       {/* Header */}
-      <OptimizedMotion className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 pb-6 relative overflow-hidden">
+      <OptimizedMotion className="p-4 pb-6 relative overflow-hidden" style={{ background: 'var(--bg-header)' }}>
         {/* Background decorations - simplified for performance */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-y-12"></div>
 

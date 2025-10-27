@@ -172,7 +172,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
       {/* Background decorations removed for performance */}
       
       {/* Header */}
-      <OptimizedMotion className="bg-gradient-to-br from-blue-500 via-indigo-600 to-blue-700 px-4 py-6 relative overflow-hidden">
+      <OptimizedMotion className="px-4 py-6 relative overflow-hidden" style={{ background: 'var(--bg-header)' }}>
         {/* Background decorations - simplified for performance */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-y-12 translate-y-8"></div>
 

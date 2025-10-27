@@ -273,7 +273,8 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
       
       {/* Header */}
       <OptimizedMotion
-        className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 pb-6 relative overflow-hidden"
+        className="p-4 pb-6 relative overflow-hidden"
+        style={{ background: 'var(--bg-header)' }}
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}

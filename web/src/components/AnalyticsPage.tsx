@@ -176,7 +176,8 @@ export function AnalyticsPage() {
       
       {/* Header */}
       <OptimizedMotion
-        className="bg-gradient-to-br from-blue-500 via-indigo-600 to-blue-700 px-4 py-6 relative overflow-hidden"
+        className="px-4 py-6 relative overflow-hidden"
+        style={{ background: 'var(--bg-header)' }}
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}

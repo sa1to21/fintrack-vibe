@@ -503,8 +503,9 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       <div className="absolute top-1/3 right-0 w-16 h-16 bg-indigo-200/20 rounded-full blur-xl"></div>
       
       {/* Header */}
-      <OptimizedMotion 
-        className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-4 pb-6 relative overflow-hidden"
+      <OptimizedMotion
+        className="p-4 pb-6 relative overflow-hidden"
+        style={{ background: 'var(--bg-header)' }}
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
