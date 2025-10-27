@@ -140,7 +140,7 @@ export function AnalyticsPage() {
   // Show loading or error state
   if (loading) {
     return (
-      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
+      <div className="min-h-full flex items-center justify-center" style={{ background: 'var(--bg-page-analytics)' }}>
         <div className="text-center">
           <div className="w-12 h-12 mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-blue-600">Загрузка аналитики...</p>
@@ -151,7 +151,7 @@ export function AnalyticsPage() {
 
   if (error || !summary || !categories) {
     return (
-      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+      <div className="min-h-full flex items-center justify-center p-4" style={{ background: 'var(--bg-page-analytics)' }}>
         <Card className="max-w-md w-full">
           <CardContent className="p-6 text-center">
             <p className="text-red-600 mb-4">{error || 'Не удалось загрузить данные'}</p>

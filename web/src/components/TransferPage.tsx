@@ -165,7 +165,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
+      <div className="min-h-full flex items-center justify-center" style={{ background: 'var(--bg-page-dashboard)' }}>
         <div className="text-center space-y-4">
           <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
           <p className="text-slate-600">Загрузка...</p>
@@ -176,7 +176,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
 
   if (accounts.length < 2) {
     return (
-      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      <div className="min-h-full" style={{ background: 'var(--bg-page-dashboard)' }}>
         <OptimizedMotion
           className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-4 relative overflow-hidden"
           initial={{ opacity: 0, y: -30 }}
@@ -211,7 +211,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
   }
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-full" style={{ background: 'var(--bg-page-dashboard)' }}>
       {/* Header */}
       <OptimizedMotion
         className="p-4 pb-6 relative overflow-hidden"

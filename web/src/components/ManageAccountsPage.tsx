@@ -486,7 +486,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
+      <div className="min-h-full flex items-center justify-center" style={{ background: 'var(--bg-page-dashboard)' }}>
         <div className="text-center space-y-4">
           <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
           <p className="text-slate-600">Загрузка счетов...</p>
@@ -496,7 +496,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   }
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
+    <div className="min-h-full relative overflow-hidden" style={{ background: 'var(--bg-page-dashboard)' }}>
       {/* Background decorations */}
       <div className="absolute top-10 left-10 w-32 h-32 bg-blue-200/30 rounded-full blur-3xl"></div>
       <div className="absolute bottom-20 right-10 w-24 h-24 bg-indigo-200/30 rounded-full blur-2xl"></div>

@@ -172,7 +172,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-full bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center">
+      <div className="min-h-full flex items-center justify-center" style={{ background: 'var(--bg-page-dashboard)' }}>
         <div className="text-center space-y-4">
           <Loader2 className="w-12 h-12 mx-auto text-purple-600 animate-spin" />
           <p className="text-slate-600">Загрузка категорий...</p>
@@ -182,7 +182,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
   }
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-purple-50 via-white to-blue-50 relative overflow-hidden">
+    <div className="min-h-full relative overflow-hidden" style={{ background: 'var(--bg-page-dashboard)' }}>
       {/* Header */}
       <OptimizedMotion className="px-4 py-6 relative overflow-hidden" style={{ background: 'var(--bg-header)' }}>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-y-12 translate-y-8"></div>

@@ -4048,10 +4048,10 @@ html {
 
 .dark {
   --bg-header: linear-gradient(to right, #1e293b, #334155);
-  --bg-page-dashboard: #0d1117;  /* GitHub dark (очень популярный тёмный оттенок) */
+  --bg-page-dashboard: #0e1419;  /* Чуть светлее чёрного с синевой */
   --bg-page-analytics: #0e1419;  /* Чуть светлее чёрного с синевой */
-  --bg-page-education: #11141a;  /* Средний между чёрным и slate */
-  --bg-page-settings: #0a0f1a;   /* Почти чёрный с синим оттенком - ОСТАВИЛИ */
+  --bg-page-education: #0e1419;  /* Чуть светлее чёрного с синевой */
+  --bg-page-settings: #0e1419;   /* Чуть светлее чёрного с синевой */
 }
 
 .light {

@@ -257,7 +257,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
   // Показываем экран загрузки
   if (loading) {
     return (
-      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
+      <div className="min-h-full flex items-center justify-center" style={{ background: 'var(--bg-page-dashboard)' }}>
         <div className="text-center space-y-4">
           <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
           <p className="text-slate-600">Загрузка...</p>
@@ -269,7 +269,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
   // Если категории не загрузились - показываем ошибку
   if (apiCategories.length === 0) {
     return (
-      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+      <div className="min-h-full flex items-center justify-center p-4" style={{ background: 'var(--bg-page-dashboard)' }}>
         <div className="text-center max-w-md">
           <div className="text-red-600 text-5xl mb-4">⚠️</div>
           <h2 className="text-xl font-semibold text-slate-800 mb-2">Не удалось загрузить категории</h2>
@@ -283,7 +283,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
   }
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-full" style={{ background: 'var(--bg-page-dashboard)' }}>
       {/* Header */}
       <OptimizedMotion
         className="p-4 pb-6 relative overflow-hidden"

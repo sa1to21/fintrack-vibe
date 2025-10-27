@@ -258,7 +258,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
 
   if (loading) {
     return (
-      <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
+      <div className="min-h-full flex items-center justify-center" style={{ background: 'var(--bg-page-dashboard)' }}>
         <div className="text-center space-y-4">
           <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
           <p className="text-slate-600">Загрузка...</p>
@@ -268,7 +268,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
   }
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
+    <div className="min-h-full relative overflow-hidden" style={{ background: 'var(--bg-page-dashboard)' }}>
       {/* Background decorations removed for performance */}
       
       {/* Header */}
