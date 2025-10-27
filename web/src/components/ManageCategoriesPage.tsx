@@ -200,9 +200,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
               </Button>
             </LightMotion>
             <div className="flex items-center gap-2">
-              <Tags className="w-6 h-6 text-yellow-300" />
               <h1 className="text-white font-medium">Категории</h1>
-              <Sparkles className="w-5 h-5 text-yellow-300" />
             </div>
             <div className="w-8" />
           </div>

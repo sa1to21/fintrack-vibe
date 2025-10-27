@@ -532,9 +532,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
             </Button>
           </LightMotion>
           <div className="flex items-center gap-2">
-            <Settings className="w-5 h-5 text-yellow-300" />
             <h1 className="font-medium text-white">Управление счетами</h1>
-            <Sparkles className="w-4 h-4 text-yellow-300" />
           </div>
           <div className="w-8" />
         </OptimizedMotion>
