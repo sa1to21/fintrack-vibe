@@ -214,7 +214,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
         <LightMotion whileTap={{ scale: 0.98 }}>
           <Button
             onClick={openAddDialog}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 rounded-xl shadow-lg"
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-6 rounded-xl shadow-lg"
           >
             <Plus className="w-5 h-5 mr-2" />
             Добавить категорию
@@ -229,7 +229,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
               Расходы ({expenseCategories.length})
             </h2>
           </div>
-          <Card className="border-purple-200 bg-gradient-to-br from-white to-purple-50/30 shadow-sm">
+          <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm">
             <CardContent className="p-0">
               {expenseCategories.length === 0 ? (
                 <div className="p-4 text-center text-slate-500">
@@ -258,7 +258,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
               Доходы ({incomeCategories.length})
             </h2>
           </div>
-          <Card className="border-purple-200 bg-gradient-to-br from-white to-purple-50/30 shadow-sm">
+          <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm">
             <CardContent className="p-0">
               {incomeCategories.length === 0 ? (
                 <div className="p-4 text-center text-slate-500">
@@ -282,9 +282,9 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
 
       {/* Add Category Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="border-purple-200 bg-gradient-to-br from-white to-purple-50/30">
+        <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30">
           <DialogHeader>
-            <DialogTitle className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               Новая категория
             </DialogTitle>
             <DialogDescription>
@@ -302,14 +302,14 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
               variant="outline"
               onClick={() => setIsAddDialogOpen(false)}
               disabled={actionLoading}
-              className="border-purple-300"
+              className="border-blue-300"
             >
               Отмена
             </Button>
             <Button
               onClick={handleAddCategory}
               disabled={actionLoading}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
             >
               {actionLoading ? (
                 <>
@@ -326,9 +326,9 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
 
       {/* Edit Category Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="border-purple-200 bg-gradient-to-br from-white to-purple-50/30">
+        <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30">
           <DialogHeader>
-            <DialogTitle className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               Редактировать категорию
             </DialogTitle>
             <DialogDescription>
@@ -346,14 +346,14 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
               variant="outline"
               onClick={() => setIsEditDialogOpen(false)}
               disabled={actionLoading}
-              className="border-purple-300"
+              className="border-blue-300"
             >
               Отмена
             </Button>
             <Button
               onClick={handleEditCategory}
               disabled={actionLoading}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
             >
               {actionLoading ? (
                 <>
@@ -381,7 +381,7 @@ interface CategoryItemProps {
 
 function CategoryItem({ category, onEdit, onDelete, actionLoading }: CategoryItemProps) {
   return (
-    <div className="flex items-center justify-between p-4 hover:bg-purple-50/50 transition-colors duration-200 border-b last:border-b-0 border-purple-100/50">
+    <div className="flex items-center justify-between p-4 hover:bg-blue-50/50 transition-colors duration-200 border-b last:border-b-0 border-blue-100/50">
       <div className="flex items-center gap-3">
         <div
           className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
@@ -403,7 +403,7 @@ function CategoryItem({ category, onEdit, onDelete, actionLoading }: CategoryIte
             size="sm"
             onClick={() => onEdit(category)}
             disabled={actionLoading}
-            className="text-purple-600 hover:bg-purple-100"
+            className="text-blue-600 hover:bg-blue-100"
           >
             <Edit className="w-4 h-4" />
           </Button>
@@ -478,7 +478,7 @@ function CategoryForm({ formData, setFormData }: CategoryFormProps) {
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           placeholder="Название категории"
-          className="border-purple-200 focus:border-purple-400"
+          className="border-blue-200 focus:border-blue-400"
         />
       </div>
 

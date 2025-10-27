@@ -379,13 +379,13 @@ export function AnalyticsPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}
           >
-            <Card className="border-purple-200 bg-gradient-to-br from-purple-50 via-white to-indigo-50 shadow-sm hover:shadow-lg transition-all duration-300">
+            <Card className="border-blue-200 bg-gradient-to-br from-blue-50 via-white to-indigo-50 shadow-sm hover:shadow-lg transition-all duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-indigo-200 rounded-full flex items-center justify-center shadow-sm">
-                    <BarChart3 className="w-4 h-4 text-purple-600" />
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full flex items-center justify-center shadow-sm">
+                    <BarChart3 className="w-4 h-4 text-blue-600" />
                   </div>
-                  <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                     Сравнение с предыдущим периодом
                   </span>
                 </CardTitle>

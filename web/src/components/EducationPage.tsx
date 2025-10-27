@@ -133,19 +133,19 @@ export function EducationPage() {
       <div className="px-4 py-6 max-w-md mx-auto space-y-6 relative z-10">
         {/* Daily Tips - moved to top */}
         <div className="space-y-4">
-          <h2 className="font-medium text-foreground bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Советы дня</h2>
+          <h2 className="font-medium text-foreground bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Советы дня</h2>
           {tips.map((tip, index) => (
             <OptimizedMotion key={index}>
-              <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50 hover:shadow-md transition-all duration-300">
+              <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-md transition-all duration-300">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-medium text-slate-800">{tip.title}</h3>
                     <Badge
                       variant="outline"
-                      className={`text-xs border-purple-300 ${
+                      className={`text-xs border-blue-300 ${
                         index === 0 ? 'text-blue-700 bg-blue-50' :
                         index === 1 ? 'text-green-700 bg-green-50' :
-                        'text-purple-700 bg-purple-50'
+                        'text-indigo-700 bg-indigo-50'
                       }`}
                     >
                       {tip.category}
@@ -219,7 +219,7 @@ export function EducationPage() {
 
             {/* Courses */}
             <div className="space-y-4">
-              <h2 className="font-medium text-foreground bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Курсы</h2>
+              <h2 className="font-medium text-foreground bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Курсы</h2>
               {courses.map((course, index) => {
                 const Icon = course.icon;
                 return (
@@ -229,7 +229,7 @@ export function EducationPage() {
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-gradient-to-br ${
                             index === 0 ? 'from-blue-500 to-indigo-600' :
                             index === 1 ? 'from-green-500 to-emerald-600' :
-                            'from-purple-500 to-pink-600'
+                            'from-indigo-500 to-blue-600'
                           }`}>
                           <Icon className="w-5 h-5 text-white" />
                         </div>
