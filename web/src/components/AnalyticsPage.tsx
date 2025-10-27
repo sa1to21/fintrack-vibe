@@ -512,11 +512,9 @@ export function AnalyticsPage() {
                         </div>
                       </div>
                       <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                        <OptimizedMotion
-                          className="h-2 rounded-full bg-blue-500"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${progressValue}%` }}
-                          transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
+                        <div
+                          className="h-2 rounded-full bg-blue-500 transition-all duration-600 ease-out"
+                          style={{ width: `${progressValue}%` }}
                         />
                       </div>
                     </OptimizedMotion>
@@ -548,11 +546,9 @@ export function AnalyticsPage() {
                         </div>
                       </div>
                       <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                        <OptimizedMotion
-                          className={`h-2 rounded-full ${getColorClass(index)}`}
-                          initial={{ width: 0 }}
-                          animate={{ width: `${progress}%` }}
-                          transition={{ duration: 0.6, delay: 0.66 + index * 0.06, ease: "easeOut" }}
+                        <div
+                          className={`h-2 rounded-full ${getColorClass(index)} transition-all duration-600 ease-out`}
+                          style={{ width: `${progress}%` }}
                         />
                       </div>
                     </OptimizedMotion>
