@@ -114,7 +114,7 @@ export function EducationPage() {
   };
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-indigo-50 via-white to-purple-50 relative overflow-hidden">
+    <div className="min-h-full bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-900 relative overflow-hidden">
       {/* Background decorations removed for performance */}
       
       {/* Header */}

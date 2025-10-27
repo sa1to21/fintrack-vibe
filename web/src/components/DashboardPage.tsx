@@ -268,7 +268,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   };
 
   return (
-    <div className="min-h-full bg-background">
+    <div className="min-h-full bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900">
       {/* Header */}
       <OptimizedMotion className="px-4 pt-6 pb-3 relative overflow-hidden" style={{ background: 'var(--bg-header)' }}>
         {/* Background decorations - simplified for performance */}
