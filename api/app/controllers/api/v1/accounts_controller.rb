@@ -79,11 +79,19 @@ class Api::V1::AccountsController < Api::V1::BaseController
       }
     end
 
+    # Calculate average progress (arithmetic mean of percentages, not weighted by amount)
+    # This is correct for debts in different currencies
+    overall_progress = if debts.any?
+      debts.sum { |d| d.debt_progress.to_f } / debts.count
+    else
+      0
+    end
+
     render json: {
       total_debt: total_debt,
       total_initial: total_initial,
       total_paid: total_paid,
-      overall_progress: total_initial.zero? ? 0 : (total_paid / total_initial * 100).round(2),
+      overall_progress: overall_progress.round(2),
       debts: debts_data
     }
   end
