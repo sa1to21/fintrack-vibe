@@ -46,11 +46,11 @@ export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
     ? Math.max(0, Math.min(100, ((initialAmount - remaining) / initialAmount) * 100))
     : 0;
 
-  // Определяем цветовую схему карточки (в стиле AnalyticsPage)
+  // Определяем цветовую схему карточки (в стиле блока последних операций)
   const colorScheme = isOverdue
     ? {
         border: 'border-red-200',
-        bg: 'bg-gradient-to-br from-red-50 to-red-100/50',
+        bg: 'bg-gradient-to-br from-white to-red-50/30',
         iconBg: 'bg-gradient-to-br from-red-100 to-red-200',
         iconColor: 'text-red-600',
         amountColor: 'text-red-700',
@@ -64,7 +64,7 @@ export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
     : isUrgent
     ? {
         border: 'border-amber-200',
-        bg: 'bg-gradient-to-br from-amber-50 to-orange-100/50',
+        bg: 'bg-gradient-to-br from-white to-amber-50/30',
         iconBg: 'bg-gradient-to-br from-amber-100 to-orange-200',
         iconColor: 'text-amber-600',
         amountColor: 'text-amber-700',
@@ -77,7 +77,7 @@ export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
       }
     : {
         border: 'border-blue-200',
-        bg: 'bg-gradient-to-br from-blue-50 to-indigo-100/50',
+        bg: 'bg-gradient-to-br from-white to-blue-50/30',
         iconBg: 'bg-gradient-to-br from-blue-100 to-indigo-200',
         iconColor: 'text-blue-600',
         amountColor: 'text-blue-700',
