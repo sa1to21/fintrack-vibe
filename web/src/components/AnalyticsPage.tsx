@@ -508,11 +508,12 @@ export function AnalyticsPage() {
                   </div>
                   <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden relative">
                     <div
-                      className="h-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 absolute top-0 left-0"
+                      className="h-2 rounded-full absolute top-0 left-0"
                       style={{
                         width: debtStats.debts.length > 0
                           ? `${(debtStats.debts.reduce((sum, debt) => sum + parseFloat(String(debt.progress || 0)), 0) / debtStats.debts.length)}%`
-                          : '0%'
+                          : '0%',
+                        background: 'linear-gradient(to right, #f59e0b, #ea580c)'
                       }}
                     />
                   </div>
@@ -540,13 +541,16 @@ export function AnalyticsPage() {
                         </div>
                         <div className="text-right">
                           <div className="text-sm font-semibold text-amber-700">{formatCurrency(debt.balance, debt.currency)}</div>
-                          <div className="text-xs text-slate-500">{progress.toFixed(0)}%</div>
+                          <div className="text-xs text-slate-500">{progress.toFixed(0)}% (w:{progress})</div>
                         </div>
                       </div>
                       <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden relative">
                         <div
-                          className="h-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 absolute top-0 left-0"
-                          style={{ width: `${progress}%` }}
+                          className="h-2 rounded-full absolute top-0 left-0"
+                          style={{
+                            width: `${progress}%`,
+                            background: 'linear-gradient(to right, #f59e0b, #ea580c)'
+                          }}
                         />
                       </div>
                     </OptimizedMotion>
