@@ -94,14 +94,14 @@ export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
       <OptimizedMotion
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        whileHover={{ scale: 1.02, y: -3 }}
+        whileHover={{ scale: 1.01, y: -2 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
       >
         <Card className={`
           border ${colorScheme.border} ${colorScheme.bg}
-          shadow-sm hover:shadow-lg transition-all duration-300
+          shadow-sm hover:shadow-md transition-all duration-300
         `}>
-        <CardContent className="p-3 space-y-3">
+        <CardContent className="p-4 space-y-3">
           {/* Header */}
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className={`
