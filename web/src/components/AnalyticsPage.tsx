@@ -478,13 +478,13 @@ export function AnalyticsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.53 }}
           >
-            <Card className="border-amber-200 bg-gradient-to-br from-white to-amber-50/30 shadow-sm hover:shadow-lg transition-all duration-300">
+            <Card className="border-indigo-200 bg-gradient-to-br from-white to-indigo-50/30 shadow-sm hover:shadow-lg transition-all duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <div className="w-8 h-8 bg-gradient-to-br from-amber-100 to-orange-200 rounded-full flex items-center justify-center shadow-sm">
                     <AlertCircle className="w-4 h-4 text-amber-700" />
                   </div>
-                  <span className="text-amber-800 font-semibold">
+                  <span className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
                     Статистика по задолженностям
                   </span>
                 </CardTitle>
@@ -567,13 +567,13 @@ export function AnalyticsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.55 }}
           >
-            <Card className="border-yellow-200 bg-gradient-to-br from-yellow-50 via-white to-amber-50 shadow-sm hover:shadow-lg transition-all duration-300">
+            <Card className="border-blue-200 bg-gradient-to-br from-blue-50 via-white to-indigo-50 shadow-sm hover:shadow-lg transition-all duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-yellow-100 to-amber-200 rounded-full flex items-center justify-center shadow-sm">
-                    <Sparkles className="w-4 h-4 text-yellow-600" />
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full flex items-center justify-center shadow-sm">
+                    <Sparkles className="w-4 h-4 text-blue-600" />
                   </div>
-                  <span className="text-yellow-800 font-semibold">
+                  <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                     Ваша финансовая статистика
                   </span>
                 </CardTitle>
