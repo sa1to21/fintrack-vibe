@@ -8,9 +8,10 @@ import type { Account } from "../services/accounts.service";
 interface DebtAccountCardProps {
   account: Account;
   onClick?: () => void;
+  showBalance?: boolean;
 }
 
-export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
+export function DebtAccountCard({ account, onClick, showBalance = true }: DebtAccountCardProps) {
   if (!account.is_debt || !account.debt_info) return null;
 
   const formatCurrency = (amount: number) => {
@@ -135,13 +136,13 @@ export function DebtAccountCard({ account, onClick }: DebtAccountCardProps) {
             <div className="bg-white/40 rounded-lg p-3 backdrop-blur-sm">
               <p className={`text-xs ${colorScheme.textSecondary} mb-1 font-medium`}>Задолженность</p>
               <p className={`text-xl font-bold ${colorScheme.amountColor}`}>
-                {formatCurrency(remaining)}
+                {showBalance ? formatCurrency(remaining) : "• • •"}
               </p>
             </div>
             <div className="bg-white/40 rounded-lg p-3 backdrop-blur-sm">
               <p className="text-xs text-slate-500 mb-1 font-medium">Изначально</p>
               <p className="text-xl font-bold text-slate-700">
-                {formatCurrency(initialAmount)}
+                {showBalance ? formatCurrency(initialAmount) : "• • •"}
               </p>
             </div>
           </div>

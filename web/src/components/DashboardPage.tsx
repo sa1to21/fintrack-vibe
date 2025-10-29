@@ -700,6 +700,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   key={debt.id}
                   account={debt}
                   onClick={onManageAccounts}
+                  showBalance={showBalance}
                 />
               ))}
             </div>
