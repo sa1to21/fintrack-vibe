@@ -60,8 +60,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats | null>(null);
   const [debtAccounts, setDebtAccounts] = useState<ApiAccount[]>([]);
 
-  // Выбираем логотип в зависимости от темы
-  const currentLogo = theme === 'dark' ? logoWhite : logo;
+  // Выбираем логотип в зависимости от темы (временно отключено - всегда светлый)
+  const currentLogo = logo; // theme === 'dark' ? logoWhite : logo;
 
   // Загрузить данные дашборда одним запросом (счета + транзакции)
   useEffect(() => {

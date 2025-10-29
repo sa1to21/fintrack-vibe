@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Switch } from "./ui/switch";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "./ui/alert-dialog";
-import { Trash2, Sparkles, Tags, DollarSign, Bell, Moon, Globe, Upload, Settings, ChevronRight } from "./icons";
+import { Trash2, Sparkles, Tags, DollarSign, Bell, Globe, Upload, Settings, ChevronRight } from "./icons";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
 import { useTelegramAuth } from "../contexts/TelegramAuthContext";
@@ -23,7 +23,7 @@ interface SettingsPageProps {
 }
 
 export function SettingsPage({ onNavigate }: SettingsPageProps) {
-  const { theme, setTheme } = useTelegramAuth();
+  // const { theme, setTheme } = useTelegramAuth(); // Тема временно отключена
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -31,8 +31,8 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
   const [isLoadingCurrency, setIsLoadingCurrency] = useState(true);
   const [isDonateDialogOpen, setIsDonateDialogOpen] = useState(false);
 
-  // Выбираем логотип в зависимости от темы
-  const currentLogo = theme === 'dark' ? logoWhite : logo;
+  // Выбираем логотип в зависимости от темы (временно отключено - всегда светлый)
+  const currentLogo = logo; // theme === 'dark' ? logoWhite : logo;
 
   useEffect(() => {
     loadBaseCurrency();
@@ -126,14 +126,6 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
           action: "toggle",
           value: true,
           color: "bg-yellow-100 text-yellow-600"
-        },
-        {
-          icon: Moon,
-          label: "Тёмная тема",
-          description: "Переключить на тёмное оформление",
-          action: "theme-toggle",
-          value: theme === 'dark',
-          color: "bg-gray-100 text-gray-600"
         },
         {
           icon: Globe,
@@ -276,12 +268,6 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                       <div className="flex items-center">
                         {item.action === 'toggle' && (
                           <Switch checked={item.value} />
-                        )}
-                        {item.action === 'theme-toggle' && (
-                          <Switch
-                            checked={item.value}
-                            onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-                          />
                         )}
                         {item.action === 'navigate' && (
                           <ChevronRight className="w-5 h-5 text-slate-500" />

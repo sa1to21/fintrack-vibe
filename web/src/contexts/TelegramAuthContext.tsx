@@ -228,33 +228,33 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // Эффект для синхронизации с темой Telegram
-  useEffect(() => {
-    const tg = window.Telegram?.WebApp;
-    if (!tg) return;
+  // Эффект для синхронизации с темой Telegram (ВРЕМЕННО ОТКЛЮЧЕНО)
+  // useEffect(() => {
+  //   const tg = window.Telegram?.WebApp;
+  //   if (!tg) return;
 
-    // Только синхронизируем с Telegram, если пользователь не выбирал тему вручную
-    if (isManualTheme) return;
+  //   // Только синхронизируем с Telegram, если пользователь не выбирал тему вручную
+  //   if (isManualTheme) return;
 
-    // Устанавливаем начальную тему из Telegram
-    const telegramTheme = tg.colorScheme || 'light';
-    setThemeState(telegramTheme);
+  //   // Устанавливаем начальную тему из Telegram
+  //   const telegramTheme = tg.colorScheme || 'light';
+  //   setThemeState(telegramTheme);
 
-    // Слушаем изменения темы в Telegram
-    const handleThemeChange = () => {
-      // Только если тема не установлена вручную
-      if (!isManualTheme) {
-        const newTheme = tg.colorScheme || 'light';
-        setThemeState(newTheme);
-      }
-    };
+  //   // Слушаем изменения темы в Telegram
+  //   const handleThemeChange = () => {
+  //     // Только если тема не установлена вручную
+  //     if (!isManualTheme) {
+  //       const newTheme = tg.colorScheme || 'light';
+  //       setThemeState(newTheme);
+  //     }
+  //   };
 
-    tg.onEvent('themeChanged', handleThemeChange);
+  //   tg.onEvent('themeChanged', handleThemeChange);
 
-    return () => {
-      tg.offEvent('themeChanged', handleThemeChange);
-    };
-  }, [isTelegramReady, isManualTheme]);
+  //   return () => {
+  //     tg.offEvent('themeChanged', handleThemeChange);
+  //   };
+  // }, [isTelegramReady, isManualTheme]);
 
   const setTheme = (newTheme: 'light' | 'dark') => {
     setThemeState(newTheme);
