@@ -14,6 +14,7 @@ import usersService from "../services/users.service";
 import { useTelegramAuth } from "../contexts/TelegramAuthContext";
 import logo from "../assets/logo.png";
 import logoWhite from "../assets/logo-white.png";
+import whiteOwl from "../assets/owl-white.png";
 
 interface Account {
   id: string;
@@ -60,8 +61,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats | null>(null);
   const [debtAccounts, setDebtAccounts] = useState<ApiAccount[]>([]);
 
-  // Выбираем логотип в зависимости от темы (временно отключено - всегда светлый)
-  const currentLogo = logo; // theme === 'dark' ? logoWhite : logo;
+  // Используем новую светлую иконку совы
+  const currentLogo = whiteOwl;
 
   // Загрузить данные дашборда одним запросом (счета + транзакции)
   useEffect(() => {
