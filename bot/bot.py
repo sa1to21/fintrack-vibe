@@ -131,6 +131,7 @@ async def cmd_guide(message: types.Message):
         [InlineKeyboardButton(text="🔍 Фильтры и поиск", callback_data="guide_filters")],
         [InlineKeyboardButton(text="💾 Экспорт данных", callback_data="guide_export")],
         [InlineKeyboardButton(text="✏️ Редактирование операций", callback_data="guide_edit")],
+        [InlineKeyboardButton(text="🔔 Напоминания о финансах", callback_data="guide_notifications")],
         [InlineKeyboardButton(text="💰 Открыть WiseTrack", web_app=WebAppInfo(url=WEBAPP_URL))],
         [InlineKeyboardButton(text="❓ Помощь", callback_data="show_help")]
     ])
@@ -262,6 +263,23 @@ async def handle_guide_callback(callback: CallbackQuery):
 • Тип и категория
 • Счёт и сумма
 • Описание (если есть)
+""",
+        "notifications": """
+🔔 Напоминания о финансах
+
+Настройте ежедневные уведомления о записи трат, чтобы не забывать вести учёт:
+
+Как настроить:
+1. Откройте Настройки → Настройка напоминаний
+2. Включите напоминания
+3. Выберите удобное время (в вашем локальном часовом поясе)
+4. Укажите дни недели для напоминаний
+
+Что будет в уведомлении:
+• Напоминание записать траты за день
+• Последняя транзакция
+
+⏰ Важно: Время определяется автоматически по часовому поясу вашего устройства
 """
     }
 
@@ -288,6 +306,7 @@ async def handle_guide_back(callback: CallbackQuery):
         [InlineKeyboardButton(text="🔍 Фильтры и поиск", callback_data="guide_filters")],
         [InlineKeyboardButton(text="💾 Экспорт данных", callback_data="guide_export")],
         [InlineKeyboardButton(text="✏️ Редактирование операций", callback_data="guide_edit")],
+        [InlineKeyboardButton(text="🔔 Напоминания о финансах", callback_data="guide_notifications")],
         [InlineKeyboardButton(text="💰 Открыть WiseTrack", web_app=WebAppInfo(url=WEBAPP_URL))],
         [InlineKeyboardButton(text="❓ Помощь", callback_data="show_help")]
     ])
