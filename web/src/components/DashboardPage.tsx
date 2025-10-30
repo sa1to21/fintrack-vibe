@@ -278,8 +278,8 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
         <div className="max-w-md mx-auto relative">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <img src={currentLogo} alt="Finance Tracker" className="w-10 h-10" />
-              <h1 className="text-white font-medium">Finance Tracker</h1>
+              <img src={currentLogo} alt="WiseTrack" className="w-10 h-10" />
+              <h1 className="text-white font-medium">WiseTrack</h1>
             </div>
             <LightMotion whileTap={{ scale: 0.95 }}>
               <Button

@@ -375,12 +375,12 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         <div className="text-center pt-2 space-y-2">
           {/* Logo */}
           <div className="flex justify-center">
-            <img src={currentLogo} alt="Finance Tracker" className="w-16 h-16" />
+            <img src={currentLogo} alt="WiseTrack" className="w-16 h-16" />
           </div>
 
           <div className="space-y-1">
             <p className="text-xs text-slate-500">
-              Finance Tracker v1.0 <span className="text-orange-500 font-medium">(BETA)</span>
+              WiseTrack v1.0 <span className="text-orange-500 font-medium">(BETA)</span>
             </p>
             <p className="text-xs text-slate-500">
               Сделано с ❤️ для вашего финансового благополучия

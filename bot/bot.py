@@ -19,7 +19,7 @@ dp = Dispatcher()
 def get_webapp_keyboard(url: str = WEBAPP_URL) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[[
         InlineKeyboardButton(
-            text="💰 Открыть FinTrack",
+            text="💰 Открыть WiseTrack",
             web_app=WebAppInfo(url=url)
         )
     ]])
@@ -29,9 +29,12 @@ def get_webapp_keyboard(url: str = WEBAPP_URL) -> InlineKeyboardMarkup:
 async def cmd_start(message: types.Message):
     keyboard = get_webapp_keyboard()
     await message.answer(
-        "🦉 Добро пожаловать в FinTrack!\n\n"
-        "Управляй финансами легко и удобно.\n"
-        "Нажми кнопку ниже, чтобы начать 👇",
+        "🦉 Добро пожаловать в WiseTrack!\n\n"
+        "Управляй финансами легко и удобно через приложение в Telegram.\n\n"
+        "📌 Полезные команды:\n"
+        "• /help - Список всех команд бота\n"
+        "• /guide - Руководство по функциям приложения\n\n"
+        "Нажми кнопку ниже, чтобы начать 👇\n\n",
         reply_markup=keyboard
     )
 
@@ -40,7 +43,7 @@ async def cmd_start(message: types.Message):
 async def cmd_help(message: types.Message):
     keyboard = get_webapp_keyboard()
     help_text = """
-📚 Список команд FinTrack:
+📚 Список команд WiseTrack:
 
 /start - Запустить приложение
 /help - Список команд
@@ -63,10 +66,10 @@ async def cmd_guide(message: types.Message):
         [InlineKeyboardButton(text="🔍 Фильтры и поиск", callback_data="guide_filters")],
         [InlineKeyboardButton(text="💾 Экспорт данных", callback_data="guide_export")],
         [InlineKeyboardButton(text="✏️ Редактирование операций", callback_data="guide_edit")],
-        [InlineKeyboardButton(text="💰 Открыть FinTrack", web_app=WebAppInfo(url=WEBAPP_URL))]
+        [InlineKeyboardButton(text="💰 Открыть WiseTrack", web_app=WebAppInfo(url=WEBAPP_URL))]
     ])
     await message.answer(
-        "📖 Руководство по функциям FinTrack\n\n"
+        "📖 Руководство по функциям WiseTrack\n\n"
         "Выберите интересующую вас тему:",
         reply_markup=keyboard
     )
@@ -177,7 +180,7 @@ async def handle_guide_callback(callback: CallbackQuery):
 
     back_keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="← Назад к темам", callback_data="guide_back")],
-        [InlineKeyboardButton(text="💰 Открыть FinTrack", web_app=WebAppInfo(url=WEBAPP_URL))]
+        [InlineKeyboardButton(text="💰 Открыть WiseTrack", web_app=WebAppInfo(url=WEBAPP_URL))]
     ])
 
     await callback.message.edit_text(
@@ -197,10 +200,10 @@ async def handle_guide_back(callback: CallbackQuery):
         [InlineKeyboardButton(text="🔍 Фильтры и поиск", callback_data="guide_filters")],
         [InlineKeyboardButton(text="💾 Экспорт данных", callback_data="guide_export")],
         [InlineKeyboardButton(text="✏️ Редактирование операций", callback_data="guide_edit")],
-        [InlineKeyboardButton(text="💰 Открыть FinTrack", web_app=WebAppInfo(url=WEBAPP_URL))]
+        [InlineKeyboardButton(text="💰 Открыть WiseTrack", web_app=WebAppInfo(url=WEBAPP_URL))]
     ])
     await callback.message.edit_text(
-        "📖 Руководство по функциям FinTrack\n\n"
+        "📖 Руководство по функциям WiseTrack\n\n"
         "Выберите интересующую вас тему:",
         reply_markup=keyboard
     )
@@ -211,7 +214,7 @@ async def handle_guide_back(callback: CallbackQuery):
 async def cmd_version(message: types.Message):
     keyboard = get_webapp_keyboard()
     version_text = """
-FinTrack v1.0 (BETA) 🚀
+WiseTrack v1.0 (BETA) 🚀
 Последнее обновление: 30 октября 2025
 
 Нажмите кнопку ниже, чтобы открыть приложение 👇
@@ -223,7 +226,7 @@ FinTrack v1.0 (BETA) 🚀
 async def cmd_donate(message: types.Message):
     keyboard = get_webapp_keyboard(f"{WEBAPP_URL}/settings")
     donate_text = """
-💝 Поддержать проект FinTrack
+💝 Поддержать проект WiseTrack
 
 Проект развивается на донатной основе. Спасибо за вашу поддержку!
 
@@ -254,7 +257,7 @@ async def handle_any_message(message: types.Message):
 
 # Главная функция запуска бота
 async def main():
-    print("Bot FinTrack started!")
+    print("Bot WiseTrack started!")
     print(f"WebApp URL: {WEBAPP_URL}")
     await dp.start_polling(bot)
 
