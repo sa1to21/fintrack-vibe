@@ -38,17 +38,9 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
         <OptimizedMotion className="space-y-4">
           {[
             {
-              icon: TrendingUp,
-              title: "Отслеживание трендов",
-              description: "Видите динамику ваших финансов",
-              gradient: "from-emerald-500 to-green-600",
-              bgGradient: "from-emerald-50 to-green-50",
-              borderColor: "border-emerald-200"
-            },
-            {
-              icon: PieChart,
-              title: "Категории расходов",
-              description: "Анализируйте структуру трат",
+              icon: Sparkles,
+              title: "Быстрые операции",
+              description: "Добавь транзакцию за секунды",
               gradient: "from-blue-500 to-indigo-600",
               bgGradient: "from-blue-50 to-indigo-50",
               borderColor: "border-blue-200"
