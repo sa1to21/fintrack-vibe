@@ -39,16 +39,14 @@ function AppContent() {
   // Автоматически пропускаем Welcome Page для вернувшихся пользователей
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      // ВРЕМЕННО: Всегда показываем Welcome Page для тестирования
-      setCurrentScreen('welcome');
-      // if (!isNewUser) {
-      //   // Это вернувшийся пользователь - идём сразу в Dashboard
-      //   setHasSeenWelcome(true);
-      //   setCurrentScreen('dashboard');
-      // } else {
-      //   // Новый пользователь - показываем Welcome Page
-      //   setCurrentScreen('welcome');
-      // }
+      if (!isNewUser) {
+        // Это вернувшийся пользователь - идём сразу в Dashboard
+        setHasSeenWelcome(true);
+        setCurrentScreen('dashboard');
+      } else {
+        // Новый пользователь - показываем Welcome Page
+        setCurrentScreen('welcome');
+      }
     }
   }, [loading, isAuthenticated, isNewUser]);
 
