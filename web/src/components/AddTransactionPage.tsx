@@ -314,7 +314,10 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </LightMotion>
-          <h1 className="font-medium text-white">Новая операция</h1>
+          <div className="flex items-center gap-2">
+            <Plus className="w-6 h-6 text-yellow-300" />
+            <h1 className="font-medium text-white">Новая операция</h1>
+          </div>
           <div className="w-8" />
         </OptimizedMotion>
       </OptimizedMotion>
