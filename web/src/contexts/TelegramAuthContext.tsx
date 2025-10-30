@@ -72,15 +72,9 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [isTelegramReady, setIsTelegramReady] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
-  const [theme, setThemeState] = useState<'light' | 'dark'>(() => {
-    // Читаем тему из localStorage или дефолтная
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    return savedTheme || 'light';
-  });
-  const [isManualTheme, setIsManualTheme] = useState(() => {
-    // Проверяем, была ли тема установлена вручную
-    return localStorage.getItem('theme') !== null;
-  });
+  // Тема всегда светлая (темная тема отключена)
+  const [theme] = useState<'light' | 'dark'>('light');
+  const [isManualTheme] = useState(false);
 
   useEffect(() => {
     // Функция ожидания загрузки Telegram SDK с таймаутом
@@ -218,15 +212,15 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
     initializeTelegram();
   }, []);
 
-  // Эффект для применения темы к DOM и синхронизации с Telegram
+  // Эффект для применения светлой темы к DOM (темная тема отключена)
   useEffect(() => {
-    // Применяем класс к document
-    document.documentElement.classList.remove('light', 'dark');
-    document.documentElement.classList.add(theme);
+    // Всегда используем светлую тему
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
 
-    // Сохраняем в localStorage
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    // Очищаем сохраненную тему из localStorage
+    localStorage.removeItem('theme');
+  }, []);
 
   // Эффект для синхронизации с темой Telegram (ВРЕМЕННО ОТКЛЮЧЕНО)
   // useEffect(() => {
@@ -256,9 +250,9 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
   //   };
   // }, [isTelegramReady, isManualTheme]);
 
-  const setTheme = (newTheme: 'light' | 'dark') => {
-    setThemeState(newTheme);
-    setIsManualTheme(true); // Отмечаем, что тема установлена вручную
+  // Функция setTheme оставлена для совместимости, но ничего не делает (темная тема отключена)
+  const setTheme = (_newTheme: 'light' | 'dark') => {
+    // Тема всегда светлая, изменение отключено
   };
 
   const logout = () => {
