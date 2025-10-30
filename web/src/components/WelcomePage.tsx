@@ -23,17 +23,14 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
       >
         {/* Header */}
         <OptimizedMotion className="text-center space-y-4">
-          <OptimizedMotion className="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 rounded-full flex items-center justify-center shadow-xl relative">
-            <Wallet className="w-12 h-12 text-white relative z-10" />
-            <div className="absolute -top-1 -right-1">
-              <Sparkles className="w-6 h-6 text-yellow-400" />
-            </div>
+          <OptimizedMotion className="w-24 h-24 mx-auto flex items-center justify-center">
+            <img src="/images/Logo FinTrack-no-bg-preview (carve.photos).png" alt="FinTrack" className="w-24 h-24 object-contain" />
           </OptimizedMotion>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
             FinanceTracker
           </h1>
           <p className="text-slate-600">
-            Отслеживайте свои доходы и расходы легко и просто
+            Управляй своими финансами в Telegram
           </p>
         </OptimizedMotion>
 
