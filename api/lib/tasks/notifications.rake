@@ -45,10 +45,6 @@ namespace :notifications do
         "еще не было операций"
       end
 
-      # Считаем общий баланс
-      total_balance = user.accounts.sum(:balance)
-      currency_symbol = user.base_currency || '₽'
-
       # Формируем сообщение
       message = <<~TEXT
         💰 Напоминание от WiseTrack
@@ -56,7 +52,6 @@ namespace :notifications do
         Не забудь внести свои траты за сегодня!
 
         📊 Последняя операция: #{last_activity_text}
-        💳 Общий баланс: #{total_balance.to_i.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1 ').reverse} #{currency_symbol}
       TEXT
 
       # Кнопка для открытия приложения

@@ -105,7 +105,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         {
           icon: Tags,
           label: "Управление категориями",
-          description: "Добавить, изменить или удалить категории",
+          description: "",
           action: "navigate",
           color: "bg-purple-100 text-purple-600"
         },
@@ -123,8 +123,8 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
       items: [
         {
           icon: Bell,
-          label: "Уведомления",
-          description: "Настройка напоминаний",
+          label: "Настройка напоминаний",
+          description: "",
           action: "navigate",
           color: "bg-yellow-100 text-yellow-600"
         },
@@ -242,7 +242,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                     if (item.label === "Экспорт данных") {
                       handleExportData();
                     }
-                    if (item.label === "Уведомления") {
+                    if (item.label === "Настройка напоминаний") {
                       setIsNotificationsDialogOpen(true);
                     }
                   };
@@ -264,9 +264,11 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                         </div>
                         <div>
                           <h3 className="font-medium text-slate-800">{item.label}</h3>
-                          <p className="text-sm text-slate-600">
-                            {item.description}
-                          </p>
+                          {item.description && (
+                            <p className="text-sm text-slate-600">
+                              {item.description}
+                            </p>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center">

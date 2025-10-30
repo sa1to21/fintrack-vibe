@@ -533,6 +533,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
             </Button>
           </LightMotion>
           <div className="flex items-center gap-2">
+            <Wallet className="w-6 h-6 text-yellow-300" />
             <h1 className="font-medium text-white">Управление счетами</h1>
           </div>
           <div className="w-8" />
