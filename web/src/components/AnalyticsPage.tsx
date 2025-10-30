@@ -515,7 +515,7 @@ export function AnalyticsPage() {
         )}
 
         {/* Insights Section */}
-        {insights && (
+        {insights && insights.total_transactions > 0 && (
           <OptimizedMotion
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
