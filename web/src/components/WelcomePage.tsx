@@ -24,10 +24,10 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
         {/* Header */}
         <OptimizedMotion className="text-center space-y-4">
           <OptimizedMotion className="w-24 h-24 mx-auto flex items-center justify-center">
-            <img src="/images/Logo FinTrack-no-bg-preview (carve.photos).png" alt="FinTrack" className="w-24 h-24 object-contain" />
+            <img src="/images/Logo FinTrack-no-bg-preview (carve.photos).png" alt="WiseTrack" className="w-24 h-24 object-contain" />
           </OptimizedMotion>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            FinanceTracker
+            WiseTrack
           </h1>
           <p className="text-slate-600">
             Управляй своими финансами в Telegram
