@@ -204,23 +204,45 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
                     <Calendar className="w-4 h-4" />
                     Дни недели
                   </Label>
-                  <div className="flex gap-2 flex-wrap">
-                    {DAYS_OF_WEEK.map(({ value, label }) => (
-                      <button
-                        key={value}
-                        onClick={() => toggleDay(value)}
-                        className={`
-                          w-12 h-12 rounded-full flex items-center justify-center font-medium text-sm
-                          transition-all
-                          ${selectedDays.includes(value)
-                            ? 'bg-blue-600 text-white shadow-md scale-105'
-                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                          }
-                        `}
-                      >
-                        {label}
-                      </button>
-                    ))}
+                  <div className="flex flex-col items-center gap-2">
+                    {/* Первая линия: 4 дня */}
+                    <div className="flex gap-2">
+                      {DAYS_OF_WEEK.slice(0, 4).map(({ value, label }) => (
+                        <button
+                          key={value}
+                          onClick={() => toggleDay(value)}
+                          className={`
+                            w-12 h-12 rounded-full flex items-center justify-center font-medium text-sm
+                            transition-all
+                            ${selectedDays.includes(value)
+                              ? 'bg-blue-600 text-white shadow-md scale-105'
+                              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                            }
+                          `}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                    {/* Вторая линия: 3 дня */}
+                    <div className="flex gap-2">
+                      {DAYS_OF_WEEK.slice(4).map(({ value, label }) => (
+                        <button
+                          key={value}
+                          onClick={() => toggleDay(value)}
+                          className={`
+                            w-12 h-12 rounded-full flex items-center justify-center font-medium text-sm
+                            transition-all
+                            ${selectedDays.includes(value)
+                              ? 'bg-blue-600 text-white shadow-md scale-105'
+                              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                            }
+                          `}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </>
