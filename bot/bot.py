@@ -2,7 +2,7 @@ import os
 import asyncio
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, CallbackQuery
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, CallbackQuery, FSInputFile
 from dotenv import load_dotenv
 
 # Загрузка переменных окружения
@@ -15,64 +15,110 @@ WEBAPP_URL = os.getenv('WEBAPP_URL', 'https://financetrack21.netlify.app')
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
+# Кеш для file_id изображений
+welcome_photo_file_id = None
+
 # Функция для создания кнопки открытия приложения
-def get_webapp_keyboard(url: str = WEBAPP_URL) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(inline_keyboard=[[
-        InlineKeyboardButton(
-            text="💰 Открыть WiseTrack",
-            web_app=WebAppInfo(url=url)
-        )
-    ]])
+def get_webapp_keyboard(url: str = WEBAPP_URL, show_help: bool = True) -> InlineKeyboardMarkup:
+    buttons = [[InlineKeyboardButton(
+        text="💰 Открыть WiseTrack",
+        web_app=WebAppInfo(url=url)
+    )]]
+
+    if show_help:
+        buttons.append([InlineKeyboardButton(
+            text="❓ Помощь",
+            callback_data="show_help"
+        )])
+
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 # Команда /start
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
+    global welcome_photo_file_id
     keyboard = get_webapp_keyboard()
 
-    # Первое сообщение - приветствие
-    await message.answer(
-        "🦉 Добро пожаловать в WiseTrack!\n\n"
-        "Управляй финансами легко и удобно через приложение в Telegram.\n\n"
-        "📌 Полезные команды:\n"
-        "• /help - Список всех команд бота\n"
-        "• /guide - Руководство по функциям приложения\n\n"
-        "Нажми кнопку ниже, чтобы начать 👇",
-        reply_markup=keyboard
-    )
+    caption_text = ("🦉 Добро пожаловать в WiseTrack!\n\n"
+                   "Управляй финансами легко и удобно через приложение в Telegram.\n\n"
+                   "📌 Полезные команды:\n"
+                   "• /help - Список всех команд бота\n"
+                   "• /guide - Руководство по функциям приложения\n"
+                   "• /tips - Полезные советы по использованию\n"
+                   "• /why - Зачем нужен учёт финансов?\n\n"
+                   "Нажми кнопку ниже, чтобы начать 👇")
 
-    # Второе сообщение - полезные советы
-    tips_keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="💰 Открыть WiseTrack", web_app=WebAppInfo(url=WEBAPP_URL))]
-    ])
+    # Используем кешированный file_id если он есть
+    if welcome_photo_file_id:
+        await message.answer_photo(
+            photo=welcome_photo_file_id,
+            caption=caption_text,
+            reply_markup=keyboard
+        )
+    else:
+        # Первая отправка - загружаем файл
+        image_path = os.path.join(os.path.dirname(__file__), "..", "images", "Welcome FinTrack.png")
+        photo = FSInputFile(image_path)
 
-    await message.answer(
-        "💡 Несколько полезных советов:\n\n"
-        "▸ 📌 Закрепи чат со мной вверху списка Telegram, чтобы я был всегда под рукой.\n\n"
-        "▸ ✍️ Записывай операции сразу, как только они произошли. Это займет пару секунд!\n\n"
-        "▸ 📊 Постоянство - ключ к успеху в учете финансов. Заноси траты регулярно.\n\n"
-        "▸ 🤝 <a href=\"https://t.me/share/url?url=https://t.me/WiseTrackAppBot\">Поделись ботом с друзьями</a> - вместе управлять финансами веселее!\n\n"
-        "▸ 💬 Есть вопросы или нашёл ошибку? Пиши @sa1to21\n\n"
-        "<i>(но выделенный цветом текст можно нажать)</i>",
-        reply_markup=tips_keyboard,
-        parse_mode="HTML"
-    )
+        sent_message = await message.answer_photo(
+            photo=photo,
+            caption=caption_text,
+            reply_markup=keyboard
+        )
+
+        # Сохраняем file_id для последующих отправок
+        welcome_photo_file_id = sent_message.photo[-1].file_id
 
 # Команда /help - Справка
 @dp.message(Command("help"))
 async def cmd_help(message: types.Message):
-    keyboard = get_webapp_keyboard()
+    keyboard = get_webapp_keyboard(show_help=False)
     help_text = """
 📚 Список команд WiseTrack:
 
 /start - Запустить приложение
 /help - Список команд
 /guide - Руководство по функциям
+/why - Зачем нужен учёт финансов
+/tips - Полезные советы
 /version - Информация о версии
 /donate - Поддержать проект
+/support - Техническая поддержка
 
 Нажмите кнопку ниже, чтобы открыть приложение 👇
 """
     await message.answer(help_text, reply_markup=keyboard)
+
+# Команда /tips - Полезные советы
+@dp.message(Command("tips"))
+async def cmd_tips(message: types.Message):
+    keyboard = get_webapp_keyboard()
+    await message.answer(
+        "💡 Несколько полезных советов:\n\n"
+        "📌 Закрепи чат со мной вверху списка Telegram, чтобы я был всегда под рукой.\n\n"
+        "✍️ Записывай операции сразу, как только они произошли. Это займет пару секунд!\n\n"
+        "📊 Постоянство - ключ к успеху в учете финансов. Заноси траты регулярно.\n\n"
+        "🤝 <a href=\"https://t.me/share/url?url=https://t.me/WiseTrackAppBot\">Поделись ботом с друзьями</a> - вместе управлять финансами веселее!\n\n"
+        "💬 Есть вопросы или нашёл ошибку? Пиши @sa1to21",
+        reply_markup=keyboard,
+        parse_mode="HTML"
+    )
+
+# Команда /why - Зачем нужен учёт финансов
+@dp.message(Command("why"))
+async def cmd_why(message: types.Message):
+    keyboard = get_webapp_keyboard()
+    await message.answer(
+        "🎯 Зачем нужен учёт финансов?\n\n"
+        "💪 <b>Контроль над деньгами</b>\n"
+        "Ты всегда знаешь, сколько у тебя денег и куда они уходят. Никаких сюрпризов в конце месяца.\n\n"
+        "🎁 <b>Достижение целей</b>\n"
+        "Хочешь накопить на отпуск, машину или квартиру? Учёт финансов помогает планировать и откладывать нужные суммы.\n\n"
+        "✂️ <b>Избавление от лишних трат</b>\n"
+        "Когда видишь статистику, сразу понятно, на что уходят деньги впустую. Это помогает экономить без ущерба для качества жизни.",
+        reply_markup=keyboard,
+        parse_mode="HTML"
+    )
 
 # Команда /guide - Руководство по функциям
 @dp.message(Command("guide"))
@@ -85,13 +131,35 @@ async def cmd_guide(message: types.Message):
         [InlineKeyboardButton(text="🔍 Фильтры и поиск", callback_data="guide_filters")],
         [InlineKeyboardButton(text="💾 Экспорт данных", callback_data="guide_export")],
         [InlineKeyboardButton(text="✏️ Редактирование операций", callback_data="guide_edit")],
-        [InlineKeyboardButton(text="💰 Открыть WiseTrack", web_app=WebAppInfo(url=WEBAPP_URL))]
+        [InlineKeyboardButton(text="💰 Открыть WiseTrack", web_app=WebAppInfo(url=WEBAPP_URL))],
+        [InlineKeyboardButton(text="❓ Помощь", callback_data="show_help")]
     ])
     await message.answer(
         "📖 Руководство по функциям WiseTrack\n\n"
         "Выберите интересующую вас тему:",
         reply_markup=keyboard
     )
+
+# Обработка кнопки "Помощь"
+@dp.callback_query(F.data == "show_help")
+async def handle_help_callback(callback: CallbackQuery):
+    keyboard = get_webapp_keyboard(show_help=False)
+    help_text = """
+📚 Список команд WiseTrack:
+
+/start - Запустить приложение
+/help - Список команд
+/guide - Руководство по функциям
+/why - Зачем нужен учёт финансов
+/tips - Полезные советы
+/version - Информация о версии
+/donate - Поддержать проект
+/support - Техническая поддержка
+
+Нажмите кнопку ниже, чтобы открыть приложение 👇
+"""
+    await callback.message.answer(help_text, reply_markup=keyboard)
+    await callback.answer()
 
 # Обработка callback-запросов от inline-кнопок
 @dp.callback_query(F.data.startswith("guide_") & ~F.data.in_(["guide_back"]))
@@ -199,7 +267,8 @@ async def handle_guide_callback(callback: CallbackQuery):
 
     back_keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="← Назад к темам", callback_data="guide_back")],
-        [InlineKeyboardButton(text="💰 Открыть WiseTrack", web_app=WebAppInfo(url=WEBAPP_URL))]
+        [InlineKeyboardButton(text="💰 Открыть WiseTrack", web_app=WebAppInfo(url=WEBAPP_URL))],
+        [InlineKeyboardButton(text="❓ Помощь", callback_data="show_help")]
     ])
 
     await callback.message.edit_text(
@@ -219,7 +288,8 @@ async def handle_guide_back(callback: CallbackQuery):
         [InlineKeyboardButton(text="🔍 Фильтры и поиск", callback_data="guide_filters")],
         [InlineKeyboardButton(text="💾 Экспорт данных", callback_data="guide_export")],
         [InlineKeyboardButton(text="✏️ Редактирование операций", callback_data="guide_edit")],
-        [InlineKeyboardButton(text="💰 Открыть WiseTrack", web_app=WebAppInfo(url=WEBAPP_URL))]
+        [InlineKeyboardButton(text="💰 Открыть WiseTrack", web_app=WebAppInfo(url=WEBAPP_URL))],
+        [InlineKeyboardButton(text="❓ Помощь", callback_data="show_help")]
     ])
     await callback.message.edit_text(
         "📖 Руководство по функциям WiseTrack\n\n"
@@ -235,6 +305,7 @@ async def cmd_version(message: types.Message):
     version_text = """
 WiseTrack v1.0 (BETA) 🚀
 Последнее обновление: 30 октября 2025
+Приложение находится в стадии бета-тестирования. Ваши отзывы очень важны!
 
 Нажмите кнопку ниже, чтобы открыть приложение 👇
 """
@@ -247,7 +318,7 @@ async def cmd_donate(message: types.Message):
     donate_text = """
 💝 Поддержать проект WiseTrack
 
-Проект развивается на донатной основе. Спасибо за вашу поддержку!
+Проект полностью бесплатный и развивается на донатной основе. Спасибо за вашу поддержку!
 
 Способы поддержки:
 
@@ -264,6 +335,21 @@ async def cmd_donate(message: types.Message):
 `TSG71BQmZL2E6q46u39PfUQSjaWNcENmRm`
 """
     await message.answer(donate_text, parse_mode="Markdown", reply_markup=keyboard)
+
+# Команда /support - Техническая поддержка
+@dp.message(Command("support"))
+async def cmd_support(message: types.Message):
+    keyboard = get_webapp_keyboard()
+    support_text = """
+💬 Техническая поддержка WiseTrack
+
+Если у вас возникли вопросы, нашли ошибку или есть предложения по улучшению приложения, пишите:
+
+👤 @sa1to21
+
+Постараюсь ответить как можно скорее!
+"""
+    await message.answer(support_text, reply_markup=keyboard)
 
 # Обработка всех остальных сообщений
 @dp.message()
