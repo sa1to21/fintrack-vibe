@@ -36,17 +36,10 @@ function AppContent() {
   const [hasSeenWelcome, setHasSeenWelcome] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
-  // Автоматически пропускаем Welcome Page для вернувшихся пользователей
+  // Всегда показываем Welcome Page для тестирования
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      if (!isNewUser) {
-        // Это вернувшийся пользователь - идём сразу в Dashboard
-        setHasSeenWelcome(true);
-        setCurrentScreen('dashboard');
-      } else {
-        // Новый пользователь - показываем Welcome Page
-        setCurrentScreen('welcome');
-      }
+      setCurrentScreen('welcome');
     }
   }, [loading, isAuthenticated, isNewUser]);
 
@@ -112,8 +105,8 @@ function AppContent() {
     return (
       <div className="h-screen w-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center animate-pulse">
-            <span className="text-2xl">💰</span>
+          <div className="w-16 h-16 mx-auto flex items-center justify-center animate-pulse">
+            <img src="/images/Logo FinTrack-no-bg-preview (carve.photos).png" alt="FinTrack" className="w-16 h-16 object-contain" />
           </div>
           <p className="text-lg font-medium text-slate-700">Загрузка FinTrack...</p>
         </div>
@@ -145,8 +138,8 @@ function AppContent() {
             {!currentScreen && (
               <div className="h-screen w-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
                 <div className="text-center space-y-4">
-                  <div className="w-16 h-16 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center animate-pulse">
-                    <span className="text-2xl">💰</span>
+                  <div className="w-16 h-16 mx-auto flex items-center justify-center animate-pulse">
+                    <img src="/images/Logo FinTrack-no-bg-preview (carve.photos).png" alt="FinTrack" className="w-16 h-16 object-contain" />
                   </div>
                   <p className="text-lg font-medium text-slate-700">Загрузка...</p>
                 </div>
