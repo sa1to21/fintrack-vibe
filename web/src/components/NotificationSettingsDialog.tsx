@@ -9,7 +9,13 @@ import {
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
-import { Input } from "./ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import { toast } from "sonner";
 import notificationsService, { NotificationSetting } from "../services/notifications.service";
 import { Bell, Clock, Calendar } from "./icons";
@@ -28,6 +34,20 @@ const DAYS_OF_WEEK = [
   { value: 6, label: "Сб" },
   { value: 0, label: "Вс" },
 ];
+
+// Генерируем список времени с шагом в 5 минут
+const generateTimeOptions = () => {
+  const options: { value: string; label: string }[] = [];
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += 5) {
+      const timeValue = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+      options.push({ value: timeValue, label: timeValue });
+    }
+  }
+  return options;
+};
+
+const TIME_OPTIONS = generateTimeOptions();
 
 export default function NotificationSettingsDialog({ isOpen, onClose }: NotificationSettingsDialogProps) {
   const [isLoading, setIsLoading] = useState(true);
@@ -105,7 +125,7 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Bell className="w-5 h-5 text-yellow-600" />
@@ -139,12 +159,18 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
                     <Clock className="w-4 h-4" />
                     Время напоминания
                   </Label>
-                  <Input
-                    type="time"
-                    value={reminderTime}
-                    onChange={(e) => setReminderTime(e.target.value)}
-                    className="w-full"
-                  />
+                  <Select value={reminderTime} onValueChange={setReminderTime}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Выберите время" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TIME_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <p className="text-xs text-slate-500">
                     Напоминание будет отправлено в ваше локальное время
                   </p>
