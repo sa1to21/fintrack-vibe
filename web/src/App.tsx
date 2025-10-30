@@ -39,14 +39,16 @@ function AppContent() {
   // Автоматически пропускаем Welcome Page для вернувшихся пользователей
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      if (!isNewUser) {
-        // Это вернувшийся пользователь - идём сразу в Dashboard
-        setHasSeenWelcome(true);
-        setCurrentScreen('dashboard');
-      } else {
-        // Новый пользователь - показываем Welcome Page
-        setCurrentScreen('welcome');
-      }
+      // ВРЕМЕННО: Всегда показываем Welcome Page для тестирования
+      setCurrentScreen('welcome');
+      // if (!isNewUser) {
+      //   // Это вернувшийся пользователь - идём сразу в Dashboard
+      //   setHasSeenWelcome(true);
+      //   setCurrentScreen('dashboard');
+      // } else {
+      //   // Новый пользователь - показываем Welcome Page
+      //   setCurrentScreen('welcome');
+      // }
     }
   }, [loading, isAuthenticated, isNewUser]);
 
@@ -113,9 +115,9 @@ function AppContent() {
       <div className="h-screen w-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="w-16 h-16 mx-auto flex items-center justify-center animate-pulse">
-            <img src="/images/Logo FinTrack-no-bg-preview (carve.photos).png" alt="FinTrack" className="w-16 h-16 object-contain" />
+            <img src="/images/Logo FinTrack-no-bg-preview (carve.photos).png" alt="WiseTrack" className="w-16 h-16 object-contain" />
           </div>
-          <p className="text-lg font-medium text-slate-700">Загрузка FinTrack...</p>
+          <p className="text-lg font-medium text-slate-700">Загрузка WiseTrack...</p>
         </div>
       </div>
     );
@@ -146,7 +148,7 @@ function AppContent() {
               <div className="h-screen w-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
                 <div className="text-center space-y-4">
                   <div className="w-16 h-16 mx-auto flex items-center justify-center animate-pulse">
-                    <img src="/images/Logo FinTrack-no-bg-preview (carve.photos).png" alt="FinTrack" className="w-16 h-16 object-contain" />
+                    <img src="/images/Logo FinTrack-no-bg-preview (carve.photos).png" alt="WiseTrack" className="w-16 h-16 object-contain" />
                   </div>
                   <p className="text-lg font-medium text-slate-700">Загрузка...</p>
                 </div>
