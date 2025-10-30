@@ -35,19 +35,20 @@ const DAYS_OF_WEEK = [
   { value: 0, label: "Вс" },
 ];
 
-// Генерируем список времени с шагом в 5 минут
-const generateTimeOptions = () => {
-  const options: { value: string; label: string }[] = [];
-  for (let hour = 0; hour < 24; hour++) {
-    for (let minute = 0; minute < 60; minute += 5) {
-      const timeValue = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-      options.push({ value: timeValue, label: timeValue });
-    }
-  }
-  return options;
-};
+// Генерируем опции для часов (0-23)
+const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => ({
+  value: i.toString().padStart(2, '0'),
+  label: i.toString().padStart(2, '0'),
+}));
 
-const TIME_OPTIONS = generateTimeOptions();
+// Генерируем опции для минут с шагом 5 (0, 5, 10, ..., 55)
+const MINUTE_OPTIONS = Array.from({ length: 12 }, (_, i) => {
+  const minute = i * 5;
+  return {
+    value: minute.toString().padStart(2, '0'),
+    label: minute.toString().padStart(2, '0'),
+  };
+});
 
 export default function NotificationSettingsDialog({ isOpen, onClose }: NotificationSettingsDialogProps) {
   const [isLoading, setIsLoading] = useState(true);
@@ -55,6 +56,8 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
   const [settings, setSettings] = useState<NotificationSetting | null>(null);
   const [enabled, setEnabled] = useState(false);
   const [reminderTime, setReminderTime] = useState("20:00");
+  const [selectedHour, setSelectedHour] = useState("20");
+  const [selectedMinute, setSelectedMinute] = useState("00");
   const [selectedDays, setSelectedDays] = useState<number[]>([1, 2, 3, 4, 5, 6, 0]);
 
   useEffect(() => {
@@ -70,6 +73,12 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
       setSettings(data);
       setEnabled(data.enabled);
       setReminderTime(data.reminder_time);
+
+      // Разбираем время на часы и минуты
+      const [hour, minute] = data.reminder_time.split(':');
+      setSelectedHour(hour);
+      setSelectedMinute(minute);
+
       setSelectedDays(data.days_of_week);
     } catch (error) {
       console.error('Failed to load notification settings:', error);
@@ -105,9 +114,12 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
       setIsSaving(true);
       const { timezone, offset } = getTimezoneInfo();
 
+      // Формируем время из часов и минут
+      const timeToSave = `${selectedHour}:${selectedMinute}`;
+
       await notificationsService.updateSettings({
         enabled,
-        reminder_time: reminderTime,
+        reminder_time: timeToSave,
         timezone,
         utc_offset: offset,
         days_of_week: selectedDays,
@@ -142,12 +154,7 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
           <div className="space-y-6">
             {/* Включить/выключить */}
             <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Напоминания</Label>
-                <p className="text-sm text-slate-600">
-                  Получать ежедневные напоминания
-                </p>
-              </div>
+              <Label>Получать напоминания</Label>
               <Switch checked={enabled} onCheckedChange={setEnabled} />
             </div>
 
@@ -159,18 +166,33 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
                     <Clock className="w-4 h-4" />
                     Время напоминания
                   </Label>
-                  <Select value={reminderTime} onValueChange={setReminderTime}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Выберите время" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TIME_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <Select value={selectedHour} onValueChange={setSelectedHour}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="ЧЧ" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {HOUR_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <span className="flex items-center text-slate-400 font-medium">:</span>
+                    <Select value={selectedMinute} onValueChange={setSelectedMinute}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="ММ" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {MINUTE_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <p className="text-xs text-slate-500">
                     Напоминание будет отправлено в ваше локальное время
                   </p>
