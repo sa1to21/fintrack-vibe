@@ -2,7 +2,7 @@ class Api::V1::CategoriesController < Api::V1::BaseController
   before_action :set_category, only: [:show, :update, :destroy]
 
   def index
-    categories = current_user.categories.order(:category_type, :name)
+    categories = current_user.categories.where(is_system: false).order(:category_type, :name)
 
     # Filter by type if specified
     if params[:type].present? && %w[income expense].include?(params[:type])

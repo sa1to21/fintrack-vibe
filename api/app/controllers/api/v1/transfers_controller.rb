@@ -240,6 +240,7 @@ module Api
           category_type: 'expense'
         ) do |category|
           category.icon = '🔄'
+          category.is_system = true
         end
       end
 
@@ -250,6 +251,7 @@ module Api
           category_type: 'expense'
         ) do |category|
           category.icon = '💳'
+          category.is_system = true
         end
       end
     end

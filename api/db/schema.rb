@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_23_164129) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_30_172634) do
   create_table "accounts", force: :cascade do |t|
     t.string "name", null: false
     t.string "account_type", null: false
@@ -22,6 +22,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_164129) do
     t.boolean "is_debt", default: false, null: false
     t.json "debt_info"
     t.integer "display_order", default: 0, null: false
+    t.boolean "is_savings_account", default: false, null: false
+    t.decimal "interest_rate", precision: 5, scale: 2
+    t.integer "deposit_term_months"
+    t.date "deposit_start_date"
+    t.date "deposit_end_date"
+    t.boolean "auto_renewal", default: false
+    t.boolean "withdrawal_allowed", default: true
+    t.decimal "target_amount", precision: 15, scale: 2
+    t.date "last_interest_date"
     t.index ["user_id", "display_order"], name: "index_accounts_on_user_id_and_display_order"
     t.index ["user_id"], name: "index_accounts_on_user_id"
   end
@@ -34,6 +43,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_164129) do
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_system", default: false, null: false
     t.index ["user_id", "name"], name: "index_categories_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_categories_on_user_id"
   end
