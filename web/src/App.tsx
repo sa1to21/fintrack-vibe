@@ -36,10 +36,17 @@ function AppContent() {
   const [hasSeenWelcome, setHasSeenWelcome] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
-  // Всегда показываем Welcome Page для тестирования
+  // Автоматически пропускаем Welcome Page для вернувшихся пользователей
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      setCurrentScreen('welcome');
+      if (!isNewUser) {
+        // Это вернувшийся пользователь - идём сразу в Dashboard
+        setHasSeenWelcome(true);
+        setCurrentScreen('dashboard');
+      } else {
+        // Новый пользователь - показываем Welcome Page
+        setCurrentScreen('welcome');
+      }
     }
   }, [loading, isAuthenticated, isNewUser]);
 
