@@ -137,13 +137,12 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="max-w-sm border-blue-200 bg-gradient-to-br from-white to-blue-50/30">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Bell className="w-5 h-5 text-yellow-600" />
+          <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Настройки уведомлений
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-slate-600">
             Настройте ежедневные напоминания о внесении расходов
           </DialogDescription>
         </DialogHeader>
@@ -163,12 +162,12 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
                 {/* Время напоминания */}
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
+                    <Clock className="w-4 h-4 text-blue-600" />
                     Время напоминания
                   </Label>
                   <div className="flex gap-2">
                     <Select value={selectedHour} onValueChange={setSelectedHour}>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full border-blue-200 focus:border-blue-400">
                         <SelectValue placeholder="ЧЧ" />
                       </SelectTrigger>
                       <SelectContent>
@@ -179,9 +178,9 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
                         ))}
                       </SelectContent>
                     </Select>
-                    <span className="flex items-center text-slate-400 font-medium">:</span>
+                    <span className="flex items-center text-blue-400 font-medium">:</span>
                     <Select value={selectedMinute} onValueChange={setSelectedMinute}>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full border-blue-200 focus:border-blue-400">
                         <SelectValue placeholder="ММ" />
                       </SelectTrigger>
                       <SelectContent>
@@ -201,7 +200,7 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
                 {/* Дни недели */}
                 <div className="space-y-3">
                   <Label className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
+                    <Calendar className="w-4 h-4 text-blue-600" />
                     Дни недели
                   </Label>
                   <div className="flex flex-col items-center gap-2">
@@ -253,14 +252,14 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
               <Button
                 variant="outline"
                 onClick={onClose}
-                className="flex-1"
+                className="flex-1 border-blue-300"
                 disabled={isSaving}
               >
                 Отмена
               </Button>
               <Button
                 onClick={handleSave}
-                className="flex-1"
+                className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                 disabled={isSaving}
               >
                 {isSaving ? 'Сохранение...' : 'Сохранить'}
