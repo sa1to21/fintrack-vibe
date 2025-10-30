@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_30_172634) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_30_201432) do
   create_table "accounts", force: :cascade do |t|
     t.string "name", null: false
     t.string "account_type", null: false
@@ -46,6 +46,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_30_172634) do
     t.boolean "is_system", default: false, null: false
     t.index ["user_id", "name"], name: "index_categories_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_categories_on_user_id"
+  end
+
+  create_table "notification_settings", id: :string, force: :cascade do |t|
+    t.string "user_id", null: false
+    t.boolean "enabled", default: false, null: false
+    t.string "reminder_time", default: "20:00", null: false
+    t.string "timezone", default: "UTC", null: false
+    t.integer "utc_offset", default: 0, null: false
+    t.json "days_of_week", default: [1, 2, 3, 4, 5, 6, 0], null: false
+    t.datetime "next_send_time_utc"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["enabled", "next_send_time_utc"], name: "index_notifications_for_sending"
+    t.index ["user_id"], name: "index_notification_settings_on_user_id", unique: true
   end
 
   create_table "transactions", force: :cascade do |t|
@@ -85,6 +99,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_30_172634) do
 
   add_foreign_key "accounts", "users"
   add_foreign_key "categories", "users"
+  add_foreign_key "notification_settings", "users"
   add_foreign_key "transactions", "accounts"
   add_foreign_key "transactions", "categories"
 end

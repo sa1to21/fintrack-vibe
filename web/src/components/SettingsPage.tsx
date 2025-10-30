@@ -15,6 +15,7 @@ import { CURRENCIES, getCurrency } from "../constants/currencies";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useEffect } from "react";
 import DonateDialog from "./DonateDialog";
+import NotificationSettingsDialog from "./NotificationSettingsDialog";
 import logo from "../assets/logo.png";
 import logoWhite from "../assets/logo-white.png";
 
@@ -30,6 +31,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
   const [baseCurrency, setBaseCurrency] = useState<string>('RUB');
   const [isLoadingCurrency, setIsLoadingCurrency] = useState(true);
   const [isDonateDialogOpen, setIsDonateDialogOpen] = useState(false);
+  const [isNotificationsDialogOpen, setIsNotificationsDialogOpen] = useState(false);
 
   // Выбираем логотип в зависимости от темы (временно отключено - всегда светлый)
   const currentLogo = logo; // theme === 'dark' ? logoWhite : logo;
@@ -122,9 +124,8 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         {
           icon: Bell,
           label: "Уведомления",
-          description: "Напоминания о расходах и целях",
-          action: "toggle",
-          value: true,
+          description: "Настройка напоминаний",
+          action: "navigate",
           color: "bg-yellow-100 text-yellow-600"
         },
         {
@@ -240,6 +241,9 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                     }
                     if (item.label === "Экспорт данных") {
                       handleExportData();
+                    }
+                    if (item.label === "Уведомления") {
+                      setIsNotificationsDialogOpen(true);
                     }
                   };
 
@@ -409,6 +413,12 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         <DonateDialog
           isOpen={isDonateDialogOpen}
           onClose={() => setIsDonateDialogOpen(false)}
+        />
+
+        {/* Notification Settings Dialog */}
+        <NotificationSettingsDialog
+          isOpen={isNotificationsDialogOpen}
+          onClose={() => setIsNotificationsDialogOpen(false)}
         />
       </div>
     </div>

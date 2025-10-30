@@ -58,6 +58,11 @@ Rails.application.routes.draw do
       post '/transfers', to: 'transfers#create'
       put '/transfers/:transfer_id', to: 'transfers#update'
       delete '/transfers/:transfer_id', to: 'transfers#destroy'
+
+      # Notification Settings
+      get '/notification_settings', to: 'notification_settings#show'
+      post '/notification_settings', to: 'notification_settings#update'
+      patch '/notification_settings', to: 'notification_settings#update'
     end
   end
 end
