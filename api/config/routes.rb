@@ -14,6 +14,9 @@ Rails.application.routes.draw do
       get '/auth/me', to: 'auth#me'
 
       # Users
+      get '/users/telegram/:telegram_id', to: 'users#show_by_telegram'
+      patch '/users/telegram/:telegram_id', to: 'users#update_by_telegram'
+
       resources :users, only: [:show, :update, :destroy] do
         collection do
           get :current
