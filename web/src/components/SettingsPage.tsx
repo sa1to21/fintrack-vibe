@@ -64,11 +64,11 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
 
     try {
       await usersService.update({ base_currency: newCurrency });
-      toast.success(`Основная валюта изменена на ${newCurrency}`);
+      toast.success(t('messages.currencyChanged', { currency: newCurrency }));
     } catch (error: any) {
       // Revert to previous currency on error
       setBaseCurrency(previousCurrency);
-      toast.error(`Ошибка: ${error?.response?.data?.errors || error?.message || 'Не удалось обновить валюту'}`);
+      toast.error(t('messages.error', { error: error?.response?.data?.errors || error?.message || 'Failed to update currency' }));
     }
   };
 
@@ -76,7 +76,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
     try {
       setIsDeleting(true);
       await userDataService.deleteAll();
-      toast.success('Все данные успешно удалены');
+      toast.success(t('messages.allDataDeleted'));
       setIsDeleteDialogOpen(false);
 
       // Перезагружаем страницу через небольшую задержку
@@ -85,7 +85,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
       }, 1000);
     } catch (error) {
       console.error('Failed to delete data:', error);
-      toast.error('Не удалось удалить данные');
+      toast.error(t('messages.failedToDelete'));
     } finally {
       setIsDeleting(false);
     }
@@ -95,60 +95,66 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
     try {
       setIsExporting(true);
       await exportService.exportTransactionsToCsv();
-      toast.success('📊 Файл отправлен в чат!');
+      toast.success(t('messages.fileExported'));
     } catch (error) {
       console.error('Failed to export data:', error);
-      toast.error('Не удалось экспортировать данные');
+      toast.error(t('messages.failedToExport'));
     } finally {
       setIsExporting(false);
     }
   };
+
   const settingsGroups = [
     {
-      title: "Финансы",
+      title: t('groups.finance'),
       items: [
         {
+          id: 'manage-categories',
           icon: Tags,
-          label: "Управление категориями",
+          label: t('items.manageCategories'),
           description: "",
           action: "navigate",
           color: "bg-purple-100 text-purple-600"
         },
         {
+          id: 'manage-accounts',
           icon: DollarSign,
-          label: "Счета и карты",
-          description: "Управление финансовыми счетами",
+          label: t('items.accounts'),
+          description: t('items.accountsDescription'),
           action: "navigate",
           color: "bg-orange-100 text-orange-600"
         }
       ]
     },
     {
-      title: "Приложение",
+      title: t('groups.application'),
       items: [
         {
+          id: 'notifications',
           icon: Bell,
-          label: "Настройка напоминаний",
+          label: t('items.notifications'),
           description: "",
           action: "navigate",
           color: "bg-yellow-100 text-yellow-600"
         },
         {
+          id: 'language',
           icon: Globe,
-          label: "Язык",
-          description: language === 'ru' ? "Русский" : "English",
+          label: t('items.language'),
+          description: language === 'ru' ? t('languages.ru') : t('languages.en'),
           action: "navigate",
           color: "bg-indigo-100 text-indigo-600"
         }
       ]
     },
     {
-      title: "Данные",
+      title: t('groups.data'),
       items: [
         {
+          id: 'export',
           icon: Upload,
-          label: "Экспорт данных",
-          description: "Скачать все ваши данные",
+          label: t('items.export'),
+          description: t('items.exportDescription'),
           action: "button",
           color: "bg-cyan-100 text-cyan-600"
         }
@@ -159,8 +165,8 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
   const dangerousActions = [
     {
       icon: Trash2,
-      label: "Удалить все данные",
-      description: "Безвозвратно удалить все операции",
+      label: t('danger.deleteAll'),
+      description: t('danger.deleteAllDescription'),
       color: "bg-red-100 text-red-600"
     }
   ];
@@ -177,7 +183,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         <div className="max-w-md mx-auto relative">
           <div className="flex items-center justify-center gap-2">
             <Settings className="w-6 h-6 text-yellow-300" />
-            <h1 className="text-white font-medium">Настройки</h1>
+            <h1 className="text-white font-medium">{t('title')}</h1>
           </div>
         </div>
       </OptimizedMotion>
@@ -186,7 +192,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         {/* Base Currency Selector */}
         <div className="space-y-3">
           <h2 className="font-medium text-sm uppercase tracking-wide bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Основная валюта
+            {t('baseCurrency.title')}
           </h2>
           <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm">
             <CardContent className="p-4">
@@ -196,15 +202,15 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                     <Globe className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-medium text-slate-800">Валюта для статистики</h3>
+                    <h3 className="font-medium text-slate-800">{t('baseCurrency.label')}</h3>
                     <p className="text-sm text-slate-600">
-                      Доходы и расходы будут считаться в этой валюте
+                      {t('baseCurrency.description')}
                     </p>
                   </div>
                 </div>
                 <div className="w-32">
                   {isLoadingCurrency ? (
-                    <div className="text-sm text-slate-500">Загрузка...</div>
+                    <div className="text-sm text-slate-500">{t('loading')}</div>
                   ) : (
                     <Select value={baseCurrency} onValueChange={handleBaseCurrencyChange}>
                       <SelectTrigger className="border-blue-200 focus:border-blue-400">
@@ -238,26 +244,26 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                 {group.items.map((item, index) => {
                   const Icon = item.icon;
                   const handleClick = () => {
-                    if (item.label === "Счета и карты" && onNavigate) {
+                    if (item.id === 'manage-accounts' && onNavigate) {
                       onNavigate('manage-accounts');
                     }
-                    if (item.label === "Управление категориями" && onNavigate) {
+                    if (item.id === 'manage-categories' && onNavigate) {
                       onNavigate('manage-categories');
                     }
-                    if (item.label === "Экспорт данных") {
+                    if (item.id === 'export') {
                       handleExportData();
                     }
-                    if (item.label === "Настройка напоминаний") {
+                    if (item.id === 'notifications') {
                       setIsNotificationsDialogOpen(true);
                     }
-                    if (item.label === "Язык") {
+                    if (item.id === 'language') {
                       setIsLanguageSwitcherOpen(true);
                     }
                   };
 
                   return (
                     <div
-                      key={item.label}
+                      key={item.id}
                       onClick={handleClick}
                       className="flex items-center justify-between p-4 hover:bg-blue-50/50 transition-colors duration-200 cursor-pointer"
                     >
@@ -294,7 +300,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                               className="border-blue-300 text-blue-600 hover:bg-blue-50"
                               disabled={isExporting}
                             >
-                              {isExporting ? 'Экспорт...' : 'Скачать'}
+                              {isExporting ? t('buttons.exporting') : t('buttons.download')}
                             </Button>
                           </LightMotion>
                         )}
@@ -310,15 +316,15 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         {/* Dangerous Actions */}
         <div className="space-y-3">
           <h2 className="font-medium text-sm uppercase tracking-wide bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-            Осторожно
+            {t('danger.title')}
           </h2>
           <Card className="border-red-200 bg-gradient-to-br from-red-50 to-pink-50 shadow-sm hover:shadow-lg transition-all duration-300">
             <CardContent className="p-0">
-              {dangerousActions.map((item) => {
+              {dangerousActions.map((item, index) => {
                 const Icon = item.icon;
                 return (
                   <div
-                    key={item.label}
+                    key={index}
                     className="flex items-center justify-between p-4 hover:bg-red-50/70 transition-colors duration-200"
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -340,7 +346,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                         disabled={isDeleting}
                         className="shadow-sm hover:shadow-md transition-all duration-200"
                       >
-                        {isDeleting ? 'Удаление...' : 'Удалить'}
+                        {isDeleting ? t('buttons.deleting') : t('buttons.delete')}
                       </Button>
                     </LightMotion>
                   </div>
@@ -356,30 +362,30 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
             <AlertDialogHeader>
               <AlertDialogTitle className="text-red-700 flex items-center gap-2">
                 <Trash2 className="w-5 h-5" />
-                Удалить все данные?
+                {t('deleteDialog.title')}
               </AlertDialogTitle>
               <AlertDialogDescription className="text-red-600">
-                Это действие нельзя отменить. Будут безвозвратно удалены:
+                {t('deleteDialog.warning')}
                 <ul className="list-disc list-inside mt-2 space-y-1">
-                  <li>Все транзакции</li>
-                  <li>Все счета</li>
-                  <li>Все категории</li>
+                  <li>{t('deleteDialog.transactions')}</li>
+                  <li>{t('deleteDialog.accounts')}</li>
+                  <li>{t('deleteDialog.categories')}</li>
                 </ul>
                 <p className="mt-2 font-medium">
-                  После удаления будут созданы стандартный счёт и категории.
+                  {t('deleteDialog.afterDelete')}
                 </p>
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel className="border-red-300" disabled={isDeleting}>
-                Отмена
+                {t('buttons.cancel')}
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDeleteAllData}
                 disabled={isDeleting}
                 className="bg-red-600 hover:bg-red-700"
               >
-                {isDeleting ? 'Удаление...' : 'Да, удалить всё'}
+                {isDeleting ? t('buttons.deleting') : t('buttons.confirmDelete')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -397,10 +403,10 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
               WiseTrack v1.0 <span className="text-orange-500 font-medium">(BETA)</span>
             </p>
             <p className="text-xs text-slate-500">
-              Сделано с ❤️ для вашего финансового благополучия
+              {t('appInfo.tagline')}
             </p>
             <p className="text-xs text-slate-500">
-              Создатель:{' '}
+              {t('appInfo.creator')}{' '}
               <a
                 href="https://t.me/sa1to21"
                 target="_blank"
@@ -414,7 +420,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
               onClick={() => setIsDonateDialogOpen(true)}
               className="text-xs text-blue-500 hover:text-blue-600 underline transition-colors cursor-pointer"
             >
-              Проект работает на донатной основе
+              {t('appInfo.donationNote')}
             </button>
           </div>
         </div>

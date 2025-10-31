@@ -1,5 +1,6 @@
 {
   "title": "Settings",
+  "loading": "Loading...",
   "profile": "Profile",
   "preferences": "Preferences",
   "language": "Language",
@@ -15,6 +16,63 @@
   "version": "Version",
   "support": "Support",
   "logout": "Logout",
+  "groups": {
+    "finance": "Finance",
+    "application": "Application",
+    "data": "Data"
+  },
+  "items": {
+    "manageCategories": "Manage Categories",
+    "accounts": "Accounts & Cards",
+    "accountsDescription": "Manage financial accounts",
+    "notifications": "Notification Settings",
+    "language": "Language",
+    "export": "Export Data",
+    "exportDescription": "Download all your data"
+  },
+  "baseCurrency": {
+    "title": "Base Currency",
+    "label": "Currency for statistics",
+    "description": "Income and expenses will be calculated in this currency"
+  },
+  "buttons": {
+    "download": "Download",
+    "exporting": "Exporting...",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "cancel": "Cancel",
+    "confirmDelete": "Yes, delete all"
+  },
+  "danger": {
+    "title": "Danger Zone",
+    "deleteAll": "Delete All Data",
+    "deleteAllDescription": "Permanently delete all transactions"
+  },
+  "deleteDialog": {
+    "title": "Delete all data?",
+    "warning": "This action cannot be undone. The following will be permanently deleted:",
+    "transactions": "All transactions",
+    "accounts": "All accounts",
+    "categories": "All categories",
+    "afterDelete": "Default account and categories will be created after deletion."
+  },
+  "messages": {
+    "currencyChanged": "Base currency changed to {{currency}}",
+    "error": "Error: {{error}}",
+    "allDataDeleted": "All data successfully deleted",
+    "failedToDelete": "Failed to delete data",
+    "fileExported": "📊 File sent to chat!",
+    "failedToExport": "Failed to export data",
+    "saved": "Settings saved",
+    "confirmDelete": "Are you sure? All data will be permanently deleted.",
+    "dataExported": "Data exported",
+    "dataImported": "Data imported"
+  },
+  "appInfo": {
+    "tagline": "Made with ❤️ for your financial well-being",
+    "creator": "Creator:",
+    "donationNote": "This project runs on donations"
+  },
   "languages": {
     "ru": "Русский",
     "en": "English"
@@ -23,13 +81,6 @@
     "light": "Light",
     "dark": "Dark",
     "auto": "Auto"
-  },
-  "messages": {
-    "saved": "Settings saved",
-    "error": "Error saving settings",
-    "confirmDelete": "Are you sure? All data will be permanently deleted.",
-    "dataExported": "Data exported",
-    "dataImported": "Data imported"
   },
   "notificationForm": {
     "enabled": "Enable reminders",
