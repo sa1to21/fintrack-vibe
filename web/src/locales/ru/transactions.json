@@ -116,7 +116,6 @@
   "onlyTransfers": "Только переводы",
   "allAccounts": "Все счета",
   "foundTransactions": "Найдено операций: {count}",
-  "transfer": "Перевод",
   "noTransactions": "Операции не найдены",
   "tryChangeFilters": "Попробуйте изменить фильтры поиска",
   "loadingTransactions": "Загрузка операций...",

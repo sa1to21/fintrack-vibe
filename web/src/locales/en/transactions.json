@@ -116,7 +116,6 @@
   "onlyTransfers": "Transfers only",
   "allAccounts": "All accounts",
   "foundTransactions": "Transactions found: {count}",
-  "transfer": "Transfer",
   "noTransactions": "No transactions found",
   "tryChangeFilters": "Try changing the search filters",
   "loadingTransactions": "Loading transactions...",
