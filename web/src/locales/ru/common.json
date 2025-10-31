@@ -1,0 +1,42 @@
+{
+  "navigation": {
+    "dashboard": "Главная",
+    "analytics": "Аналитика",
+    "education": "Обучение",
+    "settings": "Настройки"
+  },
+  "buttons": {
+    "save": "Сохранить",
+    "cancel": "Отменить",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "back": "Назад",
+    "confirm": "Подтвердить",
+    "close": "Закрыть",
+    "add": "Добавить",
+    "submit": "Отправить",
+    "continue": "Продолжить",
+    "getStarted": "Начать"
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успешно",
+    "noData": "Нет данных",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "date": "Дата",
+    "time": "Время",
+    "amount": "Сумма",
+    "description": "Описание",
+    "total": "Всего",
+    "balance": "Баланс"
+  },
+  "currencies": {
+    "RUB": "₽",
+    "USD": "$",
+    "EUR": "€",
+    "GBP": "£",
+    "GEL": "₾"
+  }
+}

@@ -16,8 +16,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { useEffect } from "react";
 import DonateDialog from "./DonateDialog";
 import NotificationSettingsDialog from "./NotificationSettingsDialog";
+import LanguageSwitcher from "./LanguageSwitcher";
 import logo from "../assets/logo.png";
 import logoWhite from "../assets/logo-white.png";
+import { useTranslation } from "react-i18next";
 
 interface SettingsPageProps {
   onNavigate?: (screen: string) => void;
@@ -25,6 +27,8 @@ interface SettingsPageProps {
 
 export function SettingsPage({ onNavigate }: SettingsPageProps) {
   // const { theme, setTheme } = useTelegramAuth(); // Тема временно отключена
+  const { language } = useTelegramAuth();
+  const { t } = useTranslation('settings');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -32,6 +36,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
   const [isLoadingCurrency, setIsLoadingCurrency] = useState(true);
   const [isDonateDialogOpen, setIsDonateDialogOpen] = useState(false);
   const [isNotificationsDialogOpen, setIsNotificationsDialogOpen] = useState(false);
+  const [isLanguageSwitcherOpen, setIsLanguageSwitcherOpen] = useState(false);
 
   // Выбираем логотип в зависимости от темы (временно отключено - всегда светлый)
   const currentLogo = logo; // theme === 'dark' ? logoWhite : logo;
@@ -131,7 +136,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         {
           icon: Globe,
           label: "Язык",
-          description: "Русский",
+          description: language === 'ru' ? "Русский" : "English",
           action: "navigate",
           color: "bg-indigo-100 text-indigo-600"
         }
@@ -244,6 +249,9 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                     }
                     if (item.label === "Настройка напоминаний") {
                       setIsNotificationsDialogOpen(true);
+                    }
+                    if (item.label === "Язык") {
+                      setIsLanguageSwitcherOpen(true);
                     }
                   };
 
@@ -421,6 +429,12 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
         <NotificationSettingsDialog
           isOpen={isNotificationsDialogOpen}
           onClose={() => setIsNotificationsDialogOpen(false)}
+        />
+
+        {/* Language Switcher */}
+        <LanguageSwitcher
+          isOpen={isLanguageSwitcherOpen}
+          onClose={() => setIsLanguageSwitcherOpen(false)}
         />
       </div>
     </div>

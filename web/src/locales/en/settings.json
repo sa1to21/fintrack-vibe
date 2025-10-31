@@ -1,0 +1,49 @@
+{
+  "title": "Settings",
+  "profile": "Profile",
+  "preferences": "Preferences",
+  "language": "Language",
+  "currency": "Default Currency",
+  "theme": "Theme",
+  "notifications": "Notifications",
+  "notificationSettings": "Notification Settings",
+  "data": "Data",
+  "exportData": "Export Data",
+  "importData": "Import Data",
+  "deleteAllData": "Delete All Data",
+  "about": "About",
+  "version": "Version",
+  "support": "Support",
+  "logout": "Logout",
+  "languages": {
+    "ru": "Русский",
+    "en": "English"
+  },
+  "themes": {
+    "light": "Light",
+    "dark": "Dark",
+    "auto": "Auto"
+  },
+  "messages": {
+    "saved": "Settings saved",
+    "error": "Error saving settings",
+    "confirmDelete": "Are you sure? All data will be permanently deleted.",
+    "dataExported": "Data exported",
+    "dataImported": "Data imported"
+  },
+  "notificationForm": {
+    "enabled": "Enable reminders",
+    "time": "Reminder time",
+    "days": "Days of week",
+    "timezone": "Timezone",
+    "daysOfWeek": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    }
+  }
+}

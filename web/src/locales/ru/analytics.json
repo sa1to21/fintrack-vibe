@@ -1,0 +1,26 @@
+{
+  "title": "Аналитика",
+  "overview": "Обзор",
+  "income": "Доходы",
+  "expenses": "Расходы",
+  "balance": "Баланс",
+  "byCategory": "По категориям",
+  "byAccount": "По счетам",
+  "trend": "Динамика",
+  "period": {
+    "week": "Неделя",
+    "month": "Месяц",
+    "threeMonths": "3 месяца",
+    "year": "Год",
+    "custom": "Выбрать период"
+  },
+  "charts": {
+    "pieChart": "Круговая диаграмма",
+    "barChart": "Столбчатая диаграмма",
+    "lineChart": "Линейный график"
+  },
+  "noData": "Нет данных за выбранный период",
+  "totalIncome": "Всего доходов",
+  "totalExpenses": "Всего расходов",
+  "netBalance": "Чистый баланс"
+}

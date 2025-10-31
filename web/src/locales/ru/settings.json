@@ -1,0 +1,49 @@
+{
+  "title": "Настройки",
+  "profile": "Профиль",
+  "preferences": "Предпочтения",
+  "language": "Язык",
+  "currency": "Валюта по умолчанию",
+  "theme": "Тема",
+  "notifications": "Уведомления",
+  "notificationSettings": "Настройка напоминаний",
+  "data": "Данные",
+  "exportData": "Экспортировать данные",
+  "importData": "Импортировать данные",
+  "deleteAllData": "Удалить все данные",
+  "about": "О приложении",
+  "version": "Версия",
+  "support": "Поддержка",
+  "logout": "Выйти",
+  "languages": {
+    "ru": "Русский",
+    "en": "English"
+  },
+  "themes": {
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "auto": "Авто"
+  },
+  "messages": {
+    "saved": "Настройки сохранены",
+    "error": "Ошибка при сохранении настроек",
+    "confirmDelete": "Вы уверены? Все данные будут удалены безвозвратно.",
+    "dataExported": "Данные экспортированы",
+    "dataImported": "Данные импортированы"
+  },
+  "notificationForm": {
+    "enabled": "Включить напоминания",
+    "time": "Время напоминания",
+    "days": "Дни недели",
+    "timezone": "Часовой пояс",
+    "daysOfWeek": {
+      "monday": "Понедельник",
+      "tuesday": "Вторник",
+      "wednesday": "Среда",
+      "thursday": "Четверг",
+      "friday": "Пятница",
+      "saturday": "Суббота",
+      "sunday": "Воскресенье"
+    }
+  }
+}

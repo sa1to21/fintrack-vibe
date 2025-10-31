@@ -1,0 +1,26 @@
+{
+  "title": "Analytics",
+  "overview": "Overview",
+  "income": "Income",
+  "expenses": "Expenses",
+  "balance": "Balance",
+  "byCategory": "By Category",
+  "byAccount": "By Account",
+  "trend": "Trend",
+  "period": {
+    "week": "Week",
+    "month": "Month",
+    "threeMonths": "3 Months",
+    "year": "Year",
+    "custom": "Custom Period"
+  },
+  "charts": {
+    "pieChart": "Pie Chart",
+    "barChart": "Bar Chart",
+    "lineChart": "Line Chart"
+  },
+  "noData": "No data for selected period",
+  "totalIncome": "Total Income",
+  "totalExpenses": "Total Expenses",
+  "netBalance": "Net Balance"
+}

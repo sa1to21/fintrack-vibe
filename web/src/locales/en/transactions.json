@@ -1,0 +1,44 @@
+{
+  "title": "Transactions",
+  "addTransaction": "Add Transaction",
+  "editTransaction": "Edit Transaction",
+  "deleteTransaction": "Delete Transaction",
+  "transactionDetails": "Transaction Details",
+  "types": {
+    "income": "Income",
+    "expense": "Expense",
+    "transfer": "Transfer"
+  },
+  "fields": {
+    "type": "Type",
+    "amount": "Amount",
+    "category": "Category",
+    "account": "Account",
+    "fromAccount": "From Account",
+    "toAccount": "To Account",
+    "date": "Date",
+    "time": "Time",
+    "description": "Description",
+    "optional": "optional"
+  },
+  "filters": {
+    "all": "All",
+    "period": "Period",
+    "allTime": "All Time",
+    "week": "Week",
+    "month": "Month",
+    "threeMonths": "3 Months",
+    "year": "Year",
+    "custom": "Custom Period",
+    "byType": "By Type",
+    "byAccount": "By Account",
+    "searchPlaceholder": "Search by description or category"
+  },
+  "messages": {
+    "added": "Transaction added",
+    "updated": "Transaction updated",
+    "deleted": "Transaction deleted",
+    "error": "Error saving transaction",
+    "confirmDelete": "Are you sure you want to delete this transaction?"
+  }
+}

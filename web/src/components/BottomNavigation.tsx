@@ -1,5 +1,6 @@
 import { Home, BarChart3, BookOpen, Settings } from "./icons";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface BottomNavigationProps {
   currentPage: string;
@@ -7,25 +8,27 @@ interface BottomNavigationProps {
 }
 
 export function BottomNavigation({ currentPage, onNavigate }: BottomNavigationProps) {
+  const { t } = useTranslation('common');
+
   const navItems = [
     {
       id: 'dashboard',
-      label: 'Главная',
+      label: t('navigation.dashboard'),
       icon: Home,
     },
     {
       id: 'analytics',
-      label: 'Статистика',
+      label: t('navigation.analytics'),
       icon: BarChart3,
     },
     {
       id: 'education',
-      label: 'Обучение',
+      label: t('navigation.education'),
       icon: BookOpen,
     },
     {
       id: 'settings',
-      label: 'Настройки',
+      label: t('navigation.settings'),
       icon: Settings,
     },
   ];

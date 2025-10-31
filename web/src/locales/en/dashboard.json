@@ -1,0 +1,16 @@
+{
+  "title": "WiseTrack",
+  "welcome": "Welcome",
+  "totalBalance": "Total Balance",
+  "accounts": "Accounts",
+  "recentTransactions": "Recent Transactions",
+  "viewAll": "View All",
+  "noTransactions": "No transactions",
+  "addFirstTransaction": "Add your first transaction",
+  "quickActions": {
+    "addTransaction": "Add Transaction",
+    "addIncome": "Add Income",
+    "addExpense": "Add Expense",
+    "transfer": "Transfer Between Accounts"
+  }
+}

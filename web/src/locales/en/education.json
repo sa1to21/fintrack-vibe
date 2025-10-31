@@ -1,0 +1,13 @@
+{
+  "title": "Education",
+  "welcome": "Welcome to WiseTrack!",
+  "intro": "Let's learn how to manage your finances",
+  "topics": {
+    "gettingStarted": "Getting Started",
+    "accounts": "Working with Accounts",
+    "transactions": "Recording Transactions",
+    "categories": "Categories",
+    "analytics": "Analytics",
+    "tips": "Useful Tips"
+  }
+}

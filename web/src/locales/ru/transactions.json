@@ -1,0 +1,44 @@
+{
+  "title": "Транзакции",
+  "addTransaction": "Добавить операцию",
+  "editTransaction": "Редактировать операцию",
+  "deleteTransaction": "Удалить операцию",
+  "transactionDetails": "Детали операции",
+  "types": {
+    "income": "Доход",
+    "expense": "Расход",
+    "transfer": "Перевод"
+  },
+  "fields": {
+    "type": "Тип",
+    "amount": "Сумма",
+    "category": "Категория",
+    "account": "Счёт",
+    "fromAccount": "Со счёта",
+    "toAccount": "На счёт",
+    "date": "Дата",
+    "time": "Время",
+    "description": "Описание",
+    "optional": "необязательно"
+  },
+  "filters": {
+    "all": "Все",
+    "period": "Период",
+    "allTime": "Всё время",
+    "week": "Неделя",
+    "month": "Месяц",
+    "threeMonths": "3 месяца",
+    "year": "Год",
+    "custom": "Выбрать период",
+    "byType": "По типу",
+    "byAccount": "По счёту",
+    "searchPlaceholder": "Поиск по описанию или категории"
+  },
+  "messages": {
+    "added": "Операция добавлена",
+    "updated": "Операция обновлена",
+    "deleted": "Операция удалена",
+    "error": "Ошибка при сохранении операции",
+    "confirmDelete": "Вы уверены, что хотите удалить эту операцию?"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "title": "Accounts",
+  "manageAccounts": "Manage Accounts",
+  "addAccount": "Add Account",
+  "editAccount": "Edit Account",
+  "deleteAccount": "Delete Account",
+  "accountDetails": "Account Details",
+  "fields": {
+    "name": "Name",
+    "type": "Account Type",
+    "balance": "Balance",
+    "currency": "Currency",
+    "initialBalance": "Initial Balance",
+    "displayOrder": "Display Order"
+  },
+  "types": {
+    "cash": "Cash",
+    "card": "Card",
+    "savings": "Savings",
+    "debt": "Debt",
+    "investment": "Investment"
+  },
+  "messages": {
+    "added": "Account added",
+    "updated": "Account updated",
+    "deleted": "Account deleted",
+    "error": "Error saving account",
+    "confirmDelete": "Are you sure you want to delete this account?",
+    "hasTransactions": "Cannot delete account with transactions"
+  },
+  "reorderHint": "Drag cards to change display order"
+}

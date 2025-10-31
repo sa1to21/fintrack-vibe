@@ -1,0 +1,16 @@
+{
+  "title": "WiseTrack",
+  "welcome": "Добро пожаловать",
+  "totalBalance": "Общий баланс",
+  "accounts": "Счета",
+  "recentTransactions": "Последние операции",
+  "viewAll": "Смотреть все",
+  "noTransactions": "Нет транзакций",
+  "addFirstTransaction": "Добавьте вашу первую транзакцию",
+  "quickActions": {
+    "addTransaction": "Добавить операцию",
+    "addIncome": "Добавить доход",
+    "addExpense": "Добавить расход",
+    "transfer": "Перевод между счетами"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "analytics": "Analytics",
+    "education": "Education",
+    "settings": "Settings"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "confirm": "Confirm",
+    "close": "Close",
+    "add": "Add",
+    "submit": "Submit",
+    "continue": "Continue",
+    "getStarted": "Get Started"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "noData": "No data",
+    "search": "Search",
+    "filter": "Filter",
+    "date": "Date",
+    "time": "Time",
+    "amount": "Amount",
+    "description": "Description",
+    "total": "Total",
+    "balance": "Balance"
+  },
+  "currencies": {
+    "RUB": "₽",
+    "USD": "$",
+    "EUR": "€",
+    "GBP": "£",
+    "GEL": "₾"
+  }
+}

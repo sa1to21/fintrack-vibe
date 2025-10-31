@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authApi } from '../lib/api';
+import i18n from '../i18n';
 
 export interface TelegramUser {
   id: number;
@@ -15,6 +16,7 @@ export interface User {
   telegram_id: number;
   name: string;
   username?: string;
+  language_code?: string;
   created_at: string;
 }
 
@@ -35,6 +37,8 @@ interface TelegramAuthContextType {
   isNewUser: boolean;
   theme: 'light' | 'dark';
   setTheme: (theme: 'light' | 'dark') => void;
+  language: string;
+  changeLanguage: (lang: string) => Promise<void>;
 }
 
 const TelegramAuthContext = createContext<TelegramAuthContextType | undefined>(undefined);
@@ -75,6 +79,7 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
   // Тема всегда светлая (темная тема отключена)
   const [theme] = useState<'light' | 'dark'>('light');
   const [isManualTheme] = useState(false);
+  const [language, setLanguage] = useState<string>('en');
 
   useEffect(() => {
     // Функция ожидания загрузки Telegram SDK с таймаутом
@@ -173,8 +178,16 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
             localStorage.setItem('user', JSON.stringify(response.data.user));
             setUser(response.data.user);
             setIsNewUser(response.data.is_new_user);
+
+            // Устанавливаем язык из БД или автоопределение
+            const userLanguage = response.data.user.language_code || tgUser.language_code || 'en';
+            const appLanguage = userLanguage === 'ru' ? 'ru' : 'en';
+            setLanguage(appLanguage);
+            i18n.changeLanguage(appLanguage);
+
             console.log('[TelegramAuth] User authenticated successfully');
             console.log('[TelegramAuth] Is new user:', response.data.is_new_user);
+            console.log('[TelegramAuth] Language set to:', appLanguage);
           }
         } else {
           // Если нет данных пользователя
@@ -255,6 +268,34 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
     // Тема всегда светлая, изменение отключено
   };
 
+  // Функция для смены языка
+  const changeLanguage = async (lang: string) => {
+    try {
+      const appLanguage = lang === 'ru' ? 'ru' : 'en';
+
+      // Обновляем язык в i18n
+      await i18n.changeLanguage(appLanguage);
+      setLanguage(appLanguage);
+
+      // Если пользователь авторизован, сохраняем в БД
+      if (user?.telegram_id) {
+        await authApi.patch(`/users/telegram/${user.telegram_id}`, {
+          language_code: appLanguage,
+        });
+
+        // Обновляем user в state и localStorage
+        const updatedUser = { ...user, language_code: appLanguage };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
+
+      console.log('[TelegramAuth] Language changed to:', appLanguage);
+    } catch (err) {
+      console.error('[TelegramAuth] Error changing language:', err);
+      throw err;
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
@@ -274,6 +315,8 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
         isNewUser,
         theme,
         setTheme,
+        language,
+        changeLanguage,
       }}
     >
       {children}
