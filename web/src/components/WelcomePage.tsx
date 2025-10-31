@@ -3,12 +3,14 @@ import { Card, CardContent } from "./ui/card";
 import { Wallet, TrendingUp, PieChart, Sparkles, Shield, Target } from "./icons";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
+import { useTranslation } from "react-i18next";
 
 interface WelcomePageProps {
   onGetStarted: () => void;
 }
 
 export function WelcomePage({ onGetStarted }: WelcomePageProps) {
+  const { t } = useTranslation('common');
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4 flex flex-col justify-center relative overflow-hidden">
       {/* Background decorations */}
@@ -27,10 +29,10 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
             <img src="/images/Logo FinTrack-no-bg-preview (carve.photos).png" alt="WiseTrack" className="w-24 h-24 object-contain" />
           </OptimizedMotion>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            WiseTrack
+            {t('welcome.title')}
           </h1>
           <p className="text-slate-600">
-            Управляй своими финансами в Telegram
+            {t('welcome.subtitle')}
           </p>
         </OptimizedMotion>
 
@@ -39,16 +41,16 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
           {[
             {
               icon: Sparkles,
-              title: "Быстрые операции",
-              description: "Добавь транзакцию за секунды",
+              titleKey: "welcome.features.quickOperations.title",
+              descriptionKey: "welcome.features.quickOperations.description",
               gradient: "from-blue-500 to-indigo-600",
               bgGradient: "from-blue-50 to-indigo-50",
               borderColor: "border-blue-200"
             },
             {
               icon: Target,
-              title: "Достижение целей",
-              description: "Планируйте и контролируйте бюджет",
+              titleKey: "welcome.features.achieveGoals.title",
+              descriptionKey: "welcome.features.achieveGoals.description",
               gradient: "from-purple-500 to-pink-600",
               bgGradient: "from-purple-50 to-pink-50",
               borderColor: "border-purple-200"
@@ -64,9 +66,9 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
                         <Icon className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-slate-800">{feature.title}</h3>
+                        <h3 className="font-medium text-slate-800">{t(feature.titleKey)}</h3>
                         <p className="text-sm text-slate-600">
-                          {feature.description}
+                          {t(feature.descriptionKey)}
                         </p>
                       </div>
                     </div>
@@ -84,7 +86,7 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
               onClick={onGetStarted}
               className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group"
             >
-              <span className="relative z-10 font-medium">Начать отслеживание</span>
+              <span className="relative z-10 font-medium">{t('welcome.startButton')}</span>
             </Button>
           </LightMotion>
         </OptimizedMotion>
@@ -92,7 +94,7 @@ export function WelcomePage({ onGetStarted }: WelcomePageProps) {
         {/* Footer */}
         <OptimizedMotion className="text-center text-sm text-slate-500 flex items-center justify-center space-x-2">
           <Shield className="w-4 h-4" />
-          <span>Безопасно и просто в использовании</span>
+          <span>{t('welcome.secureAndSimple')}</span>
         </OptimizedMotion>
       </LightMotion>
     </div>

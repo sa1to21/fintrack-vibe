@@ -415,7 +415,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.45 }}
         >
-          <h2 className="font-medium mb-3 text-foreground">Быстрые действия</h2>
+          <h2 className="font-medium mb-3 text-foreground">{t('quickActions.title')}</h2>
           <div className="space-y-3">
             <LightMotion
               whileTap={{ scale: 0.97 }}
@@ -485,7 +485,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                       <TrendingUp className="w-4 h-4 text-emerald-600" />
                     </div>
                     <div>
-                      <p className="text-xs text-emerald-600/70">Доходы</p>
+                      <p className="text-xs text-emerald-600/70">{t('income')}</p>
                       <OptimizedMotion as="p"
                         className="font-medium text-sm text-emerald-700"
                         key={showBalance ? monthlyIncome : 'hidden'}
@@ -506,7 +506,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                       <TrendingDown className="w-4 h-4 text-red-600" />
                     </div>
                     <div>
-                      <p className="text-xs text-red-600/70">Расходы</p>
+                      <p className="text-xs text-red-600/70">{t('expense')}</p>
                       <OptimizedMotion as="p"
                         className="font-medium text-sm text-red-700"
                         key={showBalance ? monthlyExpenses : 'hidden'}
@@ -540,7 +540,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                 className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
               >
                 <Filter className="w-4 h-4 mr-1" />
-                Все
+{t('all')}
               </Button>
             </LightMotion>
           </div>
@@ -579,7 +579,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                         </div>
                         <div className="min-w-0 flex-1">
                           <h3 className="font-medium text-sm truncate">
-                            {transaction.type === 'transfer' ? 'Перевод' : transaction.categoryName}
+                            {transaction.type === 'transfer' ? t('transfer') : transaction.categoryName}
                           </h3>
                           {transaction.type !== 'transfer' && (
                             <p className="text-xs text-muted-foreground truncate">
@@ -622,7 +622,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                                   return `${truncateText(fromAccount)} → ${truncateText(toAccount)}`;
                                 })()
                               : (() => {
-                                  const accountName = accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || 'Неизвестно';
+                                  const accountName = accounts.find(acc => String(acc.id) === String(transaction.accountId))?.name || t('unknown');
                                   const maxLength = 22; // Максимальная длина для одного счета
                                   return accountName.length > maxLength ? accountName.slice(0, maxLength) + '...' : accountName;
                                 })()}
@@ -641,7 +641,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                       variant="outline"
                       className="w-full border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-all duration-300"
                     >
-                      Показать все операции
+{t('showAllTransactions')}
                     </Button>
                   </LightMotion>
                 </div>
@@ -660,7 +660,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     <Wallet className="w-6 h-6 text-blue-600" />
                   </div>
                   <p className="text-muted-foreground text-sm mb-3">
-                    Операций пока нет
+                    {t('noTransactionsYet')}
                   </p>
                   <LightMotion
                     whileTap={{ scale: 0.95 }}
@@ -671,7 +671,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                       size="sm"
                       className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-all duration-300"
                     >
-                      Добавить первую операцию
+{t('addFirstOperation')}
                     </Button>
                   </LightMotion>
                 </OptimizedMotion>
@@ -690,7 +690,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-amber-600" />
-                <h2 className="font-medium text-foreground">Задолженности</h2>
+                <h2 className="font-medium text-foreground">{t('debtAccounts.title')}</h2>
               </div>
               <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300">
                 {debtAccounts.length}

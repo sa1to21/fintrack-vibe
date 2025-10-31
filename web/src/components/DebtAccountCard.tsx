@@ -4,6 +4,7 @@ import { Progress } from "./ui/progress";
 import { User, TrendingDown, AlertCircle, Clock } from "./icons";
 import { getCurrencySymbol } from "../constants/currencies";
 import type { Account } from "../services/accounts.service";
+import { useTranslation } from "react-i18next";
 
 interface DebtAccountCardProps {
   account: Account;
@@ -12,11 +13,14 @@ interface DebtAccountCardProps {
 }
 
 export function DebtAccountCard({ account, onClick, showBalance = true }: DebtAccountCardProps) {
+  const { t, i18n } = useTranslation('accounts');
+
   if (!account.is_debt || !account.debt_info) return null;
 
   const formatCurrency = (amount: number) => {
     const symbol = getCurrencySymbol(account.currency);
-    return `${Math.abs(amount).toLocaleString('ru-RU', {
+    const locale = i18n.language === 'ru' ? 'ru-RU' : 'en-US';
+    return `${Math.abs(amount).toLocaleString(locale, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     })} ${symbol}`;
@@ -24,7 +28,8 @@ export function DebtAccountCard({ account, onClick, showBalance = true }: DebtAc
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
+    const locale = i18n.language === 'ru' ? 'ru-RU' : 'en-US';
+    return date.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
   const getDaysUntilDue = () => {
@@ -134,13 +139,13 @@ export function DebtAccountCard({ account, onClick, showBalance = true }: DebtAc
           {/* Суммы */}
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-white/40 rounded-lg p-3 backdrop-blur-sm">
-              <p className={`text-xs ${colorScheme.textSecondary} mb-1 font-medium`}>Задолженность</p>
+              <p className={`text-xs ${colorScheme.textSecondary} mb-1 font-medium`}>{t('debtCard.debt')}</p>
               <p className={`text-xl font-bold ${colorScheme.amountColor}`}>
                 {showBalance ? formatCurrency(remaining) : "• • •"}
               </p>
             </div>
             <div className="bg-white/40 rounded-lg p-3 backdrop-blur-sm">
-              <p className="text-xs text-slate-500 mb-1 font-medium">Изначально</p>
+              <p className="text-xs text-slate-500 mb-1 font-medium">{t('debtCard.initial')}</p>
               <p className="text-xl font-bold text-slate-700">
                 {showBalance ? formatCurrency(initialAmount) : "• • •"}
               </p>
@@ -152,10 +157,10 @@ export function DebtAccountCard({ account, onClick, showBalance = true }: DebtAc
             <Clock className={`w-4 h-4 ${colorScheme.iconColor} flex-shrink-0`} />
             <span className={`${colorScheme.textSecondary} font-medium`}>
               {isOverdue
-                ? `Просрочено на ${Math.abs(daysUntilDue)} дн.`
+                ? t('debtCard.overdue', { days: Math.abs(daysUntilDue) })
                 : daysUntilDue === 0
-                ? 'Погашение сегодня!'
-                : `До ${formatDate(account.debt_info.dueDate)} (${daysUntilDue} дн.)`
+                ? t('debtCard.dueToday')
+                : t('debtCard.dueIn', { date: formatDate(account.debt_info.dueDate), days: daysUntilDue })
               }
             </span>
           </div>

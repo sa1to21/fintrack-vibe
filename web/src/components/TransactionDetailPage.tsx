@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
@@ -71,6 +72,7 @@ const iconMap: Record<string, typeof Wallet> = {
 };
 
 export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete }: TransactionDetailPageProps) {
+  const { t, i18n } = useTranslation('transactions');
   const [isEditing, setIsEditing] = useState(false);
   const [accounts, setAccounts] = useState<APIAccount[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -98,14 +100,14 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
         setCategories(categoriesData);
       } catch (error) {
         console.error('Failed to load data:', error);
-        toast.error('Не удалось загрузить данные');
+        toast.error(t('messages.failedToLoadData'));
       } finally {
         setLoading(false);
       }
     };
 
     loadData();
-  }, []);
+  }, [t]);
 
   const formatCurrency = (amount: number, currency: string = 'RUB') => {
     const symbol = getCurrencySymbol(currency);
@@ -116,7 +118,8 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
   };
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('ru-RU', {
+    const locale = i18n.language === 'ru' ? 'ru-RU' : 'en-US';
+    return new Date(dateStr).toLocaleDateString(locale, {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
@@ -148,17 +151,17 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
     // Проверка для переводов
     if (transaction.type === 'transfer') {
       if (!editData.amount || !editData.accountId || !editData.toAccountId) {
-        toast.error("Заполните все обязательные поля");
+        toast.error(t('messages.fillRequired'));
         return;
       }
       if (editData.accountId === editData.toAccountId) {
-        toast.error("Нельзя перевести на тот же счет");
+        toast.error(t('detail.cannotTransferSameAccount'));
         return;
       }
     } else {
       // Проверка для обычных транзакций
       if (!editData.amount || !editData.category || !editData.accountId) {
-        toast.error("Заполните все обязательные поля");
+        toast.error(t('messages.fillRequired'));
         return;
       }
     }
@@ -187,7 +190,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
 
         onUpdate(updatedTransaction);
         setIsEditing(false);
-        toast.success("Перевод обновлен!");
+        toast.success(t('detail.transferUpdated'));
       } else {
         // Обновляем обычную транзакцию через transactions API
         await transactionsService.update(transaction.id, {
@@ -214,39 +217,41 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
 
         onUpdate(updatedTransaction);
         setIsEditing(false);
-        toast.success("Операция обновлена!");
+        toast.success(t('detail.operationUpdated'));
       }
     } catch (error: any) {
       console.error('Failed to update transaction:', error);
 
       // Проверяем, является ли ошибка связанной с недостатком средств
       if (error.response?.data?.error === 'Недостаточно средств') {
-        toast.error('Недостаточно средств на счете');
+        toast.error(t('messages.insufficientFunds'));
       } else {
-        toast.error('Не удалось обновить ' + (transaction.type === 'transfer' ? 'перевод' : 'операцию'));
+        const typeText = transaction.type === 'transfer' ? t('detail.transferType') : t('detail.operationType');
+        toast.error(t('detail.failedToUpdate', { type: typeText }));
       }
     }
-  }, [editData, transaction, currentCategory, onUpdate]);
+  }, [editData, transaction, currentCategory, onUpdate, t]);
 
   const handleDelete = useCallback(async () => {
     try {
       if (transaction.type === 'transfer' && transaction.transferId) {
         // Удаляем перевод через transfers API
         await transfersService.delete(transaction.transferId);
-        toast.success("Перевод удален!");
+        toast.success(t('detail.transferDeleted'));
       } else {
         // Удаляем обычную транзакцию через transactions API
         await transactionsService.delete(transaction.id);
-        toast.success("Операция удалена!");
+        toast.success(t('detail.operationDeleted'));
       }
 
       // Обновляем локальное состояние
       onDelete(transaction.id);
     } catch (error) {
       console.error('Failed to delete transaction:', error);
-      toast.error('Не удалось удалить ' + (transaction.type === 'transfer' ? 'перевод' : 'операцию'));
+      const typeText = transaction.type === 'transfer' ? t('detail.transferType') : t('detail.operationType');
+      toast.error(t('detail.failedToUpdate', { type: typeText }));
     }
-  }, [transaction.id, transaction.type, transaction.transferId, onDelete]);
+  }, [transaction.id, transaction.type, transaction.transferId, onDelete, t]);
 
   const handleTypeChange = useCallback((newType: 'income' | 'expense') => {
     setEditData(prev => ({
@@ -261,7 +266,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
       <div className="min-h-full flex items-center justify-center" style={{ background: 'var(--bg-page-dashboard)' }}>
         <div className="text-center space-y-4">
           <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
-          <p className="text-slate-600">Загрузка...</p>
+          <p className="text-slate-600">{t('loading')}</p>
         </div>
       </div>
     );
@@ -300,7 +305,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </LightMotion>
-          <h1 className="font-medium text-white">Детали операции</h1>
+          <h1 className="font-medium text-white">{t('detail.title')}</h1>
           <div className="flex items-center gap-2">
             {!isEditing && (
               <>
@@ -328,21 +333,26 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                     <AlertDialogContent className="border-red-200 bg-gradient-to-br from-white to-red-50/30">
                       <AlertDialogHeader>
                         <AlertDialogTitle className="text-red-700">
-                          Удалить {transaction.type === 'transfer' ? 'перевод' : 'операцию'}?
+                          {t('detail.deleteConfirm', {
+                            type: transaction.type === 'transfer' ? t('detail.transferType') : t('detail.operationType')
+                          })}
                         </AlertDialogTitle>
                         <AlertDialogDescription className="text-red-600">
-                          Это действие нельзя отменить. {transaction.type === 'transfer' ? 'Перевод' : 'Операция'} будет {transaction.type === 'transfer' ? 'удален' : 'удалена'} навсегда.
+                          {t('detail.deleteDescription', {
+                            type: transaction.type === 'transfer' ? t('detail.transferType') : t('detail.operationType'),
+                            deleted: transaction.type === 'transfer' ? t('detail.transferDeleted') : t('detail.operationDeleted')
+                          })}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel className="border-red-300">
-                          Отмена
+                          {t('detail.cancel')}
                         </AlertDialogCancel>
                         <AlertDialogAction
                           onClick={handleDelete}
                           className="bg-red-600 hover:bg-red-700"
                         >
-                          Удалить
+                          {t('detail.delete')}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -381,7 +391,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                     }}
                     className="text-white hover:bg-white/20 transition-all duration-200"
                   >
-                    Отмена
+                    {t('detail.cancel')}
                   </Button>
                 </LightMotion>
               </>
@@ -421,7 +431,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                     ) : (
                       <TrendingDown className="w-4 h-4" />
                     )}
-                    {transaction.type === 'transfer' ? 'Перевод' : transaction.type === 'income' ? 'Доход' : 'Расход'}
+                    {transaction.type === 'transfer' ? t('types.transfer') : transaction.type === 'income' ? t('types.income') : t('types.expense')}
                   </div>
                   <p className={`text-3xl font-medium ${
                     transaction.type === 'transfer'
@@ -442,7 +452,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                         </div>
                         <div>
                           <p className="font-medium text-slate-800">{currentCategory.name}</p>
-                          <p className="text-sm text-slate-600">Категория</p>
+                          <p className="text-sm text-slate-600">{t('detail.category')}</p>
                         </div>
                       </>
                     )}
@@ -462,7 +472,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="font-medium text-slate-800 truncate">{currentAccount.name}</p>
-                        <p className="text-xs text-purple-600">Откуда</p>
+                        <p className="text-xs text-purple-600">{t('detail.from')}</p>
                       </div>
                     </div>
 
@@ -481,7 +491,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="font-medium text-slate-800 truncate">{toAccount.name}</p>
-                        <p className="text-xs text-purple-600">Куда</p>
+                        <p className="text-xs text-purple-600">{t('detail.to')}</p>
                       </div>
                     </div>
                   </div>
@@ -495,7 +505,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-slate-800 truncate">{currentAccount.name}</p>
-                      <p className="text-sm text-slate-600">Счёт</p>
+                      <p className="text-sm text-slate-600">{t('detail.account')}</p>
                     </div>
                   </div>
                 ) : null}
@@ -506,14 +516,14 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                     <Calendar className="w-5 h-5 text-blue-600" />
                     <div>
                       <p className="font-medium text-slate-800">{formatDate(transaction.date)}</p>
-                      <p className="text-sm text-slate-600">Дата</p>
+                      <p className="text-sm text-slate-600">{t('fields.date')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
                     <Clock className="w-5 h-5 text-blue-600" />
                     <div>
                       <p className="font-medium text-slate-800">{transaction.time}</p>
-                      <p className="text-sm text-slate-600">Время</p>
+                      <p className="text-sm text-slate-600">{t('fields.time')}</p>
                     </div>
                   </div>
                 </div>
@@ -521,7 +531,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                 {/* Description */}
                 {transaction.description && (
                   <div className="p-3 bg-blue-50 rounded-lg">
-                    <p className="text-sm text-slate-600 mb-1">Описание</p>
+                    <p className="text-sm text-slate-600 mb-1">{t('fields.description')}</p>
                     <p className="font-medium text-slate-800">{transaction.description}</p>
                   </div>
                 )}
@@ -538,7 +548,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
             <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-lg">
               <CardHeader>
                 <CardTitle className="text-center bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Редактировать {transaction.type === 'transfer' ? 'перевод' : 'операцию'}
+                  {transaction.type === 'transfer' ? t('detail.editTransfer') : t('detail.editOperation')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -556,7 +566,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                         onClick={() => handleTypeChange('expense')}
                       >
                         <Minus className="w-4 h-4 mr-2" />
-                        Расход
+                        {t('types.expense')}
                       </Button>
                     </LightMotion>
                     <LightMotion className="flex-1" whileTap={{ scale: 0.98 }}>
@@ -570,7 +580,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                         onClick={() => handleTypeChange('income')}
                       >
                         <Plus className="w-4 h-4 mr-2" />
-                        Доход
+                        {t('types.income')}
                       </Button>
                     </LightMotion>
                   </div>
@@ -578,7 +588,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
 
                 {/* Amount */}
                 <div className="space-y-2">
-                  <Label htmlFor="amount">Сумма *</Label>
+                  <Label htmlFor="amount">{t('detail.amount')} {t('detail.required')}</Label>
                   <div className="relative">
                     <Input
                       id="amount"
@@ -601,7 +611,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                 {/* Category - только для обычных операций */}
                 {transaction.type !== 'transfer' && (
                   <div className="space-y-2">
-                    <Label>Категория *</Label>
+                    <Label>{t('fields.category')} {t('detail.required')}</Label>
                     <div className="grid grid-cols-3 gap-2">
                       {currentCategories.map((cat) => {
                         return (
@@ -635,10 +645,10 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                   // Для переводов: два селекта (откуда → куда)
                   <>
                     <div className="space-y-2">
-                      <Label>Откуда *</Label>
+                      <Label>{t('detail.from')} {t('detail.required')}</Label>
                       <Select value={String(editData.accountId)} onValueChange={(value) => setEditData(prev => ({ ...prev, accountId: value }))}>
                         <SelectTrigger className="border-purple-200 focus:border-purple-400">
-                          <SelectValue placeholder="Выберите счёт" />
+                          <SelectValue placeholder={t('detail.selectAccount')} />
                         </SelectTrigger>
                         <SelectContent>
                           {accounts
@@ -664,10 +674,10 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Куда *</Label>
+                      <Label>{t('detail.to')} {t('detail.required')}</Label>
                       <Select value={String(editData.toAccountId)} onValueChange={(value) => setEditData(prev => ({ ...prev, toAccountId: value }))}>
                         <SelectTrigger className="border-purple-200 focus:border-purple-400">
-                          <SelectValue placeholder="Выберите счёт" />
+                          <SelectValue placeholder={t('detail.selectAccount')} />
                         </SelectTrigger>
                         <SelectContent>
                           {accounts
@@ -688,7 +698,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                       </Select>
                       {currentAccount && (
                         <p className="text-xs text-muted-foreground mt-1">
-                          💡 Переводы возможны только между счетами в {currentAccount.currency}
+                          {t('detail.transfersOnlySameCurrency', { currency: currentAccount.currency })}
                         </p>
                       )}
                     </div>
@@ -696,10 +706,10 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                 ) : (
                   // Для обычных операций: один селект (только счета с той же валютой)
                   <div className="space-y-2">
-                    <Label>Счёт *</Label>
+                    <Label>{t('detail.account')} {t('detail.required')}</Label>
                     <Select value={String(editData.accountId)} onValueChange={(value) => setEditData(prev => ({ ...prev, accountId: value }))}>
                       <SelectTrigger className="border-blue-200 focus:border-blue-400">
-                        <SelectValue placeholder="Выберите счёт" />
+                        <SelectValue placeholder={t('detail.selectAccount')} />
                       </SelectTrigger>
                       <SelectContent>
                         {accounts
@@ -719,7 +729,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                     </Select>
                     {currentAccount && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        💡 Можно выбрать только счета в {currentAccount.currency}. Для изменения валюты удалите и создайте новую операцию.
+                        {t('detail.changeAccountCurrencyHint', { currency: currentAccount.currency })}
                       </p>
                     )}
                   </div>
@@ -728,7 +738,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                 {/* Date & Time */}
                 <div className="space-y-3">
                   <div className="space-y-2">
-                    <Label htmlFor="date">Дата</Label>
+                    <Label htmlFor="date">{t('fields.date')}</Label>
                     <Input
                       id="date"
                       type="date"
@@ -738,7 +748,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="time">Время</Label>
+                    <Label htmlFor="time">{t('fields.time')}</Label>
                     <Input
                       id="time"
                       type="time"
@@ -751,10 +761,10 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
 
                 {/* Description */}
                 <div className="space-y-2">
-                  <Label htmlFor="description">Описание</Label>
+                  <Label htmlFor="description">{t('fields.description')}</Label>
                   <Textarea
                     id="description"
-                    placeholder="Добавьте описание..."
+                    placeholder={t('detail.addDescription')}
                     value={editData.description}
                     onChange={(e) => setEditData(prev => ({ ...prev, description: e.target.value }))}
                     rows={3}

@@ -5,13 +5,24 @@
   "editAccount": "Редактировать счёт",
   "deleteAccount": "Удалить счёт",
   "accountDetails": "Детали счёта",
+  "addNewAccount": "Добавить новый счёт",
+  "createNewAccount": "Создать новый счёт",
+  "changeBalance": "Изменить баланс",
+  "currentBalance": "Текущий баланс",
   "fields": {
     "name": "Название",
+    "accountName": "Название счёта",
     "type": "Тип счёта",
     "balance": "Баланс",
     "currency": "Валюта",
     "initialBalance": "Начальный баланс",
-    "displayOrder": "Порядок отображения"
+    "displayOrder": "Порядок отображения",
+    "icon": "Иконка счёта",
+    "amount": "Сумма"
+  },
+  "placeholders": {
+    "enterName": "Введите название...",
+    "enterAmount": "0"
   },
   "types": {
     "cash": "Наличные",
@@ -20,13 +31,80 @@
     "debt": "Долг",
     "investment": "Инвестиции"
   },
+  "icons": {
+    "wallet": "Кошелёк",
+    "card": "Карта",
+    "savings": "Накопления",
+    "cash": "Наличные",
+    "bankAccount": "Банковский счёт",
+    "investment": "Инвестиции"
+  },
+  "debt": {
+    "title": "Это счёт задолженности (кредит, займ)",
+    "creditor": "Кредитор *",
+    "creditorPlaceholder": "Банк, МФО или имя",
+    "amount": "Сумма задолженности *",
+    "dueDate": "Дата погашения *",
+    "notes": "Заметки (необязательно)",
+    "notesPlaceholder": "Дополнительная информация..."
+  },
+  "balance": {
+    "deposit": "Пополнить",
+    "withdraw": "Снять",
+    "depositOperation": "Пополнение средств",
+    "withdrawOperation": "Снятие средств",
+    "deposited": "пополнен",
+    "withdrawn": "уменьшен"
+  },
+  "dialogs": {
+    "addDescription": "Добавьте новый счёт для отслеживания ваших финансов",
+    "editDescription": "Измените название и иконку вашего счёта",
+    "balanceDescription": "Пополните счёт или снимите средства с записью операции",
+    "deleteTitle": "Удалить счёт?",
+    "deleteDescription": "Это действие нельзя отменить. Счёт \"{name}\" и все связанные операции будут удалены."
+  },
+  "actions": {
+    "cancel": "Отмена",
+    "create": "Создать",
+    "save": "Сохранить",
+    "delete": "Удалить"
+  },
   "messages": {
     "added": "Счёт добавлен",
-    "updated": "Счёт обновлён",
-    "deleted": "Счёт удалён",
+    "created": "Счёт создан!",
+    "updated": "Счёт обновлён!",
+    "deleted": "Счёт удалён!",
     "error": "Ошибка при сохранении счёта",
     "confirmDelete": "Вы уверены, что хотите удалить этот счёт?",
-    "hasTransactions": "Невозможно удалить счёт с транзакциями"
+    "hasTransactions": "Невозможно удалить счёт с транзакциями",
+    "enterName": "Введите название счёта",
+    "enterCreditor": "Введите имя кредитора",
+    "enterDebtAmount": "Введите корректную сумму долга",
+    "enterDueDate": "Укажите дату погашения",
+    "enterValidAmount": "Введите корректную сумму",
+    "failedToLoad": "Не удалось загрузить счета",
+    "failedToCreate": "Не удалось создать счёт",
+    "failedToUpdate": "Не удалось обновить счёт",
+    "failedToDelete": "Не удалось удалить счёт",
+    "failedToChangeBalance": "Не удалось изменить баланс",
+    "balanceChanged": "Баланс {action}!",
+    "categoryNotFound": "Не найдена подходящая категория",
+    "reordered": "Порядок счетов обновлён",
+    "failedToReorder": "Не удалось сохранить порядок счетов"
   },
-  "reorderHint": "Перетащите карточки для изменения порядка отображения"
+  "loading": {
+    "accounts": "Загрузка счетов..."
+  },
+  "reorderHint": "Перетащите карточки для изменения порядка отображения",
+  "debtCard": {
+    "debt": "Задолженность",
+    "initial": "Изначально",
+    "creditor": "Кредитор",
+    "overdue": "Просрочено на {{days}} дн.",
+    "dueToday": "Погашение сегодня!",
+    "dueIn": "До {{date}} ({{days}} дн.)",
+    "days_one": "{{count}} день",
+    "days_few": "{{count}} дня",
+    "days_many": "{{count}} дней"
+  }
 }

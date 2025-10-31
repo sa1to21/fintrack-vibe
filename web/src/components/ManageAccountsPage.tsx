@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
@@ -64,12 +65,12 @@ interface Account {
 }
 
 const accountIcons = [
-  { icon: Wallet, name: "Кошелёк", emoji: "💰", color: "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700", type: "cash" },
-  { icon: CreditCard, name: "Карта", emoji: "💳", color: "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700", type: "card" },
-  { icon: PiggyBank, name: "Накопления", emoji: "🐷", color: "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700", type: "savings" },
-  { icon: DollarSign, name: "Наличные", emoji: "💵", color: "bg-gradient-to-br from-green-100 to-green-200 text-green-700", type: "cash" },
-  { icon: Wallet, name: "Банковский счёт", emoji: "🏦", color: "bg-gradient-to-br from-indigo-100 to-indigo-200 text-indigo-700", type: "card" },
-  { icon: CreditCard, name: "Инвестиции", emoji: "💎", color: "bg-gradient-to-br from-amber-100 to-amber-200 text-amber-700", type: "savings" },
+  { icon: Wallet, nameKey: "icons.wallet", emoji: "💰", color: "bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700", type: "cash" },
+  { icon: CreditCard, nameKey: "icons.card", emoji: "💳", color: "bg-gradient-to-br from-purple-100 to-purple-200 text-purple-700", type: "card" },
+  { icon: PiggyBank, nameKey: "icons.savings", emoji: "🐷", color: "bg-gradient-to-br from-emerald-100 to-emerald-200 text-emerald-700", type: "savings" },
+  { icon: DollarSign, nameKey: "icons.cash", emoji: "💵", color: "bg-gradient-to-br from-green-100 to-green-200 text-green-700", type: "cash" },
+  { icon: Wallet, nameKey: "icons.bankAccount", emoji: "🏦", color: "bg-gradient-to-br from-indigo-100 to-indigo-200 text-indigo-700", type: "card" },
+  { icon: CreditCard, nameKey: "icons.investment", emoji: "💎", color: "bg-gradient-to-br from-amber-100 to-amber-200 text-amber-700", type: "savings" },
 ];
 
 interface SortableAccountItemProps {
@@ -79,9 +80,10 @@ interface SortableAccountItemProps {
   openBalanceDialog: (account: Account) => void;
   openEditDialog: (account: Account) => void;
   handleDeleteAccount: (accountId: string) => void;
+  t: (key: string, params?: any) => string;
 }
 
-function SortableAccountItem({ account, accounts, formatCurrency, openBalanceDialog, openEditDialog, handleDeleteAccount }: SortableAccountItemProps) {
+function SortableAccountItem({ account, accounts, formatCurrency, openBalanceDialog, openEditDialog, handleDeleteAccount, t }: SortableAccountItemProps) {
   const {
     attributes,
     listeners,
@@ -166,21 +168,21 @@ function SortableAccountItem({ account, accounts, formatCurrency, openBalanceDia
                     <AlertDialogContent className="border-red-200 bg-gradient-to-br from-white to-red-50/30">
                       <AlertDialogHeader>
                         <AlertDialogTitle className="text-red-700">
-                          Удалить счёт?
+                          {t('dialogs.deleteTitle')}
                         </AlertDialogTitle>
                         <AlertDialogDescription className="text-red-600">
-                          Это действие нельзя отменить. Счёт "{account.name}" и все связанные операции будут удалены.
+                          {t('dialogs.deleteDescription', { name: account.name })}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel className="border-red-300">
-                          Отмена
+                          {t('actions.cancel')}
                         </AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => handleDeleteAccount(account.id)}
                           className="bg-red-600 hover:bg-red-700"
                         >
-                          Удалить
+                          {t('actions.delete')}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -196,6 +198,7 @@ function SortableAccountItem({ account, accounts, formatCurrency, openBalanceDia
 }
 
 export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
+  const { t } = useTranslation('accounts');
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -252,7 +255,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       setAccounts(accountsWithIcons);
     } catch (error) {
       console.error('Failed to load accounts:', error);
-      toast.error('Не удалось загрузить счета');
+      toast.error(t('messages.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -277,21 +280,21 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
 
   const handleAddAccount = async () => {
     if (!newAccountName.trim()) {
-      toast.error("Введите название счёта");
+      toast.error(t('messages.enterName'));
       return;
     }
 
     if (isDebt) {
       if (!debtCreditor.trim()) {
-        toast.error("Введите имя кредитора");
+        toast.error(t('messages.enterCreditor'));
         return;
       }
       if (!debtInitialAmount || parseFloat(debtInitialAmount) <= 0) {
-        toast.error("Введите корректную сумму долга");
+        toast.error(t('messages.enterDebtAmount'));
         return;
       }
       if (!debtDueDate) {
-        toast.error("Укажите дату погашения");
+        toast.error(t('messages.enterDueDate'));
         return;
       }
     }
@@ -324,10 +327,10 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       await loadAccounts();
       resetForm();
       setIsAddDialogOpen(false);
-      toast.success("Счёт создан!");
+      toast.success(t('messages.created'));
     } catch (error) {
       console.error('Failed to create account:', error);
-      toast.error("Не удалось создать счёт");
+      toast.error(t('messages.failedToCreate'));
     } finally {
       setActionLoading(false);
     }
@@ -347,7 +350,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
 
   const handleEditAccount = async () => {
     if (!editingAccount || !newAccountName.trim()) {
-      toast.error("Введите название счёта");
+      toast.error(t('messages.enterName'));
       return;
     }
 
@@ -366,10 +369,10 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       setSelectedCurrency(DEFAULT_CURRENCY);
       setSelectedIcon(accountIcons[0]);
       setIsEditDialogOpen(false);
-      toast.success("Счёт обновлён!");
+      toast.success(t('messages.updated'));
     } catch (error) {
       console.error('Failed to update account:', error);
-      toast.error("Не удалось обновить счёт");
+      toast.error(t('messages.failedToUpdate'));
     } finally {
       setActionLoading(false);
     }
@@ -382,10 +385,10 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
 
       // Перезагружаем счета
       await loadAccounts();
-      toast.success("Счёт удалён!");
+      toast.success(t('messages.deleted'));
     } catch (error) {
       console.error('Failed to delete account:', error);
-      toast.error("Не удалось удалить счёт");
+      toast.error(t('messages.failedToDelete'));
     } finally {
       setActionLoading(false);
     }
@@ -393,7 +396,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
 
   const handleBalanceChange = async () => {
     if (!editingAccount || !balanceChange || parseFloat(balanceChange) <= 0) {
-      toast.error("Введите корректную сумму");
+      toast.error(t('messages.enterValidAmount'));
       return;
     }
 
@@ -407,7 +410,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       const suitableCategory = categories.find(cat => cat.category_type === categoryType);
 
       if (!suitableCategory) {
-        toast.error("Не найдена подходящая категория");
+        toast.error(t('messages.categoryNotFound'));
         return;
       }
 
@@ -416,7 +419,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       await transactionsService.create(editingAccount.id, {
         amount: changeAmount,
         transaction_type: categoryType,
-        description: `${balanceChangeType === 'increase' ? 'Пополнение' : 'Снятие'} средств`,
+        description: balanceChangeType === 'increase' ? t('balance.depositOperation') : t('balance.withdrawOperation'),
         date: now.toISOString().split('T')[0],
         time: now.toTimeString().substring(0, 5),
         category_id: suitableCategory.id
@@ -429,10 +432,10 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       setBalanceChange("");
       setBalanceChangeType('increase');
       setIsBalanceDialogOpen(false);
-      toast.success(`Баланс ${balanceChangeType === 'increase' ? 'пополнен' : 'уменьшен'}!`);
+      toast.success(t('messages.balanceChanged', { action: balanceChangeType === 'increase' ? t('balance.deposited') : t('balance.withdrawn') }));
     } catch (error) {
       console.error('Failed to change balance:', error);
-      toast.error("Не удалось изменить баланс");
+      toast.error(t('messages.failedToChangeBalance'));
     } finally {
       setActionLoading(false);
     }
@@ -475,10 +478,10 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       }));
 
       await accountsService.reorder(accountOrders);
-      toast.success("Порядок счетов обновлён");
+      toast.success(t('messages.reordered'));
     } catch (error) {
       console.error('Failed to reorder accounts:', error);
-      toast.error("Не удалось сохранить порядок счетов");
+      toast.error(t('messages.failedToReorder'));
       // Откатываем изменения при ошибке
       await loadAccounts();
     }
@@ -489,7 +492,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
       <div className="min-h-full flex items-center justify-center" style={{ background: 'var(--bg-page-dashboard)' }}>
         <div className="text-center space-y-4">
           <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
-          <p className="text-slate-600">Загрузка счетов...</p>
+          <p className="text-slate-600">{t('loading.accounts')}</p>
         </div>
       </div>
     );
@@ -534,7 +537,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
           </LightMotion>
           <div className="flex items-center gap-2">
             <Wallet className="w-6 h-6 text-yellow-300" />
-            <h1 className="font-medium text-white">Управление счетами</h1>
+            <h1 className="font-medium text-white">{t('manageAccounts')}</h1>
           </div>
           <div className="w-8" />
         </OptimizedMotion>
@@ -555,32 +558,32 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
               <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white p-4 h-auto gap-2 shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 <Plus className="w-5 h-5 relative z-10" />
-                <span className="relative z-10">Добавить новый счёт</span>
+                <span className="relative z-10">{t('addNewAccount')}</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 p-0 gap-0 max-h-[90vh]" style={{ display: 'flex', flexDirection: 'column', height: '90vh' }}>
               <DialogHeader className="flex-shrink-0 px-4 sm:px-6 pt-4 sm:pt-6 pb-2">
                 <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Создать новый счёт
+                  {t('createNewAccount')}
                 </DialogTitle>
                 <DialogDescription className="text-slate-600">
-                  Добавьте новый счёт для отслеживания ваших финансов
+                  {t('dialogs.addDescription')}
                 </DialogDescription>
               </DialogHeader>
               <div className="px-4 sm:px-6 py-2" style={{ flex: '1 1 0%', overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch', minHeight: 0 }}>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="account-name">Название счёта</Label>
+                      <Label htmlFor="account-name">{t('fields.accountName')}</Label>
                       <Input
                         id="account-name"
-                        placeholder="Введите название..."
+                        placeholder={t('placeholders.enterName')}
                         value={newAccountName}
                         onChange={(e) => setNewAccountName(e.target.value)}
                         className="border-blue-200 focus:border-blue-400"
                       />
                     </div>
                 <div className="space-y-2">
-                  <Label htmlFor="account-currency">Валюта</Label>
+                  <Label htmlFor="account-currency">{t('fields.currency')}</Label>
                   <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
                     <SelectTrigger className="border-blue-200 focus:border-blue-400">
                       <SelectValue />
@@ -599,16 +602,16 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="account-icon">Иконка счёта</Label>
+                  <Label htmlFor="account-icon">{t('fields.icon')}</Label>
                   <Select
-                    value={accountIcons.findIndex(icon => icon.type === selectedIcon.type && icon.name === selectedIcon.name).toString()}
+                    value={accountIcons.findIndex(icon => icon.type === selectedIcon.type && icon.nameKey === selectedIcon.nameKey).toString()}
                     onValueChange={(value) => setSelectedIcon(accountIcons[parseInt(value)])}
                   >
                     <SelectTrigger className="border-blue-200 focus:border-blue-400">
                       <SelectValue>
                         <div className="flex items-center gap-2">
                           <span className="text-xl">{selectedIcon.emoji}</span>
-                          <span>{selectedIcon.name}</span>
+                          <span>{t(selectedIcon.nameKey)}</span>
                         </div>
                       </SelectValue>
                     </SelectTrigger>
@@ -617,7 +620,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                         <SelectItem key={index} value={index.toString()} className="cursor-pointer">
                           <div className="flex items-center gap-2">
                             <span className="text-xl">{iconData.emoji}</span>
-                            <span>{iconData.name}</span>
+                            <span>{t(iconData.nameKey)}</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -627,7 +630,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
 
                 {!isDebt && (
                   <div className="space-y-2">
-                    <Label htmlFor="initial-balance">Начальный баланс</Label>
+                    <Label htmlFor="initial-balance">{t('fields.initialBalance')}</Label>
                     <div className="relative">
                       <Input
                         id="initial-balance"
@@ -655,28 +658,28 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     htmlFor="is-debt"
                     className="text-sm font-medium text-amber-800 cursor-pointer"
                   >
-                    💳 Это счёт задолженности (кредит, займ)
+                    💳 {t('debt.title')}
                   </Label>
                 </div>
 
                 {isDebt && (
                   <div className="space-y-3 p-3 bg-amber-50/50 rounded-lg border border-amber-200">
                     <div className="space-y-2">
-                      <Label htmlFor="debt-creditor">Кредитор *</Label>
+                      <Label htmlFor="debt-creditor">{t('debt.creditor')}</Label>
                       <Input
                         id="debt-creditor"
-                        placeholder="Банк, МФО или имя"
+                        placeholder={t('debt.creditorPlaceholder')}
                         value={debtCreditor}
                         onChange={(e) => setDebtCreditor(e.target.value)}
                         className="border-amber-200 focus:border-amber-400"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="debt-amount">Сумма задолженности *</Label>
+                      <Label htmlFor="debt-amount">{t('debt.amount')}</Label>
                       <Input
                         id="debt-amount"
                         type="number"
-                        placeholder="0"
+                        placeholder={t('placeholders.enterAmount')}
                         value={debtInitialAmount}
                         onChange={(e) => setDebtInitialAmount(e.target.value)}
                         className="border-amber-200 focus:border-amber-400"
@@ -685,7 +688,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="debt-due-date">Дата погашения *</Label>
+                      <Label htmlFor="debt-due-date">{t('debt.dueDate')}</Label>
                       <Input
                         id="debt-due-date"
                         type="date"
@@ -695,10 +698,10 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="debt-notes">Заметки (необязательно)</Label>
+                      <Label htmlFor="debt-notes">{t('debt.notes')}</Label>
                       <Textarea
                         id="debt-notes"
-                        placeholder="Дополнительная информация..."
+                        placeholder={t('debt.notesPlaceholder')}
                         value={debtNotes}
                         onChange={(e) => setDebtNotes(e.target.value)}
                         className="border-amber-200 focus:border-amber-400 resize-none"
@@ -715,13 +718,13 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     onClick={() => setIsAddDialogOpen(false)}
                     className="border-blue-300"
                   >
-                    Отмена
+                    {t('actions.cancel')}
                   </Button>
                   <Button
                     onClick={handleAddAccount}
                     className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                   >
-                    Создать
+                    {t('actions.create')}
                   </Button>
                 </DialogFooter>
             </DialogContent>
@@ -748,6 +751,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   openBalanceDialog={openBalanceDialog}
                   openEditDialog={openEditDialog}
                   handleDeleteAccount={handleDeleteAccount}
+                  t={t}
                 />
               ))}
             </div>
@@ -759,25 +763,25 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
           <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30">
             <DialogHeader>
               <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Редактировать счёт
+                {t('editAccount')}
               </DialogTitle>
               <DialogDescription className="text-slate-600">
-                Измените название и иконку вашего счёта
+                {t('dialogs.editDescription')}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="edit-account-name">Название счёта</Label>
+                <Label htmlFor="edit-account-name">{t('fields.accountName')}</Label>
                 <Input
                   id="edit-account-name"
-                  placeholder="Введите название..."
+                  placeholder={t('placeholders.enterName')}
                   value={newAccountName}
                   onChange={(e) => setNewAccountName(e.target.value)}
                   className="border-blue-200 focus:border-blue-400"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-account-currency">Валюта</Label>
+                <Label htmlFor="edit-account-currency">{t('fields.currency')}</Label>
                 <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
                   <SelectTrigger className="border-blue-200 focus:border-blue-400">
                     <SelectValue />
@@ -796,16 +800,16 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-account-icon">Иконка счёта</Label>
+                <Label htmlFor="edit-account-icon">{t('fields.icon')}</Label>
                 <Select
-                  value={accountIcons.findIndex(icon => icon.type === selectedIcon.type && icon.name === selectedIcon.name).toString()}
+                  value={accountIcons.findIndex(icon => icon.type === selectedIcon.type && icon.nameKey === selectedIcon.nameKey).toString()}
                   onValueChange={(value) => setSelectedIcon(accountIcons[parseInt(value)])}
                 >
                   <SelectTrigger className="border-blue-200 focus:border-blue-400">
                     <SelectValue>
                       <div className="flex items-center gap-2">
                         <span className="text-xl">{selectedIcon.emoji}</span>
-                        <span>{selectedIcon.name}</span>
+                        <span>{t(selectedIcon.nameKey)}</span>
                       </div>
                     </SelectValue>
                   </SelectTrigger>
@@ -814,7 +818,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                       <SelectItem key={index} value={index.toString()} className="cursor-pointer">
                         <div className="flex items-center gap-2">
                           <span className="text-xl">{iconData.emoji}</span>
-                          <span>{iconData.name}</span>
+                          <span>{t(iconData.nameKey)}</span>
                         </div>
                       </SelectItem>
                     ))}
@@ -823,18 +827,18 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
               </div>
             </div>
             <DialogFooter>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setIsEditDialogOpen(false)}
                 className="border-blue-300"
               >
-                Отмена
+                {t('actions.cancel')}
               </Button>
-              <Button 
+              <Button
                 onClick={handleEditAccount}
                 className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
               >
-                Сохранить
+                {t('actions.save')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -845,16 +849,16 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
           <DialogContent className="border-green-200 bg-gradient-to-br from-white to-green-50/30">
             <DialogHeader>
               <DialogTitle className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                Изменить баланс
+                {t('changeBalance')}
               </DialogTitle>
               <DialogDescription className="text-slate-600">
-                Пополните счёт или снимите средства с записью операции
+                {t('dialogs.balanceDescription')}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               {editingAccount && (
                 <div className="text-center p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <p className="text-sm text-blue-600">Текущий баланс</p>
+                  <p className="text-sm text-blue-600">{t('currentBalance')}</p>
                   <p className="text-xl font-medium text-blue-700">
                     {formatCurrency(editingAccount.balance, editingAccount.currency)}
                   </p>
@@ -877,7 +881,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     onClick={() => setBalanceChangeType('increase')}
                   >
                     <TrendingUp className="w-4 h-4 mr-2" />
-                    Пополнить
+                    {t('balance.deposit')}
                   </Button>
                 </OptimizedMotion>
                 <OptimizedMotion
@@ -888,20 +892,20 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   <Button
                     type="button"
                     variant={balanceChangeType === 'decrease' ? 'default' : 'outline'}
-                    className={`w-full transition-all duration-300 ${balanceChangeType === 'decrease' 
-                      ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg' 
+                    className={`w-full transition-all duration-300 ${balanceChangeType === 'decrease'
+                      ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg'
                       : 'border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400'
                     }`}
                     onClick={() => setBalanceChangeType('decrease')}
                   >
                     <TrendingDown className="w-4 h-4 mr-2" />
-                    Снять
+                    {t('balance.withdraw')}
                   </Button>
                 </OptimizedMotion>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="balance-change">Сумма</Label>
+                <Label htmlFor="balance-change">{t('fields.amount')}</Label>
                 <div className="relative">
                   <Input
                     id="balance-change"
@@ -920,21 +924,21 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
               </div>
             </div>
             <DialogFooter>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setIsBalanceDialogOpen(false)}
                 className="border-green-300"
               >
-                Отмена
+                {t('actions.cancel')}
               </Button>
-              <Button 
+              <Button
                 onClick={handleBalanceChange}
-                className={`${balanceChangeType === 'increase' 
+                className={`${balanceChangeType === 'increase'
                   ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800'
                   : 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800'
                 }`}
               >
-                {balanceChangeType === 'increase' ? 'Пополнить' : 'Снять'}
+                {balanceChangeType === 'increase' ? t('balance.deposit') : t('balance.withdraw')}
               </Button>
             </DialogFooter>
           </DialogContent>

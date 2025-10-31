@@ -8,11 +8,11 @@
   "byAccount": "By Account",
   "trend": "Trend",
   "period": {
-    "week": "Week",
-    "month": "Month",
-    "threeMonths": "3 Months",
-    "year": "Year",
-    "custom": "Custom Period"
+    "week": "Last week",
+    "month": "Last month",
+    "threeMonths": "Last 3 months",
+    "year": "Last year",
+    "custom": "Custom period"
   },
   "charts": {
     "pieChart": "Pie Chart",
@@ -22,5 +22,33 @@
   "noData": "No data for selected period",
   "totalIncome": "Total Income",
   "totalExpenses": "Total Expenses",
-  "netBalance": "Net Balance"
+  "netBalance": "Net Balance",
+  "loading": "Loading analytics...",
+  "error": {
+    "loadFailed": "Failed to load analytics data",
+    "noData": "Failed to load data",
+    "tryAgain": "Try again"
+  },
+  "expensesByCategory": "Expenses by category",
+  "noExpenses": "No expenses for selected period",
+  "comparison": {
+    "title": "Comparison with previous period",
+    "previous": "Previous period"
+  },
+  "debts": {
+    "title": "Debt statistics",
+    "progress": "Overall progress"
+  },
+  "insights": {
+    "title": "Your financial statistics",
+    "biggestExpense": "Record of the day",
+    "avgTransaction": "Average transaction",
+    "transactions": {
+      "one": "transaction",
+      "few": "transactions",
+      "many": "transactions"
+    },
+    "busiestDay": "Busiest day",
+    "topCategory": "of all expenses"
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "title": "Education",
+  "title": "Financial Literacy",
   "welcome": "Welcome to WiseTrack!",
   "intro": "Let's learn how to manage your finances",
   "topics": {
@@ -9,5 +9,77 @@
     "categories": "Categories",
     "analytics": "Analytics",
     "tips": "Useful Tips"
-  }
+  },
+  "dailyTips": "Daily tips",
+  "courses": {
+    "title": "Courses",
+    "level": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "duration": "min",
+    "notStarted": "Not started",
+    "list": {
+      "budgetBasics": {
+        "title": "Personal Budget Basics",
+        "description": "Learn to plan income and expenses"
+      },
+      "savingStrategies": {
+        "title": "Saving Strategies",
+        "description": "Effective methods for building savings"
+      },
+      "investmentBasics": {
+        "title": "Investing for Beginners",
+        "description": "Basic principles of investing"
+      }
+    }
+  },
+  "tips": {
+    "trackExpenses": {
+      "title": "Track all expenses",
+      "description": "Record every expense for a month — this will help find money leaks",
+      "category": "Budgeting"
+    },
+    "oneCategory": {
+      "title": "One category rule",
+      "description": "Choose one expense category to reduce each month",
+      "category": "Budgeting"
+    },
+    "emergencyFund": {
+      "title": "Emergency fund",
+      "description": "Save 3-6 months of expenses for unexpected situations",
+      "category": "Savings"
+    },
+    "compoundInterest": {
+      "title": "Compound interest",
+      "description": "Start investing as early as possible, time is your best ally",
+      "category": "Investing"
+    },
+    "wait24Hours": {
+      "title": "24-hour rule",
+      "description": "Wait a day before making large purchases — this helps avoid impulsive spending",
+      "category": "Expenses"
+    },
+    "autoSavings": {
+      "title": "Automate savings",
+      "description": "Set up automatic transfer of part of your income to a savings account right after payday",
+      "category": "Savings"
+    },
+    "diversification": {
+      "title": "Diversification",
+      "description": "Don't put all eggs in one basket — spread assets across different instruments",
+      "category": "Investing"
+    }
+  },
+  "comingSoon": {
+    "title": "Coming soon",
+    "description": "Educational courses and interactive tests",
+    "followUpdates": "Stay tuned"
+  },
+  "progress": {
+    "title": "Your progress",
+    "completed": "{{count}} of {{total}} courses completed"
+  },
+  "coursesTitle": "Courses"
 }

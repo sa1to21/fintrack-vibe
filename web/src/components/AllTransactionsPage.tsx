@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
@@ -79,6 +80,7 @@ const categoryIcons: { [key: string]: typeof Coffee } = {
 };
 
 export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransactionsPageProps) {
+  const { t, i18n } = useTranslation('transactions');
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<'all' | 'income' | 'expense' | 'transfer'>('all');
   const [selectedAccount, setSelectedAccount] = useState<string>('all');
@@ -178,7 +180,8 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
   };
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('ru-RU', {
+    const locale = i18n.language === 'ru' ? 'ru-RU' : 'en-US';
+    return new Date(dateStr).toLocaleDateString(locale, {
       day: 'numeric',
       month: 'short'
     });
@@ -280,7 +283,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
       <div className="min-h-full flex items-center justify-center" style={{ background: 'var(--bg-page-dashboard)' }}>
         <div className="text-center space-y-4">
           <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
-          <p className="text-slate-600">Загрузка операций...</p>
+          <p className="text-slate-600">{t('loadingTransactions')}</p>
         </div>
       </div>
     );
@@ -306,7 +309,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </LightMotion>
-          <h1 className="font-medium text-white">Все операции</h1>
+          <h1 className="font-medium text-white">{t('allTransactions')}</h1>
           <div className="w-8" />
         </div>
 
@@ -317,7 +320,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-emerald-300" />
                 <div>
-                  <p className="text-xs text-white/70">Доходы</p>
+                  <p className="text-xs text-white/70">{t('income')}</p>
                   <p className="font-medium text-white">{formatCurrency(totalIncome)}</p>
                 </div>
               </div>
@@ -328,7 +331,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
               <div className="flex items-center gap-2">
                 <TrendingDown className="w-5 h-5 text-red-300" />
                 <div>
-                  <p className="text-xs text-white/70">Расходы</p>
+                  <p className="text-xs text-white/70">{t('expenses')}</p>
                   <p className="font-medium text-white">{formatCurrency(totalExpenses)}</p>
                 </div>
               </div>
@@ -344,7 +347,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Поиск по описанию или категории..."
+              placeholder={t('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 border-blue-200 focus:border-blue-400 bg-white"
@@ -358,10 +361,10 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Все операции</SelectItem>
-                <SelectItem value="income">Только доходы</SelectItem>
-                <SelectItem value="expense">Только расходы</SelectItem>
-                <SelectItem value="transfer">Только переводы</SelectItem>
+                <SelectItem value="all">{t('allOperations')}</SelectItem>
+                <SelectItem value="income">{t('onlyIncome')}</SelectItem>
+                <SelectItem value="expense">{t('onlyExpense')}</SelectItem>
+                <SelectItem value="transfer">{t('onlyTransfers')}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -370,7 +373,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Все счета</SelectItem>
+                <SelectItem value="all">{t('allAccounts')}</SelectItem>
                 {accounts.map((account) => (
                   <SelectItem key={account.id} value={account.id}>
                     {account.name}
@@ -390,7 +393,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
 
         {/* Results count */}
         <p className="text-sm text-muted-foreground">
-          Найдено операций: {filteredTransactions.length}
+          {t('foundTransactions', { count: filteredTransactions.length })}
         </p>
 
         {/* Transactions List */}
@@ -402,7 +405,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
                 <div className="flex items-center gap-2 mb-2">
                   <Calendar className="w-4 h-4 text-muted-foreground" />
                   <h3 className="font-medium text-slate-700">
-                    {new Date(date).toLocaleDateString('ru-RU', {
+                    {new Date(date).toLocaleDateString(i18n.language === 'ru' ? 'ru-RU' : 'en-US', {
                       day: 'numeric',
                       month: 'long',
                       year: 'numeric'
@@ -449,7 +452,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
                               </div>
                               <div className="min-w-0 flex-1">
                                 <h4 className="font-medium text-sm truncate">
-                                  {transaction.type === 'transfer' ? 'Перевод' : transaction.categoryName}
+                                  {transaction.type === 'transfer' ? t('transfer') : transaction.categoryName}
                                 </h4>
                                 {transaction.type !== 'transfer' && (
                                   <p className="text-xs text-muted-foreground truncate">
@@ -481,7 +484,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
                                         return `${truncateText(fromName)} → ${truncateText(toName)}`;
                                       })()
                                     : (() => {
-                                        const accountName = account?.name || 'Неизвестно';
+                                        const accountName = account?.name || t('unknown');
                                         const maxLength = 22;
                                         return accountName.length > maxLength ? accountName.slice(0, maxLength) + '...' : accountName;
                                       })()}
@@ -504,10 +507,10 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
                     <Search className="w-6 h-6 text-blue-600" />
                   </div>
                   <p className="text-muted-foreground text-sm">
-                    Операции не найдены
+                    {t('noTransactions')}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Попробуйте изменить фильтры поиска
+                    {t('tryChangeFilters')}
                   </p>
                 </div>
               </CardContent>

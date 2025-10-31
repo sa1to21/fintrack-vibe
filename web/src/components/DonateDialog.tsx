@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './DonateDialog.css';
 import { Heart } from './icons';
+import { useTranslation } from 'react-i18next';
 
 interface DonateDialogProps {
   isOpen: boolean;
@@ -8,28 +9,29 @@ interface DonateDialogProps {
 }
 
 interface DonationMethod {
-  label: string;
+  labelKey: string;
   value: string;
 }
 
 const DonateDialog: React.FC<DonateDialogProps> = ({ isOpen, onClose }) => {
+  const { t } = useTranslation('common');
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const donationMethods: DonationMethod[] = [
     {
-      label: 'СБП (Т-банк)',
+      labelKey: 'donate.methods.sbp',
       value: '+79939009598',
     },
     {
-      label: 'TBC Bank IBAN (только GEL)',
+      labelKey: 'donate.methods.tbc',
       value: 'GE15TB7537945061200012',
     },
     {
-      label: 'TON',
+      labelKey: 'donate.methods.ton',
       value: 'UQBagnAhrTd6AJbQg8zfP9oyIFU_8a5RgX_78k64jBVxLLEJ',
     },
     {
-      label: 'USDT (TRC20)',
+      labelKey: 'donate.methods.usdt',
       value: 'TSG71BQmZL2E6q46u39PfUQSjaWNcENmRm',
     },
   ];
@@ -55,7 +57,7 @@ const DonateDialog: React.FC<DonateDialogProps> = ({ isOpen, onClose }) => {
         <div className="donate-dialog-header">
           <div className="donate-dialog-title">
             <Heart className="donate-dialog-icon" />
-            <h3>Поддержать проект</h3>
+            <h3>{t('donate.title')}</h3>
           </div>
           <button className="donate-dialog-close" onClick={onClose}>
             ✕
@@ -64,13 +66,13 @@ const DonateDialog: React.FC<DonateDialogProps> = ({ isOpen, onClose }) => {
 
         <div className="donate-dialog-content">
           <p className="donate-dialog-description">
-            Проект развивается на донатной основе. Спасибо за вашу поддержку!
+            {t('donate.description')}
           </p>
 
           <div className="donate-methods">
             {donationMethods.map((method, index) => (
               <div key={index} className="donate-method">
-                <label className="donate-method-label">{method.label}</label>
+                <label className="donate-method-label">{t(method.labelKey)}</label>
                 <div className={`donate-method-value-container ${copiedIndex === index ? 'copied-animation' : ''}`}>
                   <div className="donate-method-value" title={method.value}>
                     {method.value}
@@ -80,7 +82,7 @@ const DonateDialog: React.FC<DonateDialogProps> = ({ isOpen, onClose }) => {
                     onClick={() => handleCopy(method.value, index)}
                   >
                     {copiedIndex === index ? (
-                      <span className="copy-success">✓ Скопировано</span>
+                      <span className="copy-success">✓ {t('donate.copied')}</span>
                     ) : (
                       '📋'
                     )}

@@ -10,18 +10,25 @@
   "addFirstTransaction": "Add your first transaction",
   "perMonth": "per month",
   "income": "Income",
-  "expense": "Expense",
+  "expense": "Expenses",
   "defaultAccountName": "Main Account",
   "noCategory": "No Category",
   "quickActions": {
+    "title": "Quick Actions",
     "addTransaction": "Add Transaction",
     "addIncome": "Add Income",
     "addExpense": "Add Expense",
     "transfer": "Transfer"
   },
   "debtAccounts": {
-    "title": "Debt Accounts",
+    "title": "Debts",
     "totalDebt": "Total Debt",
     "viewDetails": "Details"
-  }
+  },
+  "all": "All",
+  "showAllTransactions": "Show all transactions",
+  "noTransactionsYet": "No transactions yet",
+  "addFirstOperation": "Add first transaction",
+  "transfer": "Transfer",
+  "unknown": "Unknown"
 }

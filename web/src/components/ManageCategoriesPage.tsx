@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
@@ -43,6 +44,7 @@ const DEFAULT_EMOJIS = [
 ];
 
 export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
+  const { t } = useTranslation('categories');
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -66,7 +68,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
       setCategories(data);
     } catch (error) {
       console.error('Failed to load categories:', error);
-      toast.error('Не удалось загрузить категории');
+      toast.error(t('messages.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -74,7 +76,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
 
   const handleAddCategory = async () => {
     if (!formData.name.trim()) {
-      toast.error("Введите название категории");
+      toast.error(t('messages.enterName'));
       return;
     }
 
@@ -90,10 +92,10 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
       await loadCategories();
       resetForm();
       setIsAddDialogOpen(false);
-      toast.success("Категория создана!");
+      toast.success(t('messages.created'));
     } catch (error: any) {
       console.error('Failed to create category:', error);
-      const errorMessage = error?.response?.data?.errors?.[0] || "Не удалось создать категорию";
+      const errorMessage = error?.response?.data?.errors?.[0] || t('messages.failedToCreate');
       toast.error(errorMessage);
     } finally {
       setActionLoading(false);
@@ -102,7 +104,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
 
   const handleEditCategory = async () => {
     if (!editingCategory || !formData.name.trim()) {
-      toast.error("Введите название категории");
+      toast.error(t('messages.enterName'));
       return;
     }
 
@@ -119,10 +121,10 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
       resetForm();
       setIsEditDialogOpen(false);
       setEditingCategory(null);
-      toast.success("Категория обновлена!");
+      toast.success(t('messages.updated'));
     } catch (error: any) {
       console.error('Failed to update category:', error);
-      const errorMessage = error?.response?.data?.errors?.[0] || "Не удалось обновить категорию";
+      const errorMessage = error?.response?.data?.errors?.[0] || t('messages.failedToUpdate');
       toast.error(errorMessage);
     } finally {
       setActionLoading(false);
@@ -134,10 +136,10 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
       setActionLoading(true);
       await categoriesService.delete(category.id.toString());
       await loadCategories();
-      toast.success("Категория удалена!");
+      toast.success(t('messages.deleted'));
     } catch (error: any) {
       console.error('Failed to delete category:', error);
-      const errorMessage = error?.response?.data?.error || "Не удалось удалить категорию";
+      const errorMessage = error?.response?.data?.error || t('messages.failedToDelete');
       toast.error(errorMessage);
     } finally {
       setActionLoading(false);
@@ -175,7 +177,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
       <div className="min-h-full flex items-center justify-center" style={{ background: 'var(--bg-page-dashboard)' }}>
         <div className="text-center space-y-4">
           <Loader2 className="w-12 h-12 mx-auto text-purple-600 animate-spin" />
-          <p className="text-slate-600">Загрузка категорий...</p>
+          <p className="text-slate-600">{t('loading.categories')}</p>
         </div>
       </div>
     );
@@ -201,7 +203,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
             </LightMotion>
             <div className="flex items-center gap-2">
               <Tags className="w-6 h-6 text-yellow-300" />
-              <h1 className="text-white font-medium">Категории</h1>
+              <h1 className="text-white font-medium">{t('categories')}</h1>
             </div>
             <div className="w-8" />
           </div>
@@ -216,7 +218,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
             className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-6 rounded-xl shadow-lg"
           >
             <Plus className="w-5 h-5 mr-2" />
-            Добавить категорию
+            {t('addCategory')}
           </Button>
         </LightMotion>
 
@@ -225,14 +227,14 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
           <div className="flex items-center gap-2">
             <TrendingDown className="w-5 h-5 text-red-600" />
             <h2 className="font-medium text-sm uppercase tracking-wide bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-              Расходы ({expenseCategories.length})
+              {t('sections.expenses', { count: expenseCategories.length })}
             </h2>
           </div>
           <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm">
             <CardContent className="p-0">
               {expenseCategories.length === 0 ? (
                 <div className="p-4 text-center text-slate-500">
-                  Нет категорий расходов
+                  {t('sections.noExpenses')}
                 </div>
               ) : (
                 expenseCategories.map((category) => (
@@ -242,6 +244,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
                     onEdit={openEditDialog}
                     onDelete={handleDeleteCategory}
                     actionLoading={actionLoading}
+                    t={t}
                   />
                 ))
               )}
@@ -254,14 +257,14 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
           <div className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-green-600" />
             <h2 className="font-medium text-sm uppercase tracking-wide bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-              Доходы ({incomeCategories.length})
+              {t('sections.income', { count: incomeCategories.length })}
             </h2>
           </div>
           <Card className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 shadow-sm">
             <CardContent className="p-0">
               {incomeCategories.length === 0 ? (
                 <div className="p-4 text-center text-slate-500">
-                  Нет категорий доходов
+                  {t('sections.noIncome')}
                 </div>
               ) : (
                 incomeCategories.map((category) => (
@@ -271,6 +274,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
                     onEdit={openEditDialog}
                     onDelete={handleDeleteCategory}
                     actionLoading={actionLoading}
+                    t={t}
                   />
                 ))
               )}
@@ -284,16 +288,17 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
         <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30">
           <DialogHeader>
             <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Новая категория
+              {t('newCategory')}
             </DialogTitle>
             <DialogDescription>
-              Создайте новую категорию для классификации операций
+              {t('dialogs.addDescription')}
             </DialogDescription>
           </DialogHeader>
 
           <CategoryForm
             formData={formData}
             setFormData={setFormData}
+            t={t}
           />
 
           <DialogFooter>
@@ -303,7 +308,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
               disabled={actionLoading}
               className="border-blue-300"
             >
-              Отмена
+              {t('actions.cancel')}
             </Button>
             <Button
               onClick={handleAddCategory}
@@ -313,10 +318,10 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
               {actionLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Создание...
+                  {t('actions.creating')}
                 </>
               ) : (
-                "Создать"
+                t('actions.create')
               )}
             </Button>
           </DialogFooter>
@@ -328,16 +333,17 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
         <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30">
           <DialogHeader>
             <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Редактировать категорию
+              {t('editCategory')}
             </DialogTitle>
             <DialogDescription>
-              Измените параметры категории
+              {t('dialogs.editDescription')}
             </DialogDescription>
           </DialogHeader>
 
           <CategoryForm
             formData={formData}
             setFormData={setFormData}
+            t={t}
           />
 
           <DialogFooter>
@@ -347,7 +353,7 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
               disabled={actionLoading}
               className="border-blue-300"
             >
-              Отмена
+              {t('actions.cancel')}
             </Button>
             <Button
               onClick={handleEditCategory}
@@ -357,10 +363,10 @@ export function ManageCategoriesPage({ onBack }: ManageCategoriesPageProps) {
               {actionLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Сохранение...
+                  {t('actions.saving')}
                 </>
               ) : (
-                "Сохранить"
+                t('actions.save')
               )}
             </Button>
           </DialogFooter>
@@ -376,9 +382,10 @@ interface CategoryItemProps {
   onEdit: (category: Category) => void;
   onDelete: (category: Category) => void;
   actionLoading: boolean;
+  t: (key: string, params?: any) => string;
 }
 
-function CategoryItem({ category, onEdit, onDelete, actionLoading }: CategoryItemProps) {
+function CategoryItem({ category, onEdit, onDelete, actionLoading, t }: CategoryItemProps) {
   return (
     <div className="flex items-center justify-between p-4 hover:bg-blue-50/50 transition-colors duration-200 border-b last:border-b-0 border-blue-100/50">
       <div className="flex items-center gap-3">
@@ -391,7 +398,7 @@ function CategoryItem({ category, onEdit, onDelete, actionLoading }: CategoryIte
         <div className="min-w-0 flex-1">
           <h3 className="font-medium text-slate-800 break-words">{category.name}</h3>
           <p className="text-xs text-slate-500">
-            {category.category_type === 'expense' ? 'Расход' : 'Доход'}
+            {category.category_type === 'expense' ? t('types.expense') : t('types.income')}
           </p>
         </div>
       </div>
@@ -423,26 +430,26 @@ function CategoryItem({ category, onEdit, onDelete, actionLoading }: CategoryIte
           <AlertDialogContent className="border-red-200 bg-gradient-to-br from-white to-red-50/30">
             <AlertDialogHeader>
               <AlertDialogTitle className="text-red-700">
-                Удалить категорию "{category.name}"?
+                {t('dialogs.deleteTitle', { name: category.name })}
               </AlertDialogTitle>
               <AlertDialogDescription className="text-red-600">
-                Это действие нельзя отменить. Категория будет удалена навсегда.
+                {t('dialogs.deleteDescription')}
                 {category.category_type === 'expense' && (
                   <p className="mt-2 text-sm">
-                    Если к этой категории привязаны транзакции, удаление будет невозможно.
+                    {t('dialogs.hasTransactionsWarning')}
                   </p>
                 )}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel className="border-red-300">
-                Отмена
+                {t('actions.cancel')}
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => onDelete(category)}
                 className="bg-red-600 hover:bg-red-700"
               >
-                Удалить
+                {t('actions.delete')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -464,26 +471,27 @@ interface CategoryFormProps {
     category_type: "income" | "expense";
     icon: string;
   }>>;
+  t: (key: string, params?: any) => string;
 }
 
-function CategoryForm({ formData, setFormData }: CategoryFormProps) {
+function CategoryForm({ formData, setFormData, t }: CategoryFormProps) {
   return (
     <div className="space-y-4">
       {/* Name */}
       <div className="space-y-2">
-        <Label htmlFor="category-name">Название *</Label>
+        <Label htmlFor="category-name">{t('fields.nameRequired')}</Label>
         <Input
           id="category-name"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          placeholder="Название категории"
+          placeholder={t('placeholders.categoryName')}
           className="border-blue-200 focus:border-blue-400"
         />
       </div>
 
       {/* Type */}
       <div className="space-y-2">
-        <Label>Тип категории *</Label>
+        <Label>{t('fields.typeRequired')}</Label>
         <div className="flex gap-2">
           <Button
             type="button"
@@ -496,7 +504,7 @@ function CategoryForm({ formData, setFormData }: CategoryFormProps) {
             onClick={() => setFormData({ ...formData, category_type: 'expense' })}
           >
             <TrendingDown className="w-4 h-4 mr-2" />
-            Расход
+            {t('types.expense')}
           </Button>
           <Button
             type="button"
@@ -509,20 +517,20 @@ function CategoryForm({ formData, setFormData }: CategoryFormProps) {
             onClick={() => setFormData({ ...formData, category_type: 'income' })}
           >
             <TrendingUp className="w-4 h-4 mr-2" />
-            Доход
+            {t('types.income')}
           </Button>
         </div>
       </div>
 
       {/* Icon */}
       <div className="space-y-2">
-        <Label htmlFor="category-icon">Иконка *</Label>
+        <Label htmlFor="category-icon">{t('fields.iconRequired')}</Label>
         <Select value={formData.icon} onValueChange={(value) => setFormData({ ...formData, icon: value })}>
           <SelectTrigger className="border-purple-200 focus:border-purple-400">
             <SelectValue>
               <div className="flex items-center gap-2">
                 <span className="text-xl">{formData.icon}</span>
-                <span>Иконка</span>
+                <span>{t('fields.icon')}</span>
               </div>
             </SelectValue>
           </SelectTrigger>

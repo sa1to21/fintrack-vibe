@@ -21,7 +21,17 @@
       "Bash(npm run build:*)",
       "Bash(echo \"OS: $OS\")",
       "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Add notification reminder system\n\nImplement complete notification system for daily spending reminders:\n\nBackend (Rails API):\n- Add notification_settings table with timezone support\n- Create NotificationSetting model with automatic scheduling\n- Add API endpoints (GET, POST/PATCH) for settings management\n- Implement rake task for sending reminders via Telegram\n- Auto-calculate next send time in UTC with timezone offset\n- Support custom days of week selection\n\nFrontend (React):\n- Create NotificationSettingsDialog component\n- Add notifications service with API integration\n- Implement auto-detection of user timezone\n- Add time picker and day-of-week selector\n- Integrate into Settings page\n\nFeatures:\n- Users can enable/disable daily reminders\n- Custom time selection (e.g., 20:00)\n- Choose specific days of week\n- Automatic timezone handling\n- Beautiful notification messages with balance and last activity\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(ruby test_send_now.rb:*)",
+      "Bash(pip install:*)",
+      "Bash(mkdir:*)",
+      "Bash(timeout:*)",
+      "Bash(ping:*)",
+      "Bash(cat:*)",
+      "Bash(cmd /c taskkill:*)",
+      "Bash(curl:*)",
+      "Bash(npm install:*)",
+      "Bash(git restore:*)"
     ],
     "deny": [],
     "ask": []

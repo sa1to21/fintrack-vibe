@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -26,13 +27,13 @@ interface NotificationSettingsDialogProps {
 }
 
 const DAYS_OF_WEEK = [
-  { value: 1, label: "Пн" },
-  { value: 2, label: "Вт" },
-  { value: 3, label: "Ср" },
-  { value: 4, label: "Чт" },
-  { value: 5, label: "Пт" },
-  { value: 6, label: "Сб" },
-  { value: 0, label: "Вс" },
+  { value: 1, labelKey: "notifications.days.mon" },
+  { value: 2, labelKey: "notifications.days.tue" },
+  { value: 3, labelKey: "notifications.days.wed" },
+  { value: 4, labelKey: "notifications.days.thu" },
+  { value: 5, labelKey: "notifications.days.fri" },
+  { value: 6, labelKey: "notifications.days.sat" },
+  { value: 0, labelKey: "notifications.days.sun" },
 ];
 
 // Генерируем опции для часов (0-23)
@@ -51,6 +52,7 @@ const MINUTE_OPTIONS = Array.from({ length: 12 }, (_, i) => {
 });
 
 export default function NotificationSettingsDialog({ isOpen, onClose }: NotificationSettingsDialogProps) {
+  const { t } = useTranslation('settings');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [settings, setSettings] = useState<NotificationSetting | null>(null);
@@ -82,7 +84,7 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
       setSelectedDays(data.days_of_week);
     } catch (error) {
       console.error('Failed to load notification settings:', error);
-      toast.error('Не удалось загрузить настройки');
+      toast.error(t('notifications.failedToLoad'));
     } finally {
       setIsLoading(false);
     }
@@ -99,7 +101,7 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
       if (prev.includes(day)) {
         // Не даём убрать последний день
         if (prev.length === 1) {
-          toast.error('Выберите хотя бы один день недели');
+          toast.error(t('notifications.selectAtLeastOneDay'));
           return prev;
         }
         return prev.filter(d => d !== day);
@@ -125,11 +127,11 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
         days_of_week: selectedDays,
       });
 
-      toast.success('Настройки уведомлений сохранены');
+      toast.success(t('notifications.saved'));
       onClose();
     } catch (error) {
       console.error('Failed to save notification settings:', error);
-      toast.error('Не удалось сохранить настройки');
+      toast.error(t('notifications.failedToSave'));
     } finally {
       setIsSaving(false);
     }
@@ -140,20 +142,20 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
       <DialogContent className="max-w-sm border-blue-200 bg-gradient-to-br from-white to-blue-50/30">
         <DialogHeader>
           <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            Настройки уведомлений
+            {t('notifications.title')}
           </DialogTitle>
           <DialogDescription className="text-slate-600">
-            Настройте ежедневные напоминания о внесении расходов
+            {t('notifications.description')}
           </DialogDescription>
         </DialogHeader>
 
         {isLoading ? (
-          <div className="py-8 text-center text-slate-500">Загрузка...</div>
+          <div className="py-8 text-center text-slate-500">{t('notifications.loading')}</div>
         ) : (
           <div className="space-y-6">
             {/* Включить/выключить */}
             <div className="flex items-center justify-between">
-              <Label>Получать напоминания</Label>
+              <Label>{t('notifications.enableReminders')}</Label>
               <Switch checked={enabled} onCheckedChange={setEnabled} />
             </div>
 
@@ -163,12 +165,12 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-blue-600" />
-                    Время напоминания
+                    {t('notifications.reminderTime')}
                   </Label>
                   <div className="flex gap-2">
                     <Select value={selectedHour} onValueChange={setSelectedHour}>
                       <SelectTrigger className="w-full border-blue-200 focus:border-blue-400">
-                        <SelectValue placeholder="ЧЧ" />
+                        <SelectValue placeholder={t('notifications.hourPlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
                         {HOUR_OPTIONS.map((option) => (
@@ -181,7 +183,7 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
                     <span className="flex items-center text-blue-400 font-medium">:</span>
                     <Select value={selectedMinute} onValueChange={setSelectedMinute}>
                       <SelectTrigger className="w-full border-blue-200 focus:border-blue-400">
-                        <SelectValue placeholder="ММ" />
+                        <SelectValue placeholder={t('notifications.minutePlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
                         {MINUTE_OPTIONS.map((option) => (
@@ -193,7 +195,7 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
                     </Select>
                   </div>
                   <p className="text-xs text-slate-500">
-                    Напоминание будет отправлено в ваше локальное время
+                    {t('notifications.localTimeNote')}
                   </p>
                 </div>
 
@@ -201,12 +203,12 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
                 <div className="space-y-3">
                   <Label className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-blue-600" />
-                    Дни недели
+                    {t('notifications.daysOfWeek')}
                   </Label>
                   <div className="flex flex-col items-center gap-2">
                     {/* Первая линия: 4 дня */}
                     <div className="flex gap-2">
-                      {DAYS_OF_WEEK.slice(0, 4).map(({ value, label }) => (
+                      {DAYS_OF_WEEK.slice(0, 4).map(({ value, labelKey }) => (
                         <button
                           key={value}
                           onClick={() => toggleDay(value)}
@@ -219,13 +221,13 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
                             }
                           `}
                         >
-                          {label}
+                          {t(labelKey)}
                         </button>
                       ))}
                     </div>
                     {/* Вторая линия: 3 дня */}
                     <div className="flex gap-2">
-                      {DAYS_OF_WEEK.slice(4).map(({ value, label }) => (
+                      {DAYS_OF_WEEK.slice(4).map(({ value, labelKey }) => (
                         <button
                           key={value}
                           onClick={() => toggleDay(value)}
@@ -238,7 +240,7 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
                             }
                           `}
                         >
-                          {label}
+                          {t(labelKey)}
                         </button>
                       ))}
                     </div>
@@ -255,14 +257,14 @@ export default function NotificationSettingsDialog({ isOpen, onClose }: Notifica
                 className="flex-1 border-blue-300"
                 disabled={isSaving}
               >
-                Отмена
+                {t('notifications.cancel')}
               </Button>
               <Button
                 onClick={handleSave}
                 className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                 disabled={isSaving}
               >
-                {isSaving ? 'Сохранение...' : 'Сохранить'}
+                {isSaving ? t('notifications.saving') : t('notifications.save')}
               </Button>
             </div>
           </div>

@@ -1,26 +1,64 @@
 {
   "title": "Categories",
   "manageCategories": "Manage Categories",
+  "categories": "Categories",
   "addCategory": "Add Category",
   "editCategory": "Edit Category",
   "deleteCategory": "Delete Category",
+  "newCategory": "New Category",
   "fields": {
     "name": "Name",
+    "nameRequired": "Name *",
     "type": "Type",
+    "typeRequired": "Category Type *",
     "icon": "Icon",
+    "iconRequired": "Icon *",
     "color": "Color"
+  },
+  "placeholders": {
+    "categoryName": "Category name"
   },
   "types": {
     "income": "Income",
     "expense": "Expense"
   },
+  "sections": {
+    "expenses": "Expenses ({count})",
+    "income": "Income ({count})",
+    "noExpenses": "No expense categories",
+    "noIncome": "No income categories"
+  },
+  "dialogs": {
+    "addDescription": "Create a new category to classify transactions",
+    "editDescription": "Change category parameters",
+    "deleteTitle": "Delete category \"{name}\"?",
+    "deleteDescription": "This action cannot be undone. The category will be deleted permanently.",
+    "hasTransactionsWarning": "If transactions are linked to this category, deletion will not be possible."
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "create": "Create",
+    "save": "Save",
+    "delete": "Delete",
+    "creating": "Creating...",
+    "saving": "Saving..."
+  },
   "messages": {
     "added": "Category added",
-    "updated": "Category updated",
-    "deleted": "Category deleted",
+    "created": "Category created!",
+    "updated": "Category updated!",
+    "deleted": "Category deleted!",
     "error": "Error saving category",
     "confirmDelete": "Are you sure you want to delete this category?",
     "hasTransactions": "Cannot delete category with transactions",
-    "systemCategory": "Cannot delete system category"
+    "systemCategory": "Cannot delete system category",
+    "enterName": "Enter category name",
+    "failedToLoad": "Failed to load categories",
+    "failedToCreate": "Failed to create category",
+    "failedToUpdate": "Failed to update category",
+    "failedToDelete": "Failed to delete category"
+  },
+  "loading": {
+    "categories": "Loading categories..."
   }
 }

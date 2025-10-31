@@ -39,5 +39,34 @@
     "EUR": "€",
     "GBP": "£",
     "GEL": "₾"
+  },
+  "welcome": {
+    "title": "WiseTrack",
+    "subtitle": "Управляй своими финансами в Telegram",
+    "features": {
+      "quickOperations": {
+        "title": "Быстрые операции",
+        "description": "Добавь транзакцию за секунды"
+      },
+      "achieveGoals": {
+        "title": "Достижение целей",
+        "description": "Планируйте и контролируйте бюджет"
+      }
+    },
+    "startButton": "Начать отслеживание",
+    "secureAndSimple": "Безопасно и просто в использовании"
+  },
+  "donate": {
+    "title": "Поддержать проект",
+    "description": "Проект развивается на донатной основе. Спасибо за вашу поддержку!",
+    "methods": {
+      "sbp": "СБП (Т-банк)",
+      "tbc": "TBC Bank IBAN (только GEL)",
+      "ton": "TON",
+      "usdt": "USDT (TRC20)"
+    },
+    "copy": "Скопировать",
+    "copied": "Скопировано",
+    "close": "Закрыть"
   }
 }

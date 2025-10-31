@@ -45,5 +45,32 @@
       "saturday": "Saturday",
       "sunday": "Sunday"
     }
+  },
+  "notifications": {
+    "title": "Notification Settings",
+    "description": "Configure daily expense reminders",
+    "loading": "Loading...",
+    "enableReminders": "Receive reminders",
+    "reminderTime": "Reminder time",
+    "hourPlaceholder": "HH",
+    "minutePlaceholder": "MM",
+    "localTimeNote": "Reminder will be sent in your local time",
+    "daysOfWeek": "Days of the week",
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "failedToLoad": "Failed to load settings",
+    "selectAtLeastOneDay": "Select at least one day of the week",
+    "saved": "Notification settings saved",
+    "failedToSave": "Failed to save settings"
   }
 }

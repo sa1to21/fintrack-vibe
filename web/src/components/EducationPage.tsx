@@ -4,78 +4,53 @@ import { BookOpen, Clock, Award, TrendingUp, PiggyBank, Shield, Target, Graduati
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export function EducationPage() {
+  const { t } = useTranslation('education');
+
   const courses = [
     {
       id: 1,
-      title: "Основы личного бюджета",
-      description: "Научитесь планировать доходы и расходы",
-      duration: "15 мин",
-      level: "Новичок",
+      titleKey: "courses.list.budgetBasics.title",
+      descriptionKey: "courses.list.budgetBasics.description",
+      duration: 15,
+      levelKey: "courses.level.beginner",
       icon: PiggyBank,
       progress: 0,
       color: "bg-blue-100 text-blue-600"
     },
     {
       id: 2,
-      title: "Стратегии накопления",
-      description: "Эффективные методы формирования сбережений",
-      duration: "20 мин",
-      level: "Новичок",
+      titleKey: "courses.list.savingStrategies.title",
+      descriptionKey: "courses.list.savingStrategies.description",
+      duration: 20,
+      levelKey: "courses.level.beginner",
       icon: Target,
       progress: 0,
       color: "bg-green-100 text-green-600"
     },
     {
       id: 3,
-      title: "Инвестиции для начинающих",
-      description: "Базовые принципы инвестирования",
-      duration: "25 мин",
-      level: "Средний",
+      titleKey: "courses.list.investmentBasics.title",
+      descriptionKey: "courses.list.investmentBasics.description",
+      duration: 25,
+      levelKey: "courses.level.intermediate",
       icon: TrendingUp,
       progress: 0,
       color: "bg-purple-100 text-purple-600"
     }
   ];
 
-  // All 7 tips that rotate daily
-  const allTips = [
-    {
-      title: "Отслеживайте все расходы",
-      description: "Записывайте каждую трату в течение месяца — это поможет найти «утечки» денег",
-      category: "Бюджетирование"
-    },
-    {
-      title: "Правило одной категории",
-      description: "Определите одну категорию расходов для сокращения каждый месяц",
-      category: "Бюджетирование"
-    },
-    {
-      title: "Экстренный фонд",
-      description: "Откладывайте 3-6 месячных расходов на случай непредвиденных ситуаций",
-      category: "Накопления"
-    },
-    {
-      title: "Сложный процент",
-      description: "Начинайте инвестировать как можно раньше, время — ваш лучший союзник",
-      category: "Инвестиции"
-    },
-    {
-      title: "Правило 24 часов",
-      description: "Перед крупной покупкой подождите сутки — это поможет избежать импульсивных трат",
-      category: "Расходы"
-    },
-    {
-      title: "Автоматизация сбережений",
-      description: "Настройте автоматический перевод части дохода на накопительный счёт сразу после зарплаты",
-      category: "Накопления"
-    },
-    {
-      title: "Диверсификация",
-      description: "Не держите все яйца в одной корзине — распределяйте активы между разными инструментами",
-      category: "Инвестиции"
-    }
+  // All 7 tips that rotate daily - using translation keys
+  const allTipKeys = [
+    "trackExpenses",
+    "oneCategory",
+    "emergencyFund",
+    "compoundInterest",
+    "wait24Hours",
+    "autoSavings",
+    "diversification"
   ];
 
   // Calculate day offset (0-6) based on current date
@@ -93,24 +68,23 @@ export function EducationPage() {
     const offset = getDayOffset();
     const tips = [];
     for (let i = 0; i < 3; i++) {
-      tips.push(allTips[(offset + i) % 7]);
+      tips.push(allTipKeys[(offset + i) % 7]);
     }
     return tips;
   };
 
-  const tips = getTodaysTips();
+  const tipKeys = getTodaysTips();
 
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case "Новичок":
-        return "bg-green-100 text-green-700";
-      case "Средний":
-        return "bg-yellow-100 text-yellow-700";
-      case "Продвинутый":
-        return "bg-red-100 text-red-700";
-      default:
-        return "bg-gray-100 text-gray-700";
+  const getLevelColor = (levelKey: string) => {
+    const level = t(levelKey);
+    if (level.includes("Beginner") || level.includes("Новичок")) {
+      return "bg-green-100 text-green-700";
+    } else if (level.includes("Intermediate") || level.includes("Средний")) {
+      return "bg-yellow-100 text-yellow-700";
+    } else if (level.includes("Advanced") || level.includes("Продвинутый")) {
+      return "bg-red-100 text-red-700";
     }
+    return "bg-gray-100 text-gray-700";
   };
 
   return (
@@ -125,7 +99,7 @@ export function EducationPage() {
         <div className="max-w-md mx-auto relative">
           <div className="flex items-center justify-center gap-2">
             <GraduationCap className="w-6 h-6 text-yellow-300" />
-            <h1 className="text-white font-medium">Финансовая грамотность</h1>
+            <h1 className="text-white font-medium">{t('title')}</h1>
           </div>
         </div>
       </OptimizedMotion>
@@ -133,13 +107,13 @@ export function EducationPage() {
       <div className="px-4 py-6 max-w-md mx-auto space-y-6 relative z-10">
         {/* Daily Tips - moved to top */}
         <div className="space-y-4">
-          <h2 className="font-medium text-foreground bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Советы дня</h2>
-          {tips.map((tip, index) => (
+          <h2 className="font-medium text-foreground bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{t('dailyTips')}</h2>
+          {tipKeys.map((tipKey, index) => (
             <OptimizedMotion key={index}>
               <Card className="border-blue-200 bg-gradient-to-br from-blue-50 via-white to-indigo-50 shadow-sm hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-medium text-slate-800">{tip.title}</h3>
+                    <h3 className="font-medium text-slate-800">{t(`tips.${tipKey}.title`)}</h3>
                     <Badge
                       variant="outline"
                       className={`text-xs border-blue-300 ${
@@ -148,11 +122,11 @@ export function EducationPage() {
                         'text-indigo-700 bg-indigo-100'
                       }`}
                     >
-                      {tip.category}
+                      {t(`tips.${tipKey}.category`)}
                     </Badge>
                   </div>
                   <p className="text-sm text-slate-600">
-                    {tip.description}
+                    {t(`tips.${tipKey}.description`)}
                   </p>
                 </CardContent>
               </Card>
@@ -168,9 +142,9 @@ export function EducationPage() {
                 <div className="w-16 h-16 mx-auto bg-gradient-to-br from-indigo-100 to-blue-200 rounded-full flex items-center justify-center mb-4 shadow-sm">
                   <GraduationCap className="w-8 h-8 text-indigo-600" />
                 </div>
-                <h3 className="font-medium text-indigo-700 mb-2">Скоро</h3>
+                <h3 className="font-medium text-indigo-700 mb-2">{t('comingSoon.title')}</h3>
                 <p className="text-sm text-indigo-600/70 mb-1">
-                  Обучающие курсы и интерактивные тесты
+                  {t('comingSoon.description')}
                 </p>
                 <motion.div
                   animate={{
@@ -183,7 +157,7 @@ export function EducationPage() {
                   }}
                 >
                   <p className="text-xs text-indigo-500">
-                    Следите за обновлениями
+                    {t('comingSoon.followUpdates')}
                   </p>
                 </motion.div>
               </div>
@@ -206,8 +180,8 @@ export function EducationPage() {
                       <Award className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-medium text-indigo-700">Ваш прогресс</h3>
-                      <p className="text-sm text-indigo-600/70">0 из 3 курсов завершено</p>
+                      <h3 className="font-medium text-indigo-700">{t('progress.title')}</h3>
+                      <p className="text-sm text-indigo-600/70">{t('progress.completed', { count: 0, total: 3 })}</p>
                       <div className="w-full bg-indigo-200 rounded-full h-2 mt-2 overflow-hidden">
                         <div className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full" style={{width: '0%'}} />
                       </div>
@@ -219,7 +193,7 @@ export function EducationPage() {
 
             {/* Courses */}
             <div className="space-y-4">
-              <h2 className="font-medium text-foreground bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Курсы</h2>
+              <h2 className="font-medium text-foreground bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{t('coursesTitle')}</h2>
               {courses.map((course, index) => {
                 const Icon = course.icon;
                 return (
@@ -235,25 +209,25 @@ export function EducationPage() {
                         </div>
                         <div className="flex-1">
                           <div className="flex items-start justify-between mb-2">
-                            <h3 className="font-medium text-slate-800">{course.title}</h3>
+                            <h3 className="font-medium text-slate-800">{t(course.titleKey)}</h3>
                             <Badge
                               variant="secondary"
-                              className={`${getLevelColor(course.level)} border shadow-sm`}
+                              className={`${getLevelColor(course.levelKey)} border shadow-sm`}
                             >
-                              {course.level}
+                              {t(course.levelKey)}
                             </Badge>
                           </div>
                           <p className="text-sm text-slate-600 mb-3">
-                            {course.description}
+                            {t(course.descriptionKey)}
                           </p>
                           <div className="flex items-center gap-4 text-xs text-slate-500">
                             <div className="flex items-center gap-1">
                               <Clock className="w-3 h-3" />
-                              <span>{course.duration}</span>
+                              <span>{course.duration} {t('courses.duration')}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <BookOpen className="w-3 h-3" />
-                              <span>Не начат</span>
+                              <span>{t('courses.notStarted')}</span>
                             </div>
                           </div>
                         </div>

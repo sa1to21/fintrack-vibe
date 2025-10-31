@@ -24,6 +24,7 @@ import transactionsService from "../services/transactions.service";
 import accountsService, { Account } from "../services/accounts.service";
 import { getAccountIconComponent } from "../utils/accountIcons";
 import { getCurrencySymbol } from "../constants/currencies";
+import { useTranslation } from "react-i18next";
 
 interface Transaction {
   id: string;
@@ -67,6 +68,7 @@ const accounts = [
 ];
 
 export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionPageProps) {
+  const { t } = useTranslation('transactions');
   const [type, setType] = useState<'income' | 'expense'>('expense');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
@@ -100,7 +102,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
           setApiCategories(categories);
         } else {
           console.error('[AddTransaction] Categories is not an array or empty:', categories);
-          toast.error('Не удалось загрузить категории. Попробуйте перезапустить приложение.');
+          toast.error(t('messages.failedToLoadCategories'));
         }
 
         if (Array.isArray(accounts) && accounts.length > 0) {
@@ -108,15 +110,15 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
           setAccount(accounts[0].id.toString());
         } else {
           console.error('[AddTransaction] Accounts is not an array or empty:', accounts);
-          toast.error('Не удалось загрузить счета. Попробуйте перезапустить приложение.');
+          toast.error(t('messages.failedToLoadAccounts'));
         }
       } catch (error: any) {
         console.error('[AddTransaction] Failed to load data:', error);
 
         if (error.response?.status === 401) {
-          toast.error('Ошибка авторизации. Перезапустите приложение.');
+          toast.error(t('messages.authError'));
         } else {
-          toast.error('Не удалось загрузить данные. Проверьте подключение к интернету.');
+          toast.error(t('messages.failedToLoadData'));
         }
       } finally {
         setLoading(false);
@@ -150,7 +152,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
     e.preventDefault();
 
     if (!amount || !category || !account) {
-      toast.error("Заполните все обязательные поля");
+      toast.error(t('messages.fillRequired'));
       return;
     }
 
@@ -197,7 +199,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
         setAccount('');
         setDescription('');
       } else {
-        toast.success(`${type === 'income' ? 'Доход' : 'Расход'} добавлен!`);
+        toast.success(type === 'income' ? t('messages.incomeAdded') : t('messages.expenseAdded'));
 
         // Reset form
         setAmount('');
@@ -215,7 +217,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
 
       // Проверяем, является ли ошибка связанной с недостатком средств
       if (error.response?.data?.error === 'Недостаточно средств') {
-        toast.error('Недостаточно средств на счете');
+        toast.error(t('messages.insufficientFunds'));
       } else if (error.response?.data?.error === 'Долговой счет не может иметь положительный баланс') {
         const details = error.response?.data?.details?.[0] || 'Долговой счет нельзя пополнить сверх нуля';
         toast.error(details, { duration: 5000 });
@@ -227,7 +229,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
           : 'Для погашения долга используйте перевод с обычного счета';
         toast.error(message, { duration: 8000 });
       } else {
-        toast.error('Не удалось сохранить транзакцию');
+        toast.error(t('messages.failedToSave'));
       }
     }
   }, [amount, category, account, type, description, currentCategories, onAddTransaction, onBack]);
@@ -237,17 +239,17 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
 
     try {
       await accountsService.delete(debtAccount.id);
-      toast.success(`Счёт задолженности "${debtAccount.name}" удалён`);
+      toast.success(t('messages.accountDeleted', { name: debtAccount.name }));
       setShowDebtDialog(false);
       onBack();
     } catch (error) {
       console.error('Failed to delete account:', error);
-      toast.error('Не удалось удалить счет');
+      toast.error(t('messages.failedToDeleteAccount'));
     }
   };
 
   const handleKeepDebtAccount = () => {
-    toast.success('Транзакция добавлена!');
+    toast.success(t('messages.added'));
     setShowDebtDialog(false);
     setTimeout(() => {
       onBack();
@@ -260,7 +262,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
       <div className="min-h-full flex items-center justify-center" style={{ background: 'var(--bg-page-dashboard)' }}>
         <div className="text-center space-y-4">
           <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
-          <p className="text-slate-600">Загрузка...</p>
+          <p className="text-slate-600">{t('loading')}</p>
         </div>
       </div>
     );
@@ -272,10 +274,10 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
       <div className="min-h-full flex items-center justify-center p-4" style={{ background: 'var(--bg-page-dashboard)' }}>
         <div className="text-center max-w-md">
           <div className="text-red-600 text-5xl mb-4">⚠️</div>
-          <h2 className="text-xl font-semibold text-slate-800 mb-2">Не удалось загрузить категории</h2>
-          <p className="text-slate-600 mb-4">Проверьте подключение к интернету и попробуйте снова</p>
+          <h2 className="text-xl font-semibold text-slate-800 mb-2">{t('errorLoadingCategories.title')}</h2>
+          <p className="text-slate-600 mb-4">{t('errorLoadingCategories.description')}</p>
           <Button onClick={() => window.location.reload()} className="bg-blue-600 hover:bg-blue-700">
-            Обновить страницу
+            {t('errorLoadingCategories.refresh')}
           </Button>
         </div>
       </div>
@@ -316,7 +318,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
           </LightMotion>
           <div className="flex items-center gap-2">
             <Plus className="w-6 h-6 text-yellow-300" />
-            <h1 className="font-medium text-white">Новая операция</h1>
+            <h1 className="font-medium text-white">{t('newTransaction')}</h1>
           </div>
           <div className="w-8" />
         </OptimizedMotion>
@@ -336,7 +338,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
               transition={{ duration: 0.4, delay: 0.2 }}
             >
               <CardTitle className="text-center bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Добавить операцию
+                {t('addTransaction')}
               </CardTitle>
             </OptimizedMotion>
           </CardHeader>
@@ -362,7 +364,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                   onClick={() => setType('expense')}
                 >
                   <Minus className="w-4 h-4 mr-2" />
-                  Расход
+                  {t('types.expense')}
                 </Button>
               </LightMotion>
               <LightMotion
@@ -379,7 +381,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                   onClick={() => setType('income')}
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Доход
+                  {t('types.income')}
                 </Button>
               </LightMotion>
             </OptimizedMotion>
@@ -392,7 +394,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 }}
               >
-                <Label htmlFor="amount" className="text-slate-700">Сумма *</Label>
+                <Label htmlFor="amount" className="text-slate-700">{t('fields.amount')} *</Label>
                 <div className="relative">
                   <OptimizedMotion
                     whileFocus={{ scale: 1.02 }}
@@ -420,7 +422,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                 transition={{ duration: 0.4, delay: 0.35 }}
               >
                 <Label htmlFor="category" className="text-slate-700">
-                  {type === 'expense' ? 'Категория *' : 'Источник дохода *'}
+                  {type === 'expense' ? t('fields.category') + ' *' : t('incomeSource')}
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
                   {currentCategories.map((cat, index) => {
@@ -467,11 +469,11 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.5 }}
               >
-                <Label htmlFor="account" className="text-slate-700">Счёт *</Label>
+                <Label htmlFor="account" className="text-slate-700">{t('fields.account')} *</Label>
                 <OptimizedMotion whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                   <Select value={account} onValueChange={setAccount}>
                     <SelectTrigger className="border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 bg-gradient-to-br from-white to-blue-50/30">
-                      <SelectValue placeholder="Выберите счёт" />
+                      <SelectValue placeholder={t('selectAccount')} />
                     </SelectTrigger>
                     <SelectContent>
                       {(apiAccounts.length > 0 ? apiAccounts : accounts).map((acc) => {
@@ -506,11 +508,11 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.55 }}
               >
-                <Label htmlFor="description" className="text-slate-700">Описание</Label>
+                <Label htmlFor="description" className="text-slate-700">{t('fields.description')}</Label>
                 <OptimizedMotion whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                   <Textarea
                     id="description"
-                    placeholder="Добавьте описание..."
+                    placeholder={t('descriptionPlaceholder')}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={3}
@@ -529,7 +531,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                   <span className="relative z-10 font-medium">
-                    Добавить {type === 'income' ? 'доход' : 'расход'}
+                    {type === 'income' ? t('addIncome') : t('addExpense')}
                   </span>
                 </Button>
               </LightMotion>
@@ -543,14 +545,14 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
         <AlertDialogContent className="bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm border-blue-200">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-              🎉 Задолженность полностью погашена!
+              {t('debtDialog.title')}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-slate-600 space-y-3 pt-2">
               <p>
-                Поздравляем! Вы полностью погасили задолженность по счёту <span className="font-semibold text-slate-800">"{debtAccount?.name}"</span>.
+                {t('debtDialog.congratulations', { name: debtAccount?.name })}
               </p>
               <p className="text-sm">
-                Хотите удалить этот счет из списка? Вы всегда сможете создать его снова при необходимости.
+                {t('debtDialog.deletePrompt')}
               </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -559,13 +561,13 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
               onClick={handleKeepDebtAccount}
               className="border-blue-200 text-slate-700 hover:bg-blue-50"
             >
-              Оставить счет
+              {t('debtDialog.keep')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteDebtAccount}
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
             >
-              Удалить счет
+              {t('debtDialog.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

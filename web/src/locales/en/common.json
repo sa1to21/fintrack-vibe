@@ -39,5 +39,34 @@
     "EUR": "€",
     "GBP": "£",
     "GEL": "₾"
+  },
+  "welcome": {
+    "title": "WiseTrack",
+    "subtitle": "Manage your finances in Telegram",
+    "features": {
+      "quickOperations": {
+        "title": "Quick Operations",
+        "description": "Add a transaction in seconds"
+      },
+      "achieveGoals": {
+        "title": "Achieve Goals",
+        "description": "Plan and control your budget"
+      }
+    },
+    "startButton": "Start Tracking",
+    "secureAndSimple": "Secure and easy to use"
+  },
+  "donate": {
+    "title": "Support the Project",
+    "description": "The project is developed on a donation basis. Thank you for your support!",
+    "methods": {
+      "sbp": "SBP (T-Bank)",
+      "tbc": "TBC Bank IBAN (GEL only)",
+      "ton": "TON",
+      "usdt": "USDT (TRC20)"
+    },
+    "copy": "Copy",
+    "copied": "Copied",
+    "close": "Close"
   }
 }

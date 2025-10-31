@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { DateRangePicker } from "./DateRangePicker";
 import { TrendingUp, TrendingDown, DollarSign, CalendarIcon, Filter, BarChart3, Sparkles, AlertCircle } from "./icons";
@@ -14,6 +15,7 @@ import analyticsService, {
 } from "../services/analytics.service";
 
 export function AnalyticsPage() {
+  const { t, i18n } = useTranslation('analytics');
   const [selectedPeriod, setSelectedPeriod] = useState('month');
   const [customRange, setCustomRange] = useState<{
     from: Date | undefined;
@@ -92,7 +94,7 @@ export function AnalyticsPage() {
       setDebtStats(debtStatsData);
     } catch (err) {
       console.error('Failed to load analytics:', err);
-      setError('Не удалось загрузить данные аналитики');
+      setError(t('error.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -120,21 +122,22 @@ export function AnalyticsPage() {
   const formatCurrency = (amount: number | string, currency: string = 'RUB') => {
     const symbol = getCurrencySymbol(currency);
     const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-    return `${numAmount.toLocaleString('ru-RU', {
+    const locale = i18n.language === 'ru' ? 'ru-RU' : 'en-US';
+    return `${numAmount.toLocaleString(locale, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     })} ${symbol}`;
   };
 
   const getPeriodLabel = (period: string) => {
-    const labels = {
-      week: 'За неделю',
-      month: 'За месяц',
-      '3months': 'За 3 месяца',
-      year: 'За год',
-      custom: 'За период',
+    const labels: Record<string, string> = {
+      week: t('period.week'),
+      month: t('period.month'),
+      '3months': t('period.threeMonths'),
+      year: t('period.year'),
+      custom: t('period.custom'),
     };
-    return labels[period as keyof typeof labels] || 'За месяц';
+    return labels[period] || t('period.month');
   };
 
   // Show loading or error state
@@ -143,7 +146,7 @@ export function AnalyticsPage() {
       <div className="min-h-full flex items-center justify-center" style={{ background: 'var(--bg-page-analytics)' }}>
         <div className="text-center">
           <div className="w-12 h-12 mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-blue-600">Загрузка аналитики...</p>
+          <p className="text-blue-600">{t('loading')}</p>
         </div>
       </div>
     );
@@ -154,12 +157,12 @@ export function AnalyticsPage() {
       <div className="min-h-full flex items-center justify-center p-4" style={{ background: 'var(--bg-page-analytics)' }}>
         <Card className="max-w-md w-full">
           <CardContent className="p-6 text-center">
-            <p className="text-red-600 mb-4">{error || 'Не удалось загрузить данные'}</p>
+            <p className="text-red-600 mb-4">{error || t('error.noData')}</p>
             <button
               onClick={loadAnalyticsData}
               className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
             >
-              Попробовать снова
+              {t('error.tryAgain')}
             </button>
           </CardContent>
         </Card>
@@ -195,7 +198,7 @@ export function AnalyticsPage() {
             transition={{ duration: 0.4, delay: 0.1 }}
           >
             <BarChart3 className="w-6 h-6 text-yellow-300" />
-            <h1 className="text-white font-medium">Аналитика</h1>
+            <h1 className="text-white font-medium">{t('title')}</h1>
           </OptimizedMotion>
           
           {/* Period Filter */}
@@ -239,7 +242,7 @@ export function AnalyticsPage() {
                     <TrendingUp className="w-4 h-4 text-emerald-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-emerald-600/70">Доходы</p>
+                    <p className="text-xs text-emerald-600/70">{t('income')}</p>
                     <p className="font-medium text-sm text-emerald-700">{formatCurrency(summary.income)}</p>
                   </div>
                 </div>
@@ -258,7 +261,7 @@ export function AnalyticsPage() {
                     <TrendingDown className="w-4 h-4 text-red-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-red-600/70">Расходы</p>
+                    <p className="text-xs text-red-600/70">{t('expenses')}</p>
                     <p className="font-medium text-sm text-red-700">{formatCurrency(summary.expenses)}</p>
                   </div>
                 </div>
@@ -277,9 +280,9 @@ export function AnalyticsPage() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span className="text-foreground font-medium">
-                  Расходы по категориям
+                  {t('expensesByCategory')}
                 </span>
-                <OptimizedMotion 
+                <OptimizedMotion
                   className="flex items-center gap-1 text-sm text-indigo-600/70"
                   whileHover={{ scale: 1.05 }}
                 >
@@ -290,7 +293,7 @@ export function AnalyticsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {categories.categories.length === 0 ? (
-                <p className="text-center text-slate-500 py-4">Нет расходов за выбранный период</p>
+                <p className="text-center text-slate-500 py-4">{t('noExpenses')}</p>
               ) : (
                 categories.categories.map((category, index) => (
                   <OptimizedMotion
@@ -341,7 +344,7 @@ export function AnalyticsPage() {
                     <BarChart3 className="w-4 h-4 text-blue-600" />
                   </div>
                   <span className="text-foreground font-medium">
-                    Сравнение с предыдущим периодом
+                    {t('comparison.title')}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -357,13 +360,13 @@ export function AnalyticsPage() {
                       <div className="w-8 h-8 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center shadow-sm">
                         <TrendingUp className="w-4 h-4 text-emerald-600" />
                       </div>
-                      <span className="text-xs text-emerald-600/70">Доходы</span>
+                      <span className="text-xs text-emerald-600/70">{t('income')}</span>
                     </div>
                     <p className="font-medium text-sm text-emerald-700">{formatCurrency(comparison.current.income)}</p>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="text-xs text-emerald-600/70">
-                      Предыдущий период: {formatCurrency(comparison.previous.income)}
+                      {t('comparison.previous')}: {formatCurrency(comparison.previous.income)}
                     </div>
                     {comparison.change.income_percent !== 0 && (
                       <OptimizedMotion
@@ -395,13 +398,13 @@ export function AnalyticsPage() {
                       <div className="w-8 h-8 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center shadow-sm">
                         <TrendingDown className="w-4 h-4 text-red-600" />
                       </div>
-                      <span className="text-xs text-red-600/70">Расходы</span>
+                      <span className="text-xs text-red-600/70">{t('expenses')}</span>
                     </div>
                     <p className="font-medium text-sm text-red-700">{formatCurrency(comparison.current.expenses)}</p>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="text-xs text-red-600/70">
-                      Предыдущий период: {formatCurrency(comparison.previous.expenses)}
+                      {t('comparison.previous')}: {formatCurrency(comparison.previous.expenses)}
                     </div>
                     {comparison.change.expenses_percent !== 0 && (
                       <OptimizedMotion
@@ -440,7 +443,7 @@ export function AnalyticsPage() {
                     <AlertCircle className="w-4 h-4 text-amber-700" />
                   </div>
                   <span className="text-foreground font-medium">
-                    Статистика по задолженностям
+                    {t('debts.title')}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -459,7 +462,7 @@ export function AnalyticsPage() {
                       transition={{ duration: 0.3, delay: 0.58 }}
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-slate-800">Общий прогресс</span>
+                        <span className="text-sm font-medium text-slate-800">{t('debts.progress')}</span>
                         <div className="text-right">
                           <div className="text-sm font-semibold text-amber-700">
                             {progressValue.toFixed(1)}%
@@ -528,7 +531,7 @@ export function AnalyticsPage() {
                     <Sparkles className="w-4 h-4 text-blue-600" />
                   </div>
                   <span className="text-foreground font-medium">
-                    Ваша финансовая статистика
+                    {t('insights.title')}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -544,7 +547,7 @@ export function AnalyticsPage() {
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">🏆</span>
-                        <span className="text-sm font-medium text-slate-800">Рекорд дня</span>
+                        <span className="text-sm font-medium text-slate-800">{t('insights.biggestExpense')}</span>
                       </div>
                       <div className="text-right">
                         <div className="text-sm font-medium text-slate-700">{formatCurrency(insights.biggest_expense.amount)}</div>
@@ -565,11 +568,11 @@ export function AnalyticsPage() {
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">📊</span>
-                        <span className="text-sm font-medium text-slate-800">Средний чек</span>
+                        <span className="text-sm font-medium text-slate-800">{t('insights.avgTransaction')}</span>
                       </div>
                       <div className="text-right">
                         <div className="text-sm font-medium text-slate-700">{formatCurrency(insights.avg_transaction)}</div>
-                        <div className="text-xs text-slate-500">{insights.total_transactions} {insights.total_transactions === 1 ? 'транзакция' : insights.total_transactions < 5 ? 'транзакции' : 'транзакций'}</div>
+                        <div className="text-xs text-slate-500">{insights.total_transactions} {insights.total_transactions === 1 ? t('insights.transactions.one') : insights.total_transactions < 5 ? t('insights.transactions.few') : t('insights.transactions.many')}</div>
                       </div>
                     </div>
                   </OptimizedMotion>
@@ -586,7 +589,7 @@ export function AnalyticsPage() {
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">🔥</span>
-                        <span className="text-sm font-medium text-slate-800">Самый активный день</span>
+                        <span className="text-sm font-medium text-slate-800">{t('insights.busiestDay')}</span>
                       </div>
                       <div className="text-right">
                         <div className="text-sm font-medium text-slate-700">{insights.busiest_day}</div>
@@ -610,7 +613,7 @@ export function AnalyticsPage() {
                       </div>
                       <div className="text-right">
                         <div className="text-sm font-medium text-slate-700">{insights.top_category.percentage}%</div>
-                        <div className="text-xs text-slate-500">от всех расходов</div>
+                        <div className="text-xs text-slate-500">{t('insights.topCategory')}</div>
                       </div>
                     </div>
                   </OptimizedMotion>

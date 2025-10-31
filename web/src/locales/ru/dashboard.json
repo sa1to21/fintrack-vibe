@@ -9,19 +9,26 @@
   "noTransactions": "Нет транзакций",
   "addFirstTransaction": "Добавьте вашу первую транзакцию",
   "perMonth": "за месяц",
-  "income": "Доход",
-  "expense": "Расход",
+  "income": "Доходы",
+  "expense": "Расходы",
   "defaultAccountName": "Основной счёт",
   "noCategory": "Без категории",
   "quickActions": {
+    "title": "Быстрые действия",
     "addTransaction": "Добавить операцию",
     "addIncome": "Добавить доход",
     "addExpense": "Добавить расход",
     "transfer": "Перевод"
   },
   "debtAccounts": {
-    "title": "Долговые счета",
+    "title": "Задолженности",
     "totalDebt": "Общая задолженность",
     "viewDetails": "Подробнее"
-  }
+  },
+  "all": "Все",
+  "showAllTransactions": "Показать все операции",
+  "noTransactionsYet": "Операций пока нет",
+  "addFirstOperation": "Добавить первую операцию",
+  "transfer": "Перевод",
+  "unknown": "Неизвестно"
 }

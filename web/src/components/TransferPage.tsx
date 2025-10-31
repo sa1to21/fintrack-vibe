@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
@@ -30,6 +31,7 @@ interface TransferPageProps {
 }
 
 export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
+  const { t } = useTranslation('transactions');
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [fromAccountId, setFromAccountId] = useState<string>("");
   const [toAccountId, setToAccountId] = useState<string>("");
@@ -51,17 +53,17 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
 
     try {
       await accountsService.delete(debtAccount.id);
-      toast.success(`Счёт задолженности "${debtAccount.name}" удалён`);
+      toast.success(t('messages.accountDeleted', { name: debtAccount.name }));
       setShowDebtDialog(false);
       onSuccess();
     } catch (error) {
       console.error('Failed to delete account:', error);
-      toast.error('Не удалось удалить счет');
+      toast.error(t('messages.failedToDeleteAccount'));
     }
   };
 
   const handleKeepDebtAccount = () => {
-    toast.success('Перевод выполнен успешно!');
+    toast.success(t('transfer.success'));
     setShowDebtDialog(false);
     onSuccess();
   };
@@ -76,7 +78,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
       setAccounts(data);
     } catch (error) {
       console.error('Failed to load accounts:', error);
-      toast.error('Не удалось загрузить счета');
+      toast.error(t('messages.failedToLoadAccounts'));
     } finally {
       setLoading(false);
     }
@@ -86,18 +88,18 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
     e.preventDefault();
 
     if (!fromAccountId || !toAccountId || !amount) {
-      toast.error('Заполните все поля');
+      toast.error(t('transfer.errors.fillAll'));
       return;
     }
 
     if (fromAccountId === toAccountId) {
-      toast.error('Выберите разные счета');
+      toast.error(t('transfer.errors.differentAccounts'));
       return;
     }
 
     const amountNum = parseFloat(amount);
     if (amountNum <= 0) {
-      toast.error('Сумма должна быть больше нуля');
+      toast.error(t('transfer.errors.positiveAmount'));
       return;
     }
 
@@ -107,7 +109,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
 
     if (fromAccount && toAccount && fromAccount.currency !== toAccount.currency) {
       toast.error(
-        `Перевод между разными валютами невозможен. Счета используют ${fromAccount.currency} и ${toAccount.currency}.`,
+        t('transfer.errors.differentCurrencies', { from: fromAccount.currency, to: toAccount.currency }),
         { duration: 5000 }
       );
       return;
@@ -128,24 +130,24 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
         setDebtAccount(result.debt_account);
         setShowDebtDialog(true);
       } else {
-        toast.success('Перевод выполнен успешно!');
+        toast.success(t('transfer.success'));
         onSuccess();
       }
     } catch (error: any) {
       console.error('Transfer failed:', error);
 
       if (error.response?.data?.error === 'Недостаточно средств') {
-        toast.error('Недостаточно средств на счете');
+        toast.error(t('transfer.errors.insufficientFunds'));
       } else if (error.response?.data?.error === 'Нельзя перевести на тот же счет') {
-        toast.error('Нельзя перевести на тот же счет');
+        toast.error(t('transfer.errors.sameAccount'));
       } else if (error.response?.data?.error === 'Перевод между разными валютами невозможен') {
-        const details = error.response?.data?.details?.[0] || 'Счета используют разные валюты';
+        const details = error.response?.data?.details?.[0] || t('transfer.errors.differentCurrencies');
         toast.error(details, { duration: 5000 });
       } else if (error.response?.data?.error === 'Долговой счет не может иметь положительный баланс') {
-        const details = error.response?.data?.details?.[0] || 'Долговой счет нельзя пополнить сверх нуля';
+        const details = error.response?.data?.details?.[0] || t('transfer.errors.debtPositiveBalanceDetail');
         toast.error(details, { duration: 5000 });
       } else {
-        toast.error('Не удалось выполнить перевод');
+        toast.error(t('transfer.errors.failed'));
       }
     } finally {
       setSubmitting(false);
@@ -168,7 +170,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
       <div className="min-h-full flex items-center justify-center" style={{ background: 'var(--bg-page-dashboard)' }}>
         <div className="text-center space-y-4">
           <Loader2 className="w-12 h-12 mx-auto text-blue-600 animate-spin" />
-          <p className="text-slate-600">Загрузка...</p>
+          <p className="text-slate-600">{t('loading')}</p>
         </div>
       </div>
     );
@@ -191,19 +193,19 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <h1 className="font-medium text-white">Перевод между счетами</h1>
+            <h1 className="font-medium text-white">{t('transfer.title')}</h1>
             <div className="w-8" />
           </div>
         </OptimizedMotion>
 
         <div className="p-4 max-w-md mx-auto mt-8 text-center">
           <ArrowRightLeft className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-          <h2 className="text-lg font-medium mb-2">Недостаточно счетов</h2>
+          <h2 className="text-lg font-medium mb-2">{t('transfer.insufficientAccounts')}</h2>
           <p className="text-gray-600 mb-4">
-            Для перевода между счетами необходимо минимум 2 счета
+            {t('transfer.insufficientAccountsDesc')}
           </p>
           <Button onClick={onBack} variant="outline">
-            Вернуться назад
+            {t('transfer.backButton')}
           </Button>
         </div>
       </div>
@@ -245,7 +247,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
           </OptimizedMotion>
           <div className="flex items-center gap-2">
             <ArrowRightLeft className="w-6 h-6 text-yellow-300" />
-            <h1 className="font-medium text-white">Перевод между счетами</h1>
+            <h1 className="font-medium text-white">{t('transfer.title')}</h1>
           </div>
           <div className="w-8" />
         </OptimizedMotion>
@@ -268,11 +270,11 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.25 }}
               >
-                <Label htmlFor="fromAccount" className="text-slate-700">Откуда *</Label>
+                <Label htmlFor="fromAccount" className="text-slate-700">{t('transfer.fromAccount')}</Label>
                 <OptimizedMotion whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                   <Select value={fromAccountId} onValueChange={setFromAccountId}>
                     <SelectTrigger className="border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 bg-gradient-to-br from-white to-blue-50/30">
-                      <SelectValue placeholder="Выберите счёт списания" />
+                      <SelectValue placeholder={t('transfer.selectFromAccount')} />
                     </SelectTrigger>
                     <SelectContent>
                       {accounts.map((account) => {
@@ -332,11 +334,11 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.35 }}
               >
-                <Label htmlFor="toAccount" className="text-slate-700">Куда *</Label>
+                <Label htmlFor="toAccount" className="text-slate-700">{t('transfer.toAccount')}</Label>
                 <OptimizedMotion whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                   <Select value={toAccountId} onValueChange={setToAccountId}>
                     <SelectTrigger className="border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 bg-gradient-to-br from-white to-blue-50/30">
-                      <SelectValue placeholder="Выберите счёт зачисления" />
+                      <SelectValue placeholder={t('transfer.selectToAccount')} />
                     </SelectTrigger>
                     <SelectContent>
                       {accounts
@@ -355,7 +357,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                                   </span>
                                 </div>
                                 <span className={`text-xs ${isDebt ? 'text-amber-600 font-medium' : 'text-muted-foreground'}`}>
-                                  {isDebt ? `Задолженность: ${formatCurrency(Math.abs(parseFloat(account.balance.toString())), account.currency)}` : formatCurrency(parseFloat(account.balance.toString()), account.currency)}
+                                  {isDebt ? t('transfer.debt.label', { amount: formatCurrency(Math.abs(parseFloat(account.balance.toString())), account.currency) }) : formatCurrency(parseFloat(account.balance.toString()), account.currency)}
                                 </span>
                               </div>
                             </SelectItem>
@@ -373,7 +375,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.4 }}
               >
-                <Label htmlFor="amount" className="text-slate-700">Сумма перевода *</Label>
+                <Label htmlFor="amount" className="text-slate-700">{t('transfer.amount')}</Label>
                 <div className="relative">
                   <OptimizedMotion
                     whileFocus={{ scale: 1.02 }}
@@ -400,11 +402,11 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.45 }}
               >
-                <Label htmlFor="description" className="text-slate-700">Описание (опционально)</Label>
+                <Label htmlFor="description" className="text-slate-700">{t('transfer.description')}</Label>
                 <OptimizedMotion whileFocus={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
                   <Textarea
                     id="description"
-                    placeholder="Добавьте описание перевода..."
+                    placeholder={t('transfer.descriptionPlaceholder')}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={3}
@@ -432,7 +434,7 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
                   />
                   <ArrowRightLeft className="w-5 h-5 mr-2 relative z-10" />
                   <span className="relative z-10 font-medium">
-                    {submitting ? 'Выполняем перевод...' : 'Выполнить перевод'}
+                    {submitting ? t('transfer.submitting') : t('transfer.submit')}
                   </span>
                 </Button>
               </OptimizedMotion>
@@ -446,14 +448,14 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
         <AlertDialogContent className="bg-gradient-to-br from-white to-blue-50/30 backdrop-blur-sm border-blue-200">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-              🎉 Задолженность полностью погашена!
+              {t('debtDialog.title')}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-slate-600 space-y-3 pt-2">
               <p>
-                Поздравляем! Вы полностью погасили задолженность по счёту <span className="font-semibold text-slate-800">"{debtAccount?.name}"</span>.
+                {t('debtDialog.congratulations', { name: debtAccount?.name })}
               </p>
               <p className="text-sm">
-                Хотите удалить этот счет из списка? Вы всегда сможете создать его снова при необходимости.
+                {t('debtDialog.deletePrompt')}
               </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -462,13 +464,13 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
               onClick={handleKeepDebtAccount}
               className="border-blue-200 text-slate-700 hover:bg-blue-50"
             >
-              Оставить счет
+              {t('debtDialog.keep')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteDebtAccount}
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
             >
-              Удалить счет
+              {t('debtDialog.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
