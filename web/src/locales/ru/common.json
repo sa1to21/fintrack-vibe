@@ -16,7 +16,8 @@
     "add": "Добавить",
     "submit": "Отправить",
     "continue": "Продолжить",
-    "getStarted": "Начать"
+    "getStarted": "Начать",
+    "all": "Все"
   },
   "common": {
     "loading": "Загрузка...",

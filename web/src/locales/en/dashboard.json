@@ -4,13 +4,24 @@
   "totalBalance": "Total Balance",
   "accounts": "Accounts",
   "recentTransactions": "Recent Transactions",
+  "thisMonth": "This Month",
   "viewAll": "View All",
   "noTransactions": "No transactions",
   "addFirstTransaction": "Add your first transaction",
+  "perMonth": "per month",
+  "income": "Income",
+  "expense": "Expense",
+  "defaultAccountName": "Main Account",
+  "noCategory": "No Category",
   "quickActions": {
     "addTransaction": "Add Transaction",
     "addIncome": "Add Income",
     "addExpense": "Add Expense",
-    "transfer": "Transfer Between Accounts"
+    "transfer": "Transfer"
+  },
+  "debtAccounts": {
+    "title": "Debt Accounts",
+    "totalDebt": "Total Debt",
+    "viewDetails": "Details"
   }
 }

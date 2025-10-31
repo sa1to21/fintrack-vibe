@@ -4,13 +4,24 @@
   "totalBalance": "Общий баланс",
   "accounts": "Счета",
   "recentTransactions": "Последние операции",
+  "thisMonth": "Этот месяц",
   "viewAll": "Смотреть все",
   "noTransactions": "Нет транзакций",
   "addFirstTransaction": "Добавьте вашу первую транзакцию",
+  "perMonth": "за месяц",
+  "income": "Доход",
+  "expense": "Расход",
+  "defaultAccountName": "Основной счёт",
+  "noCategory": "Без категории",
   "quickActions": {
     "addTransaction": "Добавить операцию",
     "addIncome": "Добавить доход",
     "addExpense": "Добавить расход",
-    "transfer": "Перевод между счетами"
+    "transfer": "Перевод"
+  },
+  "debtAccounts": {
+    "title": "Долговые счета",
+    "totalDebt": "Общая задолженность",
+    "viewDetails": "Подробнее"
   }
 }

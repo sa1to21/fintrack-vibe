@@ -15,6 +15,7 @@ import { useTelegramAuth } from "../contexts/TelegramAuthContext";
 import logo from "../assets/logo.png";
 import logoWhite from "../assets/logo-white.png";
 import whiteOwl from "../assets/owl-white.png";
+import { useTranslation } from "react-i18next";
 
 interface Account {
   id: string;
@@ -53,6 +54,7 @@ interface DashboardPageProps {
 
 export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTransactions, onTransactionClick, onTransfer }: DashboardPageProps) {
   const { theme } = useTelegramAuth();
+  const { t } = useTranslation('dashboard');
   const [showBalance, setShowBalance] = useState(true);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -300,7 +302,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.15 }}
           >
-            <p className="text-white/80 text-sm mb-1">Общий баланс</p>
+            <p className="text-white/80 text-sm mb-1">{t('totalBalance')}</p>
             {showBalance ? (
               <OptimizedMotion
                 className="space-y-1 mb-2"
@@ -342,7 +344,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   {showBalance ? formatCurrency(Math.abs(monthlyChange), baseCurrency) : "• • •"}
                 </span>
               </div>
-              <span className="text-white/60 text-xs">за месяц</span>
+              <span className="text-white/60 text-xs">{t('perMonth')}</span>
             </div>
           </OptimizedMotion>
 
@@ -424,7 +426,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 <Plus className="w-5 h-5 relative z-10" />
-                <span className="text-sm relative z-10">Добавить операцию</span>
+                <span className="text-sm relative z-10">{t('quickActions.addTransaction')}</span>
               </Button>
             </LightMotion>
             <div className="grid grid-cols-2 gap-3">
@@ -439,7 +441,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                     className="w-full border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400 p-4 h-auto flex-col gap-2 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ArrowRightLeft className="w-5 h-5" />
-                    <span className="text-sm">Перевод</span>
+                    <span className="text-sm">{t('quickActions.transfer')}</span>
                   </Button>
                 </LightMotion>
               )}
@@ -452,7 +454,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
                   className="w-full border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400 p-4 h-auto flex-col gap-2 shadow-sm hover:shadow-md transition-all duration-300"
                 >
                   <Wallet className="w-5 h-5" />
-                  <span className="text-sm">Счета</span>
+                  <span className="text-sm">{t('accounts')}</span>
                 </Button>
               </LightMotion>
             </div>
@@ -467,7 +469,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           transition={{ duration: 0.4, delay: 0.45 }}
         >
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-medium text-foreground">Этот месяц</h2>
+            <h2 className="font-medium text-foreground">{t('thisMonth')}</h2>
             <LightMotion whileTap={{ scale: 0.95 }}>
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200">
                 <CalendarIcon className="w-4 h-4 mr-1" />
@@ -529,7 +531,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
           transition={{ duration: 0.4, delay: 0.5 }}
         >
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-medium text-foreground">Последние операции</h2>
+            <h2 className="font-medium text-foreground">{t('recentTransactions')}</h2>
             <LightMotion whileTap={{ scale: 0.95 }}>
               <Button
                 onClick={onViewAllTransactions}

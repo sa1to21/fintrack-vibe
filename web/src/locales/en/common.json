@@ -16,7 +16,8 @@
     "add": "Add",
     "submit": "Submit",
     "continue": "Continue",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "all": "All"
   },
   "common": {
     "loading": "Loading...",
