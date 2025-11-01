@@ -100,7 +100,50 @@ export function AnalyticsPage() {
       ]);
 
       setSummary(summaryData);
-      setCategories(categoriesData);
+      const filteredCategories = (() => {
+        const transferNames = new Set(['перевод', 'transfer']);
+        const cleaned = categoriesData.categories.filter((category) => {
+          const normalized = category.name?.trim().toLowerCase() || '';
+          return !transferNames.has(normalized);
+        });
+
+        if (cleaned.length === categoriesData.categories.length) {
+          return categoriesData;
+        }
+
+        const total = cleaned.reduce((sum, category) => sum + parseFloat(category.amount), 0);
+        let recalculated = cleaned.map((category) => {
+          const amount = parseFloat(category.amount);
+          const percentage = total > 0 ? Math.round((amount / total) * 100) : 0;
+          return {
+            ...category,
+            percentage,
+          };
+        });
+
+        const percentageSum = recalculated.reduce((sum, category) => sum + category.percentage, 0);
+        if (percentageSum !== 100 && recalculated.length > 0 && total > 0) {
+          const diff = 100 - percentageSum;
+          const maxIndex = recalculated.reduce(
+            (maxIdx, category, idx, arr) =>
+              category.percentage > arr[maxIdx].percentage ? idx : maxIdx,
+            0,
+          );
+          recalculated = recalculated.map((category, idx) =>
+            idx === maxIndex
+              ? { ...category, percentage: Math.max(0, category.percentage + diff) }
+              : category,
+          );
+        }
+
+        return {
+          ...categoriesData,
+          categories: recalculated,
+          total_expenses: total.toString(),
+        };
+      })();
+
+      setCategories(filteredCategories);
       setComparison(comparisonData);
       setInsights(insightsData);
       setDebtStats(debtStatsData);
