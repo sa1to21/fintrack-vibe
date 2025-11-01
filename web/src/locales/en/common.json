@@ -43,7 +43,7 @@
     "ranges": {
       "all": "All time",
       "week": "Week",
-      "month": "Month",
+      "month": "This month",
       "threeMonths": "3 months",
       "year": "Year",
       "custom": "Custom range"
@@ -51,7 +51,7 @@
     "short": {
       "all": "All",
       "week": "7d",
-      "month": "30d",
+      "month": "This month",
       "threeMonths": "90d",
       "year": "365d",
       "custom": "Range"

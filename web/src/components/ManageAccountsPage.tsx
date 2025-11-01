@@ -198,7 +198,8 @@ function SortableAccountItem({ account, accounts, formatCurrency, openBalanceDia
 }
 
 export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
-  const { t } = useTranslation('accounts');
+  const { t, i18n } = useTranslation('accounts');
+  const dateInputLang = i18n.language?.split('-')[0] === 'ru' ? 'ru' : 'en';
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -689,13 +690,14 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="debt-due-date">{t('debt.dueDate')}</Label>
-                      <Input
-                        id="debt-due-date"
-                        type="date"
-                        value={debtDueDate}
-                        onChange={(e) => setDebtDueDate(e.target.value)}
-                        className="border-amber-200 focus:border-amber-400"
-                      />
+                    <Input
+                      id="debt-due-date"
+                      type="date"
+                      value={debtDueDate}
+                      onChange={(e) => setDebtDueDate(e.target.value)}
+                      className="border-amber-200 focus:border-amber-400"
+                      lang={dateInputLang}
+                    />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="debt-notes">{t('debt.notes')}</Label>
