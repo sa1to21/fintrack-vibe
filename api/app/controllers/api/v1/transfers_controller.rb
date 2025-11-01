@@ -234,24 +234,45 @@ module Api
       end
 
       def get_transfer_category
-        # Находим или создаем категорию "Перевод"
-        current_user.categories.find_or_create_by!(
+        # Ensure the system category "Перевод" exists and is configured correctly
+        current_user.categories.find_or_initialize_by(
           name: 'Перевод',
           category_type: 'expense'
-        ) do |category|
-          category.icon = '🔄'
+        ).tap do |category|
+          category.icon = '🔄' if category.icon.blank?
           category.is_system = true
+          category.save! if category.changed?
         end
       end
 
       def get_debt_repayment_category
-        # Находим или создаем категорию "Погашение задолженности"
-        current_user.categories.find_or_create_by!(
+        # Ensure the system category for debt repayments is consistent even for legacy data
+        category = current_user.categories.find_by(
           name: 'Погашение задолженности',
           category_type: 'expense'
-        ) do |category|
-          category.icon = '💳'
-          category.is_system = true
+        )
+
+        unless category
+          legacy = current_user.categories.find_by(
+            name: 'Погашение долга',
+            category_type: 'expense'
+          )
+
+          if legacy
+            # Reuse legacy record by renaming it to the canonical value
+            legacy.update!(
+              name: 'Погашение задолженности',
+              icon: legacy.icon.presence || '💳'
+            )
+            category = legacy
+          end
+        end
+
+        (category || current_user.categories.new(category_type: 'expense')).tap do |cat|
+          cat.name = 'Погашение задолженности'
+          cat.icon = '💳' if cat.icon.blank?
+          cat.is_system = true
+          cat.save! if cat.changed? || cat.new_record?
         end
       end
     end

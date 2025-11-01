@@ -23,8 +23,8 @@
     "expense": "Расход"
   },
   "sections": {
-    "expenses": "Расходы ({count})",
-    "income": "Доходы ({count})",
+    "expenses": "Расходы ({{count}})",
+    "income": "Доходы ({{count}})",
     "noExpenses": "Нет категорий расходов",
     "noIncome": "Нет категорий доходов"
   },

@@ -23,8 +23,8 @@
     "expense": "Expense"
   },
   "sections": {
-    "expenses": "Expenses ({count})",
-    "income": "Income ({count})",
+    "expenses": "Expenses ({{count}})",
+    "income": "Income ({{count}})",
     "noExpenses": "No expense categories",
     "noIncome": "No income categories"
   },
