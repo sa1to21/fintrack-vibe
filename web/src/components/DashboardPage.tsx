@@ -54,7 +54,7 @@ interface DashboardPageProps {
 
 export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTransactions, onTransactionClick, onTransfer }: DashboardPageProps) {
   const { theme } = useTelegramAuth();
-  const { t } = useTranslation('dashboard');
+  const { t, i18n } = useTranslation('dashboard');
   const [showBalance, setShowBalance] = useState(true);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -248,14 +248,15 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
 
     // Получаем название текущего месяца
     const currentDate = new Date();
-    const monthName = currentDate.toLocaleDateString('ru-RU', { month: 'long' });
+    const locale = (i18n.language || 'en').startsWith('ru') ? 'ru-RU' : 'en-US';
+    const monthName = currentDate.toLocaleDateString(locale, { month: 'long' });
     const capitalizedMonthName = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
     return {
       balancesByCurrency: balances,
       currentMonthName: capitalizedMonthName
     };
-  }, [accounts]);
+  }, [accounts, i18n.language]);
 
   // Get monthly stats from API or use defaults
   const monthlyIncome = monthlyStats ? parseFloat(monthlyStats.monthly_income) : 0;
