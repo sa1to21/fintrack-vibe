@@ -452,7 +452,7 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
                               </div>
                               <div className="min-w-0 flex-1">
                                 <h4 className="font-medium text-sm truncate">
-                                  {transaction.type === 'transfer' ? t('transfer') : transaction.categoryName}
+                                  {transaction.type === 'transfer' ? t('types.transfer') : transaction.categoryName}
                                 </h4>
                                 {transaction.type !== 'transfer' && (
                                   <p className="text-xs text-muted-foreground truncate">

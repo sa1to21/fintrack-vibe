@@ -115,7 +115,7 @@
   "onlyExpense": "Expenses only",
   "onlyTransfers": "Transfers only",
   "allAccounts": "All accounts",
-  "foundTransactions": "Transactions found: {count}",
+  "foundTransactions": "Transactions found: {{count}}",
   "noTransactions": "No transactions found",
   "tryChangeFilters": "Try changing the search filters",
   "loadingTransactions": "Loading transactions...",
