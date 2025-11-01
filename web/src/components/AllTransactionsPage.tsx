@@ -230,7 +230,12 @@ export function AllTransactionsPage({ onBack, onTransactionClick }: AllTransacti
       const matchesSearch = transaction.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            transaction.categoryName.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesType = selectedType === 'all' || transaction.type === selectedType;
-      const matchesAccount = selectedAccount === 'all' || transaction.accountId === selectedAccount;
+      const matchesAccount = (() => {
+        if (selectedAccount === 'all') return true;
+        if (transaction.accountId === selectedAccount) return true;
+        if (transaction.type === 'transfer' && transaction.toAccountId === selectedAccount) return true;
+        return false;
+      })();
 
       // Фильтр по дате (только если dateRange не null)
       let matchesDate = true;
