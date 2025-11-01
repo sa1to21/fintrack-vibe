@@ -6,6 +6,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from "./ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
+import { DatePicker } from "./ui/date-picker";
 import {
   ArrowLeft,
   Plus,
@@ -49,6 +50,7 @@ import { CURRENCIES, DEFAULT_CURRENCY, getCurrencySymbol } from "../constants/cu
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Checkbox } from "./ui/checkbox";
 import { Textarea } from "./ui/textarea";
+import { enUS, ru } from "date-fns/locale";
 
 interface ManageAccountsPageProps {
   onBack: () => void;
@@ -199,7 +201,9 @@ function SortableAccountItem({ account, accounts, formatCurrency, openBalanceDia
 
 export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const { t, i18n } = useTranslation('accounts');
-  const dateInputLang = (i18n.language || 'en').startsWith('ru') ? 'ru-RU' : 'en-US';
+  const isRussian = (i18n.language || 'en').startsWith('ru');
+  const dateDisplayLocale = isRussian ? 'ru-RU' : 'en-US';
+  const calendarLocale = isRussian ? ru : enUS;
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -690,15 +694,15 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="debt-due-date">{t('debt.dueDate')}</Label>
-                    <Input
-                      key={dateInputLang}
-                      id="debt-due-date"
-                      type="date"
-                      value={debtDueDate}
-                      onChange={(e) => setDebtDueDate(e.target.value)}
-                      className="border-amber-200 focus:border-amber-400"
-                      lang={dateInputLang}
-                    />
+                      <DatePicker
+                        id="debt-due-date"
+                        value={debtDueDate}
+                        onChange={setDebtDueDate}
+                        placeholder={t('messages.enterDueDate')}
+                        displayLocale={dateDisplayLocale}
+                        calendarLocale={calendarLocale}
+                        className="h-10 border-amber-200 focus-visible:ring-amber-400/70 focus-visible:ring-offset-0"
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="debt-notes">{t('debt.notes')}</Label>
