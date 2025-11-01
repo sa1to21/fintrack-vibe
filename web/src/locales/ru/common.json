@@ -33,6 +33,36 @@
     "total": "Всего",
     "balance": "Баланс"
   },
+  "dateRangePicker": {
+    "quickSelect": "Быстрый выбор",
+    "selectPeriod": "Выбрать период",
+    "selectRange": "Выберите диапазон",
+    "back": "Назад",
+    "apply": "Применить",
+    "placeholder": "Период",
+    "ranges": {
+      "all": "Всё время",
+      "week": "Неделя",
+      "month": "Месяц",
+      "threeMonths": "3 месяца",
+      "year": "Год",
+      "custom": "Выбрать период"
+    },
+    "short": {
+      "all": "Всё",
+      "week": "7 дн",
+      "month": "30 дн",
+      "threeMonths": "90 дн",
+      "year": "365 дн",
+      "custom": "Период"
+    },
+    "rangeDisplay": {
+      "between": "{{from}} — {{to}}",
+      "from": "С {{date}}",
+      "single": "{{date}}",
+      "placeholder": "Выберите период"
+    }
+  },
   "currencies": {
     "RUB": "₽",
     "USD": "$",

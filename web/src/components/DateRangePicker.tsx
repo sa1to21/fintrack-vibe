@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { enUS, ru } from "date-fns/locale";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Badge } from "./ui/badge";
-import { CalendarIcon, ChevronDown } from "./icons";
+import { CalendarIcon } from "./icons";
 
 interface DateRangePickerProps {
   selectedPeriod: string;
@@ -19,23 +21,50 @@ export function DateRangePicker({
   selectedPeriod,
   onPeriodChange,
   customRange,
-  onCustomRangeChange
+  onCustomRangeChange,
 }: DateRangePickerProps) {
+  const { t, i18n } = useTranslation("common");
   const [isOpen, setIsOpen] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [tempRange, setTempRange] = useState(customRange);
 
-  const predefinedPeriods = [
-    { id: 'all', label: 'Всё время', shortLabel: 'Всё' },
-    { id: 'week', label: 'Неделя', shortLabel: '7 дн' },
-    { id: 'month', label: 'Месяц', shortLabel: '30 дн' },
-    { id: '3months', label: '3 месяца', shortLabel: '90 дн' },
-    { id: 'year', label: 'Год', shortLabel: '365 дн' },
-    { id: 'custom', label: 'Выбрать период', shortLabel: 'Период' },
-  ];
+  useEffect(() => {
+    setTempRange(customRange);
+  }, [customRange]);
+
+  const locale = i18n.language === "ru" ? "ru-RU" : "en-US";
+  const calendarLocale = i18n.language === "ru" ? ru : enUS;
+
+  const predefinedPeriods = useMemo(
+    () => [
+      { id: "all", label: t("dateRangePicker.ranges.all"), shortLabel: t("dateRangePicker.short.all") },
+      { id: "week", label: t("dateRangePicker.ranges.week"), shortLabel: t("dateRangePicker.short.week") },
+      { id: "month", label: t("dateRangePicker.ranges.month"), shortLabel: t("dateRangePicker.short.month") },
+      {
+        id: "3months",
+        label: t("dateRangePicker.ranges.threeMonths"),
+        shortLabel: t("dateRangePicker.short.threeMonths"),
+      },
+      { id: "year", label: t("dateRangePicker.ranges.year"), shortLabel: t("dateRangePicker.short.year") },
+      { id: "custom", label: t("dateRangePicker.ranges.custom"), shortLabel: t("dateRangePicker.short.custom") },
+    ],
+    [i18n.language, t],
+  );
+
+  const formatDate = (date?: Date, includeYear = false) => {
+    if (!date) {
+      return "";
+    }
+
+    return date.toLocaleDateString(locale, {
+      day: "numeric",
+      month: "short",
+      ...(includeYear ? { year: "numeric" } : {}),
+    });
+  };
 
   const handlePeriodSelect = (periodId: string) => {
-    if (periodId === 'custom') {
+    if (periodId === "custom") {
       setShowCalendar(true);
     } else {
       onPeriodChange(periodId);
@@ -49,31 +78,57 @@ export function DateRangePicker({
   };
 
   const applyCustomRange = () => {
-    if (tempRange && onCustomRangeChange) {
+    if (tempRange?.from && onCustomRangeChange) {
       onCustomRangeChange(tempRange);
-      onPeriodChange('custom');
+      onPeriodChange("custom");
     }
     setShowCalendar(false);
     setIsOpen(false);
   };
 
   const getDisplayText = () => {
-    if (selectedPeriod === 'custom' && customRange?.from) {
+    if (selectedPeriod === "custom" && customRange?.from) {
       if (customRange.to) {
-        return `${customRange.from.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} - ${customRange.to.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}`;
+        return t("dateRangePicker.rangeDisplay.between", {
+          from: formatDate(customRange.from, false),
+          to: formatDate(customRange.to, true),
+        });
       }
-      return customRange.from.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
+
+      return t("dateRangePicker.rangeDisplay.from", {
+        date: formatDate(customRange.from, true),
+      });
     }
-    
-    const period = predefinedPeriods.find(p => p.id === selectedPeriod);
-    return period?.shortLabel || 'Период';
+
+    const period = predefinedPeriods.find((p) => p.id === selectedPeriod);
+    return period?.shortLabel || t("dateRangePicker.placeholder");
+  };
+
+  const renderSelectedRange = () => {
+    if (!tempRange?.from) {
+      return t("dateRangePicker.rangeDisplay.placeholder");
+    }
+
+    if (tempRange.to) {
+      return t("dateRangePicker.rangeDisplay.between", {
+        from: formatDate(tempRange.from, false),
+        to: formatDate(tempRange.to, true),
+      });
+    }
+
+    return t("dateRangePicker.rangeDisplay.from", {
+      date: formatDate(tempRange.from, true),
+    });
   };
 
   return (
-    <Popover open={isOpen} onOpenChange={(open) => {
-      setIsOpen(open);
-      if (!open) setShowCalendar(false);
-    }}>
+    <Popover
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) setShowCalendar(false);
+      }}
+    >
       <PopoverTrigger asChild>
         <Button variant="outline" className="justify-center min-w-[120px] w-full">
           <span className="flex items-center gap-2">
@@ -85,9 +140,8 @@ export function DateRangePicker({
       <PopoverContent className="w-auto p-0 max-h-[500px] overflow-y-auto" align="center">
         <div className="p-4">
           {!showCalendar ? (
-            // Показываем только кнопки периодов
             <div className="space-y-3">
-              <h4 className="font-medium text-sm">Быстрый выбор</h4>
+              <h4 className="font-medium text-sm">{t("dateRangePicker.quickSelect")}</h4>
               <div className="flex flex-wrap gap-2">
                 {predefinedPeriods.slice(0, -1).map((period) => (
                   <Badge
@@ -101,27 +155,18 @@ export function DateRangePicker({
                 ))}
               </div>
               <div className="pt-2 border-t">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => setShowCalendar(true)}
-                >
+                <Button variant="outline" className="w-full" onClick={() => setShowCalendar(true)}>
                   <CalendarIcon className="w-4 h-4 mr-2" />
-                  Выбрать период
+                  {t("dateRangePicker.selectPeriod")}
                 </Button>
               </div>
             </div>
           ) : (
-            // Показываем календарь
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="font-medium text-sm">Выберите диапазон</h4>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowCalendar(false)}
-                >
-                  Назад
+                <h4 className="font-medium text-sm">{t("dateRangePicker.selectRange")}</h4>
+                <Button variant="ghost" size="sm" onClick={() => setShowCalendar(false)}>
+                  {t("dateRangePicker.back")}
                 </Button>
               </div>
               <Calendar
@@ -131,23 +176,13 @@ export function DateRangePicker({
                 onSelect={handleRangeSelect}
                 numberOfMonths={1}
                 className="rounded-md border"
+                locale={calendarLocale}
               />
               {tempRange?.from && (
                 <div className="flex justify-between items-center pt-2">
-                  <div className="text-sm text-muted-foreground">
-                    {tempRange.from && tempRange.to
-                      ? `${tempRange.from.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} - ${tempRange.to.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' })}`
-                      : tempRange.from
-                      ? `С ${tempRange.from.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' })}`
-                      : 'Выберите период'
-                    }
-                  </div>
-                  <Button
-                    size="sm"
-                    onClick={applyCustomRange}
-                    disabled={!tempRange.from}
-                  >
-                    Применить
+                  <div className="text-sm text-muted-foreground">{renderSelectedRange()}</div>
+                  <Button size="sm" onClick={applyCustomRange} disabled={!tempRange?.from}>
+                    {t("dateRangePicker.apply")}
                   </Button>
                 </div>
               )}
@@ -158,3 +193,4 @@ export function DateRangePicker({
     </Popover>
   );
 }
+

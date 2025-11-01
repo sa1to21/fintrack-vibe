@@ -33,6 +33,36 @@
     "total": "Total",
     "balance": "Balance"
   },
+  "dateRangePicker": {
+    "quickSelect": "Quick select",
+    "selectPeriod": "Choose period",
+    "selectRange": "Pick a range",
+    "back": "Back",
+    "apply": "Apply",
+    "placeholder": "Period",
+    "ranges": {
+      "all": "All time",
+      "week": "Week",
+      "month": "Month",
+      "threeMonths": "3 months",
+      "year": "Year",
+      "custom": "Custom range"
+    },
+    "short": {
+      "all": "All",
+      "week": "7d",
+      "month": "30d",
+      "threeMonths": "90d",
+      "year": "365d",
+      "custom": "Range"
+    },
+    "rangeDisplay": {
+      "between": "{{from}} — {{to}}",
+      "from": "From {{date}}",
+      "single": "{{date}}",
+      "placeholder": "Select a period"
+    }
+  },
   "currencies": {
     "RUB": "₽",
     "USD": "$",
