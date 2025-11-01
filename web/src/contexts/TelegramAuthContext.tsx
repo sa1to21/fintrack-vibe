@@ -268,6 +268,11 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
     // Тема всегда светлая, изменение отключено
   };
 
+  // Синхронизируем атрибут lang документа с выбранным языком
+  useEffect(() => {
+    document.documentElement.lang = language || 'en';
+  }, [language]);
+
   // Функция для смены языка
   const changeLanguage = async (lang: string) => {
     try {
@@ -276,6 +281,7 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
       // Обновляем язык в i18n
       await i18n.changeLanguage(appLanguage);
       setLanguage(appLanguage);
+      document.documentElement.lang = appLanguage;
 
       // Если пользователь авторизован, сохраняем в БД
       if (user?.telegram_id) {

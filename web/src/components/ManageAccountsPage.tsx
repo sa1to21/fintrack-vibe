@@ -691,6 +691,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     <div className="space-y-2">
                       <Label htmlFor="debt-due-date">{t('debt.dueDate')}</Label>
                     <Input
+                      key={dateInputLang}
                       id="debt-due-date"
                       type="date"
                       value={debtDueDate}
