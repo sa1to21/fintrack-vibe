@@ -31,8 +31,16 @@ export function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  type DateRangeParams = { date_from: string; date_to: string };
+  type FetchParams = Partial<DateRangeParams & { period: string }>;
+  const isAllPeriod = selectedPeriod === 'all';
+
   // Calculate date range based on selected period
-  const getDateRange = () => {
+  const getDateRange = (): DateRangeParams | null => {
+    if (isAllPeriod) {
+      return null;
+    }
+
     const today = new Date();
     let dateFrom: Date;
     let dateTo = today;
@@ -78,12 +86,16 @@ export function AnalyticsPage() {
       setError(null);
 
       const dateRange = getDateRange();
+      const baseParams: FetchParams = dateRange ? { ...dateRange } : {};
+      if (isAllPeriod) {
+        baseParams.period = 'all';
+      }
 
       const [summaryData, categoriesData, comparisonData, insightsData, debtStatsData] = await Promise.all([
-        analyticsService.getSummary(dateRange),
-        analyticsService.getCategoriesExpenses({ ...dateRange, limit: 6 }),
-        selectedPeriod !== 'custom' ? analyticsService.getComparison(dateRange) : Promise.resolve(null),
-        analyticsService.getInsights(dateRange),
+        analyticsService.getSummary(baseParams),
+        analyticsService.getCategoriesExpenses({ ...baseParams, limit: 6 }),
+        selectedPeriod !== 'custom' && !isAllPeriod ? analyticsService.getComparison(baseParams) : Promise.resolve(null),
+        analyticsService.getInsights(baseParams),
         accountsService.getDebtStats().catch(() => null),
       ]);
 
@@ -131,6 +143,7 @@ export function AnalyticsPage() {
 
   const getPeriodLabel = (period: string) => {
     const labels: Record<string, string> = {
+      all: t('period.all'),
       week: t('period.week'),
       month: t('period.month'),
       '3months': t('period.threeMonths'),

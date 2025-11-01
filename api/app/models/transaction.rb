@@ -19,8 +19,17 @@ class Transaction < ApplicationRecord
 
   # Exclude regular transfers from statistics (keep only debt repayment expenses)
   scope :excluding_transfers, -> {
+    repayment_names = [
+      Category::DEBT_REPAYMENT_NAME,
+      Category::LEGACY_DEBT_REPAYMENT_NAME
+    ]
+
     left_joins(:category)
-      .where('transfer_id IS NULL OR (categories.name = ? AND transaction_type = ?)', 'Погашение задолженности', 'expense')
+      .where(
+        'transactions.transfer_id IS NULL OR (categories.name IN (?) AND transactions.transaction_type = ?)',
+        repayment_names,
+        'expense'
+      )
   }
 
   # Проверка, является ли транзакция переводом

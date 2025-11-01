@@ -71,11 +71,17 @@ export interface InsightsResponse {
   } | null;
 }
 
+type AnalyticsParams = {
+  date_from?: string;
+  date_to?: string;
+  period?: string;
+};
+
 const analyticsService = {
   /**
    * Получить основную статистику за период
    */
-  async getSummary(params?: { date_from?: string; date_to?: string }): Promise<AnalyticsSummary> {
+  async getSummary(params?: AnalyticsParams): Promise<AnalyticsSummary> {
     const response = await api.get<AnalyticsSummary>('/analytics/summary', { params });
     return response.data;
   },
@@ -83,11 +89,7 @@ const analyticsService = {
   /**
    * Получить расходы по категориям
    */
-  async getCategoriesExpenses(params?: {
-    date_from?: string;
-    date_to?: string;
-    limit?: number;
-  }): Promise<CategoriesResponse> {
+  async getCategoriesExpenses(params?: AnalyticsParams & { limit?: number }): Promise<CategoriesResponse> {
     const response = await api.get<CategoriesResponse>('/analytics/categories', { params });
     return response.data;
   },
@@ -103,7 +105,7 @@ const analyticsService = {
   /**
    * Сравнить текущий период с предыдущим
    */
-  async getComparison(params?: { date_from?: string; date_to?: string }): Promise<ComparisonResponse> {
+  async getComparison(params?: AnalyticsParams): Promise<ComparisonResponse> {
     const response = await api.get<ComparisonResponse>('/analytics/comparison', { params });
     return response.data;
   },
@@ -111,7 +113,7 @@ const analyticsService = {
   /**
    * Получить интересные факты и инсайты
    */
-  async getInsights(params?: { date_from?: string; date_to?: string }): Promise<InsightsResponse> {
+  async getInsights(params?: AnalyticsParams): Promise<InsightsResponse> {
     const response = await api.get<InsightsResponse>('/analytics/insights', { params });
     return response.data;
   },

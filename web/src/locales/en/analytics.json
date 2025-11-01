@@ -8,6 +8,7 @@
   "byAccount": "By Account",
   "trend": "Trend",
   "period": {
+    "all": "All time",
     "week": "Last week",
     "month": "Last month",
     "threeMonths": "Last 3 months",

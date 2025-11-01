@@ -1,18 +1,9 @@
 class Api::V1::AnalyticsController < Api::V1::BaseController
   def summary
-    # Get date range from params or use current month
-    date_from = params[:date_from]&.to_date || Date.current.beginning_of_month
-    date_to = params[:date_to]&.to_date || Date.current.end_of_month
+    scope = base_transactions_scope
+    date_from, date_to = resolve_date_range(scope)
 
-    # Get base currency from user settings
-    base_currency = current_user.base_currency || 'RUB'
-
-    # Get accounts with base currency
-    base_currency_accounts = current_user.accounts.where(currency: base_currency)
-
-    # Get transactions for the period from base currency accounts only
-    transactions = Transaction
-      .where(account: base_currency_accounts)
+    transactions = scope
       .where(date: date_from..date_to)
       .includes(:category, :account)
 
@@ -72,20 +63,13 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
   end
 
   def by_category
-    # Get date range from params or use current month
-    date_from = params[:date_from]&.to_date || Date.current.beginning_of_month
-    date_to = params[:date_to]&.to_date || Date.current.end_of_month
     limit = params[:limit]&.to_i || 5
 
-    # Get base currency from user settings
-    base_currency = current_user.base_currency || 'RUB'
-
-    # Get accounts with base currency
-    base_currency_accounts = current_user.accounts.where(currency: base_currency)
+    scope = base_transactions_scope
+    date_from, date_to = resolve_date_range(scope)
 
     # Get expense transactions for the period from base currency accounts only (excluding transfers)
-    expense_transactions = Transaction
-      .where(account: base_currency_accounts)
+    expense_transactions = scope
       .where(transaction_type: 'expense')
       .where(date: date_from..date_to)
       .excluding_transfers
@@ -144,15 +128,32 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
   end
 
   def comparison
-    # Get date range from params
-    date_from = params[:date_from]&.to_date || Date.current.beginning_of_month
-    date_to = params[:date_to]&.to_date || Date.current.end_of_month
+    scope = base_transactions_scope
+    date_from, date_to = resolve_date_range(scope)
 
-    # Get base currency from user settings
-    base_currency = current_user.base_currency || 'RUB'
+    current_transactions = scope
+      .where(date: date_from..date_to)
+      .includes(:category)
 
-    # Get accounts with base currency
-    base_currency_accounts = current_user.accounts.where(currency: base_currency)
+    current_income = current_transactions.where(transaction_type: 'income').excluding_transfers.sum(:amount)
+    current_expenses = current_transactions.where(transaction_type: 'expense').excluding_transfers.sum(:amount)
+
+    if params[:period] == 'all'
+      return render json: {
+        current: {
+          income: current_income,
+          expenses: current_expenses
+        },
+        previous: {
+          income: 0,
+          expenses: 0
+        },
+        change: {
+          income_percent: 0,
+          expenses_percent: 0
+        }
+      }
+    end
 
     # Calculate period length
     period_length = (date_to - date_from).to_i + 1
@@ -161,18 +162,7 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
     prev_date_to = date_from - 1.day
     prev_date_from = prev_date_to - period_length.days + 1.day
 
-    # Current period transactions from base currency accounts
-    current_transactions = Transaction
-      .where(account: base_currency_accounts)
-      .where(date: date_from..date_to)
-      .includes(:category)
-
-    current_income = current_transactions.where(transaction_type: 'income').excluding_transfers.sum(:amount)
-    current_expenses = current_transactions.where(transaction_type: 'expense').excluding_transfers.sum(:amount)
-
-    # Previous period transactions from base currency accounts
-    previous_transactions = Transaction
-      .where(account: base_currency_accounts)
+    previous_transactions = scope
       .where(date: prev_date_from..prev_date_to)
       .includes(:category)
 
@@ -209,19 +199,11 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
   end
 
   def insights
-    # Get date range from params or use current month
-    date_from = params[:date_from]&.to_date || Date.current.beginning_of_month
-    date_to = params[:date_to]&.to_date || Date.current.end_of_month
-
-    # Get base currency from user settings
-    base_currency = current_user.base_currency || 'RUB'
-
-    # Get accounts with base currency
-    base_currency_accounts = current_user.accounts.where(currency: base_currency)
+    scope = base_transactions_scope
+    date_from, date_to = resolve_date_range(scope)
 
     # Get transactions for the period from base currency accounts only
-    transactions = Transaction
-      .where(account: base_currency_accounts)
+    transactions = scope
       .where(date: date_from..date_to)
       .includes(:category)
 
@@ -289,5 +271,36 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
       busiest_day: busiest_day,
       top_category: top_category_insight
     }
+  end
+
+  private
+
+  def base_currency_code
+    current_user.base_currency || 'RUB'
+  end
+
+  def base_currency_accounts
+    @base_currency_accounts ||= current_user.accounts.where(currency: base_currency_code)
+  end
+
+  def base_transactions_scope
+    Transaction.where(account: base_currency_accounts)
+  end
+
+  def resolve_date_range(scope)
+    if params[:period] == 'all'
+      min_date = scope.minimum(:date)
+      max_date = scope.maximum(:date)
+
+      min_date ||= Date.current.beginning_of_month
+      max_date ||= Date.current.end_of_month
+
+      [min_date, max_date]
+    else
+      [
+        params[:date_from]&.to_date || Date.current.beginning_of_month,
+        params[:date_to]&.to_date || Date.current.end_of_month
+      ]
+    end
   end
 end

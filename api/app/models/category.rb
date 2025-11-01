@@ -1,4 +1,8 @@
 class Category < ApplicationRecord
+  TRANSFER_NAME = 'Перевод'.freeze
+  DEBT_REPAYMENT_NAME = 'Погашение задолженности'.freeze
+  LEGACY_DEBT_REPAYMENT_NAME = 'Погашение долга'.freeze
+
   belongs_to :user
   has_many :transactions
 
