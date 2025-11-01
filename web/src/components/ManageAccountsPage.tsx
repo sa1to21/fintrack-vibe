@@ -199,7 +199,7 @@ function SortableAccountItem({ account, accounts, formatCurrency, openBalanceDia
 
 export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const { t, i18n } = useTranslation('accounts');
-  const dateInputLang = i18n.language?.split('-')[0] === 'ru' ? 'ru' : 'en';
+  const dateInputLang = (i18n.language || 'en').startsWith('ru') ? 'ru-RU' : 'en-US';
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
