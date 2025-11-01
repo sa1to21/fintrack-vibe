@@ -1,4 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from "react";
+import { useTranslation } from "react-i18next";
 import { TelegramAuthProvider, useTelegramAuth } from "./contexts/TelegramAuthContext";
 import { Toaster } from "./components/ui/sonner";
 
@@ -32,6 +33,7 @@ type AppScreen = 'welcome' | 'dashboard' | 'analytics' | 'education' | 'settings
 
 function AppContent() {
   const { isAuthenticated, loading, error, isNewUser } = useTelegramAuth();
+  const { t } = useTranslation('common');
   const [currentScreen, setCurrentScreen] = useState<AppScreen | null>(null);
   const [hasSeenWelcome, setHasSeenWelcome] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
@@ -115,7 +117,7 @@ function AppContent() {
           <div className="w-16 h-16 mx-auto flex items-center justify-center animate-pulse">
             <img src="/images/Logo FinTrack-no-bg-preview (carve.photos).png" alt="WiseTrack" className="w-16 h-16 object-contain" />
           </div>
-          <p className="text-lg font-medium text-slate-700">Загрузка WiseTrack...</p>
+          <p className="text-lg font-medium text-slate-700">{t('app.loadingNamed', { appName: 'WiseTrack' })}</p>
         </div>
       </div>
     );
@@ -129,9 +131,9 @@ function AppContent() {
           <div className="w-16 h-16 mx-auto bg-red-100 rounded-2xl flex items-center justify-center">
             <span className="text-2xl">⚠️</span>
           </div>
-          <p className="text-lg font-medium text-red-700">Ошибка запуска</p>
+          <p className="text-lg font-medium text-red-700">{t('app.launchErrorTitle')}</p>
           <p className="text-sm text-red-600">{error}</p>
-          <p className="text-xs text-slate-600">Приложение должно быть открыто в Telegram Mini App</p>
+          <p className="text-xs text-slate-600">{t('app.launchErrorHint')}</p>
         </div>
       </div>
     );
@@ -148,7 +150,7 @@ function AppContent() {
                   <div className="w-16 h-16 mx-auto flex items-center justify-center animate-pulse">
                     <img src="/images/Logo FinTrack-no-bg-preview (carve.photos).png" alt="WiseTrack" className="w-16 h-16 object-contain" />
                   </div>
-                  <p className="text-lg font-medium text-slate-700">Загрузка...</p>
+                  <p className="text-lg font-medium text-slate-700">{t('app.loadingGeneric')}</p>
                 </div>
               </div>
             )}

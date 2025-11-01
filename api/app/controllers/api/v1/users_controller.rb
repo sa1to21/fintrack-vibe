@@ -16,13 +16,16 @@ class Api::V1::UsersController < Api::V1::BaseController
   end
 
   def update_by_telegram
-    user = User.find_by(telegram_id: params[:telegram_id])
-    if user && user.update(telegram_user_params)
+    user = User.find_or_initialize_by(telegram_id: params[:telegram_id])
+
+    user.assign_attributes(telegram_user_params)
+    user.name = default_telegram_name if user.name.blank?
+    user.base_currency ||= 'RUB'
+
+    if user.save
       render json: user, serializer: UserSerializer
-    elsif user
-      render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
     else
-      render json: { error: 'User not found' }, status: :not_found
+      render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -63,5 +66,11 @@ class Api::V1::UsersController < Api::V1::BaseController
 
   def telegram_user_params
     params.permit(:language_code, :name, :username)
+  end
+
+  def default_telegram_name
+    params[:name].presence ||
+      params[:username].presence ||
+      "Telegram user #{params[:telegram_id]}"
   end
 end

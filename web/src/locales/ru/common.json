@@ -19,6 +19,12 @@
     "getStarted": "Начать",
     "all": "Все"
   },
+  "app": {
+    "loadingNamed": "Загрузка {{appName}}...",
+    "loadingGeneric": "Загрузка...",
+    "launchErrorTitle": "Ошибка запуска",
+    "launchErrorHint": "Приложение должно быть открыто в Telegram Mini App"
+  },
   "common": {
     "loading": "Загрузка...",
     "error": "Ошибка",

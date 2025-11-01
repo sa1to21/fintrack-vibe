@@ -19,6 +19,12 @@
     "getStarted": "Get Started",
     "all": "All"
   },
+  "app": {
+    "loadingNamed": "Loading {{appName}}...",
+    "loadingGeneric": "Loading...",
+    "launchErrorTitle": "Launch error",
+    "launchErrorHint": "Open the app from the Telegram Mini App"
+  },
   "common": {
     "loading": "Loading...",
     "error": "Error",

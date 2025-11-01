@@ -24,7 +24,7 @@ module Api
           email: user_params[:username] ? "#{user_params[:username]}@telegram.user" : "tg_#{telegram_id}@telegram.user",
           password: SecureRandom.hex(32), # Случайный пароль (не используется для Telegram)
           username: user_params[:username],
-          language_code: user_params[:language_code]
+          language_code: user_params[:language_code].presence || 'en'
         )
 
         unless user.save
@@ -37,10 +37,14 @@ module Api
         create_default_categories(user)
       else
         # Обновить данные существующего пользователя
+        preferred_language = user.language_code.presence ||
+                             user_params[:language_code].presence ||
+                             'en'
+
         user.update(
           name: "#{user_params[:first_name]} #{user_params[:last_name]}".strip,
           username: user_params[:username],
-          language_code: user_params[:language_code]
+          language_code: preferred_language
         )
       end
 
