@@ -388,9 +388,9 @@ interface CategoryItemProps {
 function CategoryItem({ category, onEdit, onDelete, actionLoading, t }: CategoryItemProps) {
   return (
     <div className="flex items-center justify-between p-4 hover:bg-blue-50/50 transition-colors duration-200 border-b last:border-b-0 border-blue-100/50">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 min-w-0 flex-1">
         <div
-          className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
+          className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm flex-shrink-0"
           style={{ backgroundColor: category.color + '20' }}
         >
           <span className="text-xl">{category.icon}</span>
@@ -402,7 +402,7 @@ function CategoryItem({ category, onEdit, onDelete, actionLoading, t }: Category
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-shrink-0">
         <LightMotion whileTap={{ scale: 0.95 }}>
           <Button
             variant="ghost"
