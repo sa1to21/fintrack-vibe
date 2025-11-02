@@ -47,16 +47,16 @@ class Api::V1::ExportsController < Api::V1::BaseController
           chat_id: telegram_id,
           file_path: temp_file.path,
           filename: filename,
-          caption: "📊 Экспорт транзакций (#{transactions.count} записей)"
+          caption: export_text(:caption, transactions.count)
         )
 
         if success
-          render json: { message: 'Файл отправлен в чат' }, status: :ok
+          render json: { message: export_text(:success_message) }, status: :ok
         else
-          render json: { error: 'Не удалось отправить файл' }, status: :unprocessable_entity
+          render json: { error: export_text(:send_error) }, status: :unprocessable_entity
         end
       else
-        render json: { error: 'Telegram ID не найден' }, status: :unprocessable_entity
+        render json: { error: export_text(:missing_telegram) }, status: :unprocessable_entity
       end
     ensure
       temp_file.unlink # Удаляем временный файл
@@ -75,6 +75,34 @@ class Api::V1::ExportsController < Api::V1::BaseController
       'Перевод'
     else
       type
+    end
+  end
+
+  def export_text(key, count = nil)
+    language = current_user.language_code.to_s.downcase.start_with?('ru') ? :ru : :en
+
+    messages = {
+      en: {
+        caption: "📊 Transactions export (%{count} records)",
+        success_message: 'Export sent to your Telegram chat.',
+        send_error: 'Could not send the export file to Telegram.',
+        missing_telegram: 'Telegram ID is not linked to this account.'
+      },
+      ru: {
+        caption: "📊 Экспорт транзакций (%{count} записей)",
+        success_message: 'Экспорт отправлен в ваш чат Telegram.',
+        send_error: 'Не удалось отправить файл экспорта в Telegram.',
+        missing_telegram: 'Telegram ID не привязан к этому аккаунту.'
+      }
+    }
+
+    selected_messages = messages[language] || messages[:en]
+    message = selected_messages[key] || messages[:en][key]
+
+    if key == :caption && count
+      message % { count: count }
+    else
+      message
     end
   end
 end
