@@ -94,7 +94,7 @@
       "fillAll": "Fill in all fields",
       "differentAccounts": "Select different accounts",
       "positiveAmount": "Amount must be greater than zero",
-      "differentCurrencies": "Transfer between different currencies is not possible. Accounts use {from} and {to}.",
+      "differentCurrencies": "Transfer between different currencies is not possible. Accounts use {{from}} and {{to}}.",
       "insufficientFunds": "Insufficient funds in account",
       "sameAccount": "Cannot transfer to the same account",
       "debtPositiveBalance": "Debt account cannot have positive balance",
