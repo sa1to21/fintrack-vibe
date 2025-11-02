@@ -643,6 +643,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                         placeholder=""
                         value={initialBalance}
                         onChange={(e) => setInitialBalance(e.target.value)}
+                        onWheel={(e) => e.currentTarget.blur()}
                         className="border-blue-200 focus:border-blue-400 pr-10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         step="0.01"
                       />
@@ -687,7 +688,8 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                         placeholder={t('placeholders.enterAmount')}
                         value={debtInitialAmount}
                         onChange={(e) => setDebtInitialAmount(e.target.value)}
-                        className="border-amber-200 focus:border-amber-400"
+                        onWheel={(e) => e.currentTarget.blur()}
+                        className="border-amber-200 focus:border-amber-400 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                         step="0.01"
                         min="0"
                       />
@@ -920,7 +922,8 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     placeholder="0"
                     value={balanceChange}
                     onChange={(e) => setBalanceChange(e.target.value)}
-                    className="text-xl font-medium text-center py-4 border-green-200 focus:border-green-400 focus:ring-green-400/20"
+                    onWheel={(e) => e.currentTarget.blur()}
+                    className="text-xl font-medium text-center py-4 border-green-200 focus:border-green-400 focus:ring-green-400/20 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                     step="0.01"
                     min="0"
                   />
