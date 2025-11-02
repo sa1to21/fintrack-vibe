@@ -461,15 +461,16 @@ async def cmd_start(message: types.Message):
 
     telegram_id = message.from_user.id
 
-    # Сначала пытаемся получить сохранённый язык из БД
-    lang = await get_user_language(telegram_id)
+    # Получаем сохранённый язык из БД
+    saved_lang = await get_user_language(telegram_id)
 
-    # Если язык не сохранён (новый пользователь или None), используем автоопределение
-    if not lang:
+    # Если язык не сохранён (новый пользователь), используем автоопределение
+    if not saved_lang:
         detected_lang = message.from_user.language_code or 'en'
         lang = 'ru' if detected_lang == 'ru' else 'en'
-        # Сохраняем автоопределённый язык
-        await save_user_language(telegram_id, lang)
+    else:
+        # Используем сохранённый язык для существующих пользователей
+        lang = saved_lang
 
     # Создаём клавиатуру с переводами
     keyboard = get_webapp_keyboard(lang)

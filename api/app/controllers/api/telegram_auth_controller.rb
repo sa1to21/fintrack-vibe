@@ -83,8 +83,15 @@ module Api
     end
 
     def create_default_account(user)
+      lang = user.language_code == 'ru' ? 'ru' : 'en'
+
+      account_name = {
+        'ru' => 'Основной счёт',
+        'en' => 'Main Account'
+      }
+
       user.accounts.create!(
-        name: 'Основной счёт',
+        name: account_name[lang],
         balance: 0,
         currency: 'RUB',
         account_type: 'cash'
@@ -92,20 +99,40 @@ module Api
     end
 
     def create_default_categories(user)
-      default_categories = [
-        # Расходы
-        { name: 'Продукты', category_type: 'expense', icon: '🛒', color: '#FF6B6B' },
-        { name: 'Транспорт', category_type: 'expense', icon: '🚗', color: '#4ECDC4' },
-        { name: 'Кафе и рестораны', category_type: 'expense', icon: '🍔', color: '#FFD93D' },
-        { name: 'Развлечения', category_type: 'expense', icon: '🎮', color: '#A8E6CF' },
-        { name: 'Здоровье', category_type: 'expense', icon: '💊', color: '#FF8B94' },
-        { name: 'Покупки', category_type: 'expense', icon: '🛍️', color: '#C7CEEA' },
+      lang = user.language_code == 'ru' ? 'ru' : 'en'
 
-        # Доходы
-        { name: 'Зарплата', category_type: 'income', icon: '💰', color: '#95E1D3' },
-        { name: 'Фриланс', category_type: 'income', icon: '💼', color: '#6C5CE7' },
-        { name: 'Подарки', category_type: 'income', icon: '🎁', color: '#FDCB6E' }
-      ]
+      categories_data = {
+        'ru' => [
+          # Расходы
+          { name: 'Продукты', category_type: 'expense', icon: '🛒', color: '#FF6B6B' },
+          { name: 'Транспорт', category_type: 'expense', icon: '🚗', color: '#4ECDC4' },
+          { name: 'Кафе и рестораны', category_type: 'expense', icon: '🍔', color: '#FFD93D' },
+          { name: 'Развлечения', category_type: 'expense', icon: '🎮', color: '#A8E6CF' },
+          { name: 'Здоровье', category_type: 'expense', icon: '💊', color: '#FF8B94' },
+          { name: 'Покупки', category_type: 'expense', icon: '🛍️', color: '#C7CEEA' },
+
+          # Доходы
+          { name: 'Зарплата', category_type: 'income', icon: '💰', color: '#95E1D3' },
+          { name: 'Фриланс', category_type: 'income', icon: '💼', color: '#6C5CE7' },
+          { name: 'Подарки', category_type: 'income', icon: '🎁', color: '#FDCB6E' }
+        ],
+        'en' => [
+          # Expenses
+          { name: 'Groceries', category_type: 'expense', icon: '🛒', color: '#FF6B6B' },
+          { name: 'Transport', category_type: 'expense', icon: '🚗', color: '#4ECDC4' },
+          { name: 'Restaurants', category_type: 'expense', icon: '🍔', color: '#FFD93D' },
+          { name: 'Entertainment', category_type: 'expense', icon: '🎮', color: '#A8E6CF' },
+          { name: 'Health', category_type: 'expense', icon: '💊', color: '#FF8B94' },
+          { name: 'Shopping', category_type: 'expense', icon: '🛍️', color: '#C7CEEA' },
+
+          # Income
+          { name: 'Salary', category_type: 'income', icon: '💰', color: '#95E1D3' },
+          { name: 'Freelance', category_type: 'income', icon: '💼', color: '#6C5CE7' },
+          { name: 'Gifts', category_type: 'income', icon: '🎁', color: '#FDCB6E' }
+        ]
+      }
+
+      default_categories = categories_data[lang]
 
       default_categories.each do |category_attrs|
         user.categories.create!(category_attrs)
