@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Textarea } from "./ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "./ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
+import { DatePicker } from "./ui/date-picker";
 import {
   ArrowLeft,
   Edit,
@@ -42,6 +43,7 @@ import accountsService, { Account as APIAccount } from "../services/accounts.ser
 import transactionsService from "../services/transactions.service";
 import transfersService from "../services/transfers.service";
 import { getCurrencySymbol, DEFAULT_CURRENCY } from "../constants/currencies";
+import { enUS, ru } from "date-fns/locale";
 
 interface Transaction {
   id: string;
@@ -73,6 +75,9 @@ const iconMap: Record<string, typeof Wallet> = {
 
 export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete }: TransactionDetailPageProps) {
   const { t, i18n } = useTranslation('transactions');
+  const isRussian = (i18n.language || 'en').toLowerCase().startsWith('ru');
+  const dateDisplayLocale = isRussian ? 'ru-RU' : 'en-US';
+  const calendarLocale = isRussian ? ru : enUS;
   const [isEditing, setIsEditing] = useState(false);
   const [accounts, setAccounts] = useState<APIAccount[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -118,8 +123,8 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
   };
 
   const formatDate = (dateStr: string) => {
-    const locale = i18n.language === 'ru' ? 'ru-RU' : 'en-US';
-    return new Date(dateStr).toLocaleDateString(locale, {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString(dateDisplayLocale, {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
@@ -739,12 +744,14 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                 <div className="space-y-3">
                   <div className="space-y-2">
                     <Label htmlFor="date">{t('fields.date')}</Label>
-                    <Input
+                    <DatePicker
                       id="date"
-                      type="date"
                       value={editData.date}
-                      onChange={(e) => setEditData(prev => ({ ...prev, date: e.target.value }))}
-                      className="border-blue-200 focus:border-blue-400"
+                      onChange={(newDate) => setEditData(prev => ({ ...prev, date: newDate }))}
+                      placeholder={t('fields.date')}
+                      displayLocale={dateDisplayLocale}
+                      calendarLocale={calendarLocale}
+                      className="h-10 border-blue-200 focus-visible:ring-blue-400 focus-visible:ring-offset-0"
                     />
                   </div>
                   <div className="space-y-2">

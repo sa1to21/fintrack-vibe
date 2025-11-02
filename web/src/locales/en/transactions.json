@@ -126,8 +126,8 @@
     "delete": "Delete",
     "save": "Save",
     "cancel": "Cancel",
-    "deleteConfirm": "Delete {type}?",
-    "deleteDescription": "This action cannot be undone. {type} will be {deleted} permanently.",
+    "deleteConfirm": "Delete {{type}}?",
+    "deleteDescription": "This action cannot be undone. {{type}} will be {{deleted}} permanently.",
     "operationType": "transaction",
     "transferType": "transfer",
     "operationDeleted": "deleted",
@@ -149,6 +149,6 @@
     "operationUpdated": "Transaction updated!",
     "transferDeleted": "Transfer deleted!",
     "operationDeleted": "Transaction deleted!",
-    "failedToUpdate": "Failed to update {type}"
+    "failedToUpdate": "Failed to update {{type}}"
   }
 }

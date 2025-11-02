@@ -126,8 +126,8 @@
     "delete": "Удалить",
     "save": "Сохранить",
     "cancel": "Отмена",
-    "deleteConfirm": "Удалить {type}?",
-    "deleteDescription": "Это действие нельзя отменить. {type} будет {deleted} навсегда.",
+    "deleteConfirm": "Удалить {{type}}?",
+    "deleteDescription": "Это действие нельзя отменить. {{type}} будет {{deleted}} навсегда.",
     "operationType": "операцию",
     "transferType": "перевод",
     "operationDeleted": "удалена",
@@ -149,6 +149,6 @@
     "operationUpdated": "Операция обновлена!",
     "transferDeleted": "Перевод удален!",
     "operationDeleted": "Операция удалена!",
-    "failedToUpdate": "Не удалось обновить {type}"
+    "failedToUpdate": "Не удалось обновить {{type}}"
   }
 }
