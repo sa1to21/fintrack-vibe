@@ -4,23 +4,24 @@ export interface Currency {
   code: string;
   symbol: string;
   name: string;
-  flag: string; // Emoji flag
+  flag: string; // Emoji flag (fallback)
+  countryCode: string; // ISO 3166-1 alpha-2 country code for flag icons
 }
 
 export const CURRENCIES: Currency[] = [
-  { code: 'RUB', symbol: '₽', name: 'Российский рубль', flag: '🇷🇺' },
-  { code: 'USD', symbol: '$', name: 'Доллар США', flag: '🇺🇸' },
-  { code: 'EUR', symbol: '€', name: 'Евро', flag: '🇪🇺' },
-  { code: 'GBP', symbol: '£', name: 'Фунт стерлингов', flag: '🇬🇧' },
-  { code: 'CNY', symbol: '¥', name: 'Китайский юань', flag: '🇨🇳' },
-  { code: 'JPY', symbol: '¥', name: 'Японская иена', flag: '🇯🇵' },
-  { code: 'KZT', symbol: '₸', name: 'Казахстанский тенге', flag: '🇰🇿' },
-  { code: 'UAH', symbol: '₴', name: 'Украинская гривна', flag: '🇺🇦' },
-  { code: 'BYN', symbol: 'Br', name: 'Белорусский рубль', flag: '🇧🇾' },
-  { code: 'GEL', symbol: '₾', name: 'Грузинский лари', flag: '🇬🇪' },
-  { code: 'TRY', symbol: '₺', name: 'Турецкая лира', flag: '🇹🇷' },
-  { code: 'AED', symbol: 'د.إ', name: 'Дирхам ОАЭ', flag: '🇦🇪' },
-  { code: 'THB', symbol: '฿', name: 'Тайский бат', flag: '🇹🇭' },
+  { code: 'RUB', symbol: '₽', name: 'Российский рубль', flag: '🇷🇺', countryCode: 'RU' },
+  { code: 'USD', symbol: '$', name: 'Доллар США', flag: '🇺🇸', countryCode: 'US' },
+  { code: 'EUR', symbol: '€', name: 'Евро', flag: '🇪🇺', countryCode: 'EU' },
+  { code: 'GBP', symbol: '£', name: 'Фунт стерлингов', flag: '🇬🇧', countryCode: 'GB' },
+  { code: 'CNY', symbol: '¥', name: 'Китайский юань', flag: '🇨🇳', countryCode: 'CN' },
+  { code: 'JPY', symbol: '¥', name: 'Японская иена', flag: '🇯🇵', countryCode: 'JP' },
+  { code: 'KZT', symbol: '₸', name: 'Казахстанский тенге', flag: '🇰🇿', countryCode: 'KZ' },
+  { code: 'UAH', symbol: '₴', name: 'Украинская гривна', flag: '🇺🇦', countryCode: 'UA' },
+  { code: 'BYN', symbol: 'Br', name: 'Белорусский рубль', flag: '🇧🇾', countryCode: 'BY' },
+  { code: 'GEL', symbol: '₾', name: 'Грузинский лари', flag: '🇬🇪', countryCode: 'GE' },
+  { code: 'TRY', symbol: '₺', name: 'Турецкая лира', flag: '🇹🇷', countryCode: 'TR' },
+  { code: 'AED', symbol: 'د.إ', name: 'Дирхам ОАЭ', flag: '🇦🇪', countryCode: 'AE' },
+  { code: 'THB', symbol: '฿', name: 'Тайский бат', flag: '🇹🇭', countryCode: 'TH' },
 ];
 
 // Default currency

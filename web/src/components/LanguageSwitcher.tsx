@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Globe, Check } from "./icons";
+import { FlagIcon } from "./ui/flag-icon";
 import { useTelegramAuth } from "../contexts/TelegramAuthContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -12,8 +13,8 @@ interface LanguageSwitcherProps {
 }
 
 const LANGUAGES = [
-  { code: 'ru', name: 'Русский', flag: '🇷🇺' },
-  { code: 'en', name: 'English', flag: '🇬🇧' },
+  { code: 'ru', name: 'Русский', flag: '🇷🇺', countryCode: 'RU' },
+  { code: 'en', name: 'English', flag: '🇬🇧', countryCode: 'GB' },
 ];
 
 export default function LanguageSwitcher({ isOpen, onClose }: LanguageSwitcherProps) {
@@ -70,7 +71,9 @@ export default function LanguageSwitcher({ isOpen, onClose }: LanguageSwitcherPr
               disabled={isChanging}
             >
               <div className="flex items-center gap-3">
-                <span className="text-2xl">{lang.flag}</span>
+                <div className="text-2xl w-8 h-6 flex items-center justify-center">
+                  <FlagIcon countryCode={lang.countryCode} className="w-8 h-6" />
+                </div>
                 <span className="font-medium">{lang.name}</span>
               </div>
               {language === lang.code && (

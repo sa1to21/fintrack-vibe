@@ -31,7 +31,9 @@
       "Bash(cmd /c taskkill:*)",
       "Bash(curl:*)",
       "Bash(npm install:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(cmd /c:*)",
+      "Bash(powershell:*)"
     ],
     "deny": [],
     "ask": []

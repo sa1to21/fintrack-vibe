@@ -6,6 +6,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Trash2, Sparkles, Tags, DollarSign, Bell, Globe, Upload, Settings, ChevronRight } from "./icons";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
+import { FlagIcon } from "./ui/flag-icon";
 import { useTelegramAuth } from "../contexts/TelegramAuthContext";
 import { toast } from "sonner";
 import userDataService from "../services/userData.service";
@@ -220,7 +221,7 @@ export function SettingsPage({ onNavigate }: SettingsPageProps) {
                         {CURRENCIES.map((currency) => (
                           <SelectItem key={currency.code} value={currency.code}>
                             <div className="flex items-center gap-2">
-                              <span>{currency.flag}</span>
+                              <FlagIcon countryCode={currency.countryCode} />
                               <span>{currency.code}</span>
                             </div>
                           </SelectItem>
