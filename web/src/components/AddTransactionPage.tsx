@@ -219,8 +219,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
       if (error.response?.data?.error === 'Недостаточно средств') {
         toast.error(t('messages.insufficientFunds'));
       } else if (error.response?.data?.error === 'Долговой счет не может иметь положительный баланс') {
-        const details = error.response?.data?.details?.[0] || 'Долговой счет нельзя пополнить сверх нуля';
-        toast.error(details, { duration: 5000 });
+        toast.error(t('messages.debtPositiveBalanceDetail'), { duration: 5000 });
       } else if (error.response?.data?.error === 'Нельзя напрямую добавить доход на долговой счет') {
         // Показываем инструкцию по погашению долга
         const details = error.response?.data?.details || [];

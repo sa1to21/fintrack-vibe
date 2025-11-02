@@ -42,6 +42,21 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
   const [showDebtDialog, setShowDebtDialog] = useState(false);
   const [debtAccount, setDebtAccount] = useState<{ id: string; name: string; balance: number } | null>(null);
 
+  const extractCurrencyCodes = (text?: string): { from?: string; to?: string } => {
+    if (!text) {
+      return {};
+    }
+    const matches = text.match(/[A-Z]{3}/g);
+    if (!matches?.length) {
+      return {};
+    }
+
+    return {
+      from: matches[0],
+      to: matches[1] ?? matches[0],
+    };
+  };
+
   const swapAccounts = () => {
     const temp = fromAccountId;
     setFromAccountId(toAccountId);
@@ -141,11 +156,15 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
       } else if (error.response?.data?.error === 'Нельзя перевести на тот же счет') {
         toast.error(t('transfer.errors.sameAccount'));
       } else if (error.response?.data?.error === 'Перевод между разными валютами невозможен') {
-        const details = error.response?.data?.details?.[0] || t('transfer.errors.differentCurrencies');
-        toast.error(details, { duration: 5000 });
+        const details = error.response?.data?.details?.[0];
+        const { from, to } = extractCurrencyCodes(details);
+        const message = t('transfer.errors.differentCurrencies', {
+          from: fromAccount?.currency || from || 'N/A',
+          to: toAccount?.currency || to || 'N/A',
+        });
+        toast.error(message, { duration: 5000 });
       } else if (error.response?.data?.error === 'Долговой счет не может иметь положительный баланс') {
-        const details = error.response?.data?.details?.[0] || t('transfer.errors.debtPositiveBalanceDetail');
-        toast.error(details, { duration: 5000 });
+        toast.error(t('transfer.errors.debtPositiveBalanceDetail'), { duration: 5000 });
       } else {
         toast.error(t('transfer.errors.failed'));
       }

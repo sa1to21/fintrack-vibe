@@ -7,10 +7,23 @@ import { Label } from './ui/label';
 import { useAuth } from '../contexts/AuthContext';
 import { Wallet, Loader2 } from './icons';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+
+type AuthNotificationKey = 'loginSuccess' | 'loginError' | 'registerSuccess' | 'registerError';
 
 export function AuthPage() {
   const { login, register } = useAuth();
   const [loading, setLoading] = useState(false);
+  const { t, i18n } = useTranslation('common');
+  const language = i18n.language || 'en';
+  const isRussian = language.toLowerCase().startsWith('ru');
+
+  const notificationMessage = (key: AuthNotificationKey, serverMessage?: string) => {
+    if (serverMessage && isRussian) {
+      return serverMessage;
+    }
+    return t(`notifications.${key}`);
+  };
 
   // Форма входа
   const [loginData, setLoginData] = useState({
@@ -30,9 +43,9 @@ export function AuthPage() {
     setLoading(true);
     try {
       await login(loginData);
-      toast.success('Вход выполнен успешно!');
+      toast.success(notificationMessage('loginSuccess'));
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Ошибка входа');
+      toast.error(notificationMessage('loginError', error.response?.data?.error));
     } finally {
       setLoading(false);
     }
@@ -43,9 +56,9 @@ export function AuthPage() {
     setLoading(true);
     try {
       await register(registerData);
-      toast.success('Регистрация успешна!');
+      toast.success(notificationMessage('registerSuccess'));
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Ошибка регистрации');
+      toast.error(notificationMessage('registerError', error.response?.data?.error));
     } finally {
       setLoading(false);
     }

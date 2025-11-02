@@ -104,5 +104,11 @@
     "copy": "Copy",
     "copied": "Copied",
     "close": "Close"
+  },
+  "notifications": {
+    "loginSuccess": "Signed in successfully!",
+    "loginError": "Could not sign in.",
+    "registerSuccess": "Registration completed!",
+    "registerError": "Could not sign up."
   }
 }
