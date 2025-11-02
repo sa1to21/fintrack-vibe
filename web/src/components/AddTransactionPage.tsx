@@ -216,9 +216,13 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
       console.error('Failed to create transaction:', error);
 
       const errorMessage: string | undefined = error.response?.data?.error;
+      const normalizedError = (errorMessage || '').toLowerCase();
 
       // Проверяем, является ли ошибка связанной с недостатком средств
-      if (errorMessage === 'Недостаточно средств' || errorMessage === 'Insufficient funds') {
+      if (
+        errorMessage === 'Недостаточно средств' ||
+        errorMessage === 'Insufficient funds'
+      ) {
         toast.error(t('messages.insufficientFunds'));
       } else if (
         errorMessage === 'Долговой счет не может иметь положительный баланс' ||
@@ -227,7 +231,9 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
         toast.error(t('messages.debtPositiveBalanceDetail'), { duration: 5000 });
       } else if (
         errorMessage === 'Нельзя напрямую добавить доход на долговой счет' ||
-        errorMessage === 'Cannot add income directly to debt account'
+        errorMessage === 'Cannot add income directly to debt account' ||
+        normalizedError.includes('долгов') && normalizedError.includes('доход') ||
+        normalizedError.includes('debt') && normalizedError.includes('income')
       ) {
         const details = error.response?.data?.details;
         const fallbackMessage = `${t('messages.cannotAddIncomeToDebt')}\n\n${t('messages.useTransferToRepay')}`;
