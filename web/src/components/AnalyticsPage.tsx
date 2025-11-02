@@ -427,26 +427,8 @@ export function AnalyticsPage() {
                     </div>
                     <p className="font-medium text-sm text-emerald-700">{formatCurrency(comparison.current.income)}</p>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div className="text-xs text-emerald-600/70">
-                      {t('comparison.previous')}: {formatCurrency(comparison.previous.income)}
-                    </div>
-                    {comparison.change.income_percent !== 0 && (
-                      <OptimizedMotion
-                        className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
-                          comparison.change.income_percent > 0
-                            ? 'text-emerald-700 bg-emerald-200/60'
-                            : 'text-red-600 bg-red-100'
-                        }`}
-                        whileHover={{ scale: 1.1 }}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3, delay: 0.2 }}
-                      >
-                        {comparison.change.income_percent > 0 ? '↗' : '↘'}
-                        <span>{comparison.change.income_percent > 0 ? '+' : ''}{comparison.change.income_percent}%</span>
-                      </OptimizedMotion>
-                    )}
+                  <div className="text-xs text-emerald-600/70">
+                    {t('comparison.previous')}: {formatCurrency(comparison.previous.income)}
                   </div>
                 </OptimizedMotion>
 
@@ -465,26 +447,8 @@ export function AnalyticsPage() {
                     </div>
                     <p className="font-medium text-sm text-red-700">{formatCurrency(comparison.current.expenses)}</p>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div className="text-xs text-red-600/70">
-                      {t('comparison.previous')}: {formatCurrency(comparison.previous.expenses)}
-                    </div>
-                    {comparison.change.expenses_percent !== 0 && (
-                      <OptimizedMotion
-                        className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
-                          comparison.change.expenses_percent > 0
-                            ? 'text-red-700 bg-red-200/60'
-                            : 'text-emerald-600 bg-emerald-100'
-                        }`}
-                        whileHover={{ scale: 1.1 }}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3, delay: 0.3 }}
-                      >
-                        {comparison.change.expenses_percent > 0 ? '↗' : '↘'}
-                        <span>{comparison.change.expenses_percent > 0 ? '+' : ''}{comparison.change.expenses_percent}%</span>
-                      </OptimizedMotion>
-                    )}
+                  <div className="text-xs text-red-600/70">
+                    {t('comparison.previous')}: {formatCurrency(comparison.previous.expenses)}
                   </div>
                 </OptimizedMotion>
               </CardContent>
