@@ -396,7 +396,7 @@ function CategoryItem({ category, onEdit, onDelete, actionLoading, t }: Category
           <span className="text-xl">{category.icon}</span>
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="font-medium text-slate-800 break-words">{category.name}</h3>
+          <h3 className="font-medium text-slate-800 truncate">{category.name}</h3>
           <p className="text-xs text-slate-500">
             {category.category_type === 'expense' ? t('types.expense') : t('types.income')}
           </p>

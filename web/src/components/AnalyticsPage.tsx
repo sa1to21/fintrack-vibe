@@ -368,11 +368,11 @@ export function AnalyticsPage() {
                     whileHover={{ x: 4 }}
                   >
                     <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">{category.icon}</span>
-                        <span className="text-sm font-medium text-slate-800">{category.name}</span>
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <span className="text-lg flex-shrink-0">{category.icon}</span>
+                        <span className="text-sm font-medium text-slate-800 truncate">{category.name}</span>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right flex-shrink-0 ml-2">
                         <div className="text-sm font-medium text-slate-700">{formatCurrency(category.amount)}</div>
                         <div className="text-xs text-slate-500">{category.percentage}%</div>
                       </div>
@@ -634,11 +634,11 @@ export function AnalyticsPage() {
                     whileHover={{ x: 4 }}
                   >
                     <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">⚡</span>
-                        <span className="text-sm font-medium text-slate-800">{insights.top_category.name}</span>
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <span className="text-lg flex-shrink-0">⚡</span>
+                        <span className="text-sm font-medium text-slate-800 truncate">{insights.top_category.name}</span>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right flex-shrink-0 ml-2">
                         <div className="text-sm font-medium text-slate-700">{insights.top_category.percentage}%</div>
                         <div className="text-xs text-slate-500">{t('insights.topCategory')}</div>
                       </div>
