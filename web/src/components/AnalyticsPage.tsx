@@ -35,6 +35,12 @@ export function AnalyticsPage() {
   type FetchParams = Partial<DateRangeParams & { period: string }>;
   const isAllPeriod = selectedPeriod === 'all';
 
+  const formatDateForApi = (date: Date): string => {
+    const timezoneOffset = date.getTimezoneOffset() * 60000;
+    const adjusted = new Date(date.getTime() - timezoneOffset);
+    return adjusted.toISOString().split('T')[0];
+  };
+
   // Calculate date range based on selected period
   const getDateRange = (): DateRangeParams | null => {
     if (isAllPeriod) {
@@ -52,6 +58,7 @@ export function AnalyticsPage() {
         break;
       case 'month':
         dateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
+        dateTo = new Date(today.getFullYear(), today.getMonth() + 1, 0);
         break;
       case '3months':
         dateFrom = new Date(today);
@@ -63,8 +70,8 @@ export function AnalyticsPage() {
       case 'custom':
         if (customRange.from && customRange.to) {
           return {
-            date_from: customRange.from.toISOString().split('T')[0],
-            date_to: customRange.to.toISOString().split('T')[0],
+            date_from: formatDateForApi(customRange.from),
+            date_to: formatDateForApi(customRange.to),
           };
         }
         dateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -74,8 +81,8 @@ export function AnalyticsPage() {
     }
 
     return {
-      date_from: dateFrom.toISOString().split('T')[0],
-      date_to: dateTo.toISOString().split('T')[0],
+      date_from: formatDateForApi(dateFrom),
+      date_to: formatDateForApi(dateTo),
     };
   };
 

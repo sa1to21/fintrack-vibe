@@ -159,8 +159,17 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
     period_length = (date_to - date_from).to_i + 1
 
     # Calculate previous period dates
-    prev_date_to = date_from - 1.day
-    prev_date_from = prev_date_to - period_length.days + 1.day
+    if date_from == date_from.beginning_of_month && date_to == date_to.end_of_month && date_from.month == date_to.month
+      prev_month = date_from.prev_month
+      prev_date_from = prev_month.beginning_of_month
+      prev_date_to = prev_month.end_of_month
+    elsif date_from == date_from.beginning_of_year && date_to == date_to.end_of_year && date_from.year == date_to.year
+      prev_date_from = date_from.prev_year.beginning_of_year
+      prev_date_to = date_to.prev_year.end_of_year
+    else
+      prev_date_from = date_from - period_length.days
+      prev_date_to = date_to - period_length.days
+    end
 
     previous_transactions = scope
       .where(date: prev_date_from..prev_date_to)
