@@ -29,14 +29,9 @@ class Api::V1::TransactionsController < Api::V1::BaseController
 
     # Проверка: нельзя напрямую добавить доход на счёт задолженности
     if transaction.transaction_type == 'income' && @account.is_debt
-      return render json: {
-        error: 'Нельзя напрямую добавить доход на счёт задолженности',
-        details: [
-          'Для погашения задолженности используйте перевод с обычного счёта.',
-          'Перейдите в раздел "Переводы" и выберите счёт задолженности как получателя.',
-          'Перевод автоматически будет учтён как расход в категории "Погашение задолженности".'
-        ]
-      }, status: :unprocessable_entity
+      error_response = debt_account_income_error
+      Rails.logger.info "Debt account income error response: #{error_response.to_json}"
+      return render json: error_response, status: :unprocessable_entity
     end
 
     if transaction.save
@@ -95,5 +90,30 @@ class Api::V1::TransactionsController < Api::V1::BaseController
 
   def transaction_params
     params.require(:transaction).permit(:amount, :transaction_type, :description, :date, :time, :category_id)
+  end
+
+  def debt_account_income_error
+    language = current_user.language_code.to_s.downcase.start_with?('ru') ? :ru : :en
+
+    messages = {
+      en: {
+        error: 'Cannot add income directly to debt account',
+        details: [
+          'To repay debt, use a transfer from a regular account.',
+          'Go to the "Transfers" section and select the debt account as the recipient.',
+          'The transfer will automatically be recorded as an expense in the "Debt Repayment" category.'
+        ]
+      },
+      ru: {
+        error: 'Нельзя напрямую добавить доход на счёт задолженности',
+        details: [
+          'Для погашения задолженности используйте перевод с обычного счёта.',
+          'Перейдите в раздел "Переводы" и выберите счёт задолженности как получателя.',
+          'Перевод автоматически будет учтён как расход в категории "Погашение задолженности".'
+        ]
+      }
+    }
+
+    messages[language] || messages[:en]
   end
 end

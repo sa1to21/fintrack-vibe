@@ -214,6 +214,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
       }
     } catch (error: any) {
       console.error('Failed to create transaction:', error);
+      console.log('Error response data:', error.response?.data);
 
       const errorMessage: string | undefined = error.response?.data?.error;
       const normalizedError = (errorMessage || '').toLowerCase();
