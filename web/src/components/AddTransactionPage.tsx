@@ -231,9 +231,9 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
       ) {
         toast.error(t('messages.debtPositiveBalanceDetail'), { duration: 5000 });
       } else if (
-        errorMessage === 'Нельзя напрямую добавить доход на долговой счет' ||
+        errorMessage === 'Нельзя напрямую добавить доход на счёт задолженности' ||
         errorMessage === 'Cannot add income directly to debt account' ||
-        normalizedError.includes('долгов') && normalizedError.includes('доход') ||
+        normalizedError.includes('задолженност') && normalizedError.includes('доход') ||
         normalizedError.includes('debt') && normalizedError.includes('income')
       ) {
         const details = error.response?.data?.details;
