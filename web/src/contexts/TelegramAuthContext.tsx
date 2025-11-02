@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authApi } from '../lib/api';
+import api, { authApi } from '../lib/api';
 import i18n from '../i18n';
 
 export interface TelegramUser {
@@ -122,12 +122,18 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
         if (!tg) {
           console.error('[TelegramAuth] Telegram SDK not available');
           // Проверяем localStorage для локальной разработки
-          const savedUser = localStorage.getItem('user');
-          if (savedUser) {
+          const savedUserRaw = localStorage.getItem('user');
+          if (savedUserRaw) {
             console.log('[TelegramAuth] Using saved user from localStorage');
-            setUser(JSON.parse(savedUser));
+            const savedUser: User = JSON.parse(savedUserRaw);
+            setUser(savedUser);
+
+            const savedLanguage = savedUser.language_code === 'ru' ? 'ru' : 'en';
+            await i18n.changeLanguage(savedLanguage);
+            setLanguage(savedLanguage);
+            document.documentElement.lang = savedLanguage;
           } else {
-            setError('Telegram SDK не загружен. Откройте приложение через Telegram.');
+            setError('Telegram SDK не доступен. Откройте приложение из Telegram Mini App.');
           }
           setLoading(false);
           return;
@@ -192,10 +198,16 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
         } else {
           // Если нет данных пользователя
           console.warn('[TelegramAuth] No user data in initDataUnsafe');
-          const savedUser = localStorage.getItem('user');
-          if (savedUser) {
+          const savedUserRaw = localStorage.getItem('user');
+          if (savedUserRaw) {
             console.log('[TelegramAuth] Using saved user from localStorage');
-            setUser(JSON.parse(savedUser));
+            const savedUser: User = JSON.parse(savedUserRaw);
+            setUser(savedUser);
+
+            const savedLanguage = savedUser.language_code === 'ru' ? 'ru' : 'en';
+            await i18n.changeLanguage(savedLanguage);
+            setLanguage(savedLanguage);
+            document.documentElement.lang = savedLanguage;
           } else {
             setError('Данные пользователя недоступны. Перезапустите приложение.');
           }
@@ -206,11 +218,17 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
         console.error('[TelegramAuth] Error message:', err.message);
 
         // Fallback для локальной разработки
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
+        const savedUserRaw = localStorage.getItem('user');
+        if (savedUserRaw) {
           console.log('[TelegramAuth] Using saved user after error');
-          setUser(JSON.parse(savedUser));
+          const savedUser: User = JSON.parse(savedUserRaw);
+          setUser(savedUser);
           setIsTelegramReady(false);
+
+          const savedLanguage = savedUser.language_code === 'ru' ? 'ru' : 'en';
+          await i18n.changeLanguage(savedLanguage);
+          setLanguage(savedLanguage);
+          document.documentElement.lang = savedLanguage;
         } else {
           const errorMessage = err.response?.data?.error || err.message || 'Ошибка авторизации через Telegram';
           console.error('[TelegramAuth] Setting error:', errorMessage);
@@ -273,26 +291,38 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = language || 'en';
   }, [language]);
 
-  // Функция для смены языка
+  // Единая точка для смены языка из приложения или бота
   const changeLanguage = async (lang: string) => {
     try {
       const appLanguage = lang === 'ru' ? 'ru' : 'en';
 
-      // Обновляем язык в i18n
       await i18n.changeLanguage(appLanguage);
       setLanguage(appLanguage);
       document.documentElement.lang = appLanguage;
 
-      // Если пользователь авторизован, сохраняем в БД
+      let updatedUserData: User | null = null;
+
       if (user?.telegram_id) {
-        await authApi.patch(`/users/telegram/${user.telegram_id}`, {
+        const response = await api.patch<User>(`/users/telegram/${user.telegram_id}`, {
           language_code: appLanguage,
         });
+        updatedUserData = response.data;
+      } else if (user) {
+        const response = await api.put<User>('/users/current', {
+          user: { language_code: appLanguage },
+        });
+        updatedUserData = response.data;
+      }
 
-        // Обновляем user в state и localStorage
-        const updatedUser = { ...user, language_code: appLanguage };
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+      if (user || updatedUserData) {
+        const mergedUser = {
+          ...(user || {}),
+          ...(updatedUserData || {}),
+          language_code: appLanguage,
+        } as User;
+
+        setUser(mergedUser);
+        localStorage.setItem('user', JSON.stringify(mergedUser));
       }
 
       console.log('[TelegramAuth] Language changed to:', appLanguage);
