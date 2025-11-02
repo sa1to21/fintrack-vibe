@@ -61,7 +61,7 @@
     "editDescription": "Change your account name and icon",
     "balanceDescription": "Deposit or withdraw funds with transaction record",
     "deleteTitle": "Delete account?",
-    "deleteDescription": "This action cannot be undone. Account \"{name}\" and all related transactions will be deleted."
+    "deleteDescription": "This action cannot be undone. Account \"{{name}}\" and all related transactions will be deleted."
   },
   "actions": {
     "cancel": "Cancel",

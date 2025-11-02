@@ -31,7 +31,7 @@
   "dialogs": {
     "addDescription": "Create a new category to classify transactions",
     "editDescription": "Change category parameters",
-    "deleteTitle": "Delete category \"{name}\"?",
+    "deleteTitle": "Delete category \"{{name}}\"?",
     "deleteDescription": "This action cannot be undone. The category will be deleted permanently.",
     "hasTransactionsWarning": "If transactions are linked to this category, deletion will not be possible."
   },

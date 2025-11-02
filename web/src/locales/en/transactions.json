@@ -53,7 +53,7 @@
     "failedToLoadAccounts": "Failed to load accounts. Try restarting the app.",
     "authError": "Authorization error. Restart the app.",
     "failedToLoadData": "Failed to load data. Check your internet connection.",
-    "accountDeleted": "Debt account \"{name}\" deleted",
+    "accountDeleted": "Debt account \"{{name}}\" deleted",
     "failedToDeleteAccount": "Failed to delete account"
   },
   "loading": "Loading...",
@@ -70,7 +70,7 @@
   },
   "debtDialog": {
     "title": "🎉 Debt fully repaid!",
-    "congratulations": "Congratulations! You have fully repaid the debt on account \"{name}\".",
+    "congratulations": "Congratulations! You have fully repaid the debt on account \"{{name}}\".",
     "deletePrompt": "Would you like to remove this account from the list? You can always create it again if needed.",
     "keep": "Keep account",
     "delete": "Delete account"
@@ -103,7 +103,7 @@
     },
     "debt": {
       "indicator": "💳",
-      "label": "Debt: {amount}"
+      "label": "Debt: {{amount}}"
     }
   },
   "allTransactions": "All Transactions",
