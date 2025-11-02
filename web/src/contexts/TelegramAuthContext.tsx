@@ -79,7 +79,28 @@ export function TelegramAuthProvider({ children }: { children: ReactNode }) {
   // Тема всегда светлая (темная тема отключена)
   const [theme] = useState<'light' | 'dark'>('light');
   const [isManualTheme] = useState(false);
-  const [language, setLanguage] = useState<string>('en');
+  const detectInitialLanguage = () => {
+    if (typeof window === 'undefined') {
+      return 'en';
+    }
+
+    const savedUserRaw = localStorage.getItem('user');
+    if (savedUserRaw) {
+      try {
+        const savedUser: User = JSON.parse(savedUserRaw);
+        const savedLanguage = savedUser.language_code === 'ru' ? 'ru' : 'en';
+        document.documentElement.lang = savedLanguage;
+        i18n.changeLanguage(savedLanguage);
+        return savedLanguage;
+      } catch (error) {
+        console.warn('[TelegramAuth] Failed to parse saved user for language detection:', error);
+      }
+    }
+
+    return 'en';
+  };
+
+  const [language, setLanguage] = useState<string>(detectInitialLanguage);
 
   useEffect(() => {
     // Функция ожидания загрузки Telegram SDK с таймаутом
