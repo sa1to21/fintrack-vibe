@@ -36,27 +36,30 @@ class NotificationSetting < ApplicationRecord
 
     hour, minute = reminder_time.split(':').map(&:to_i)
 
-    # Текущее время пользователя (с учётом его timezone offset)
-    user_time = Time.current.utc + utc_offset.minutes
+    # Текущее время в UTC
+    now_utc = Time.current.utc
 
-    # Время отправки сегодня в timezone пользователя
-    today_send_time = user_time.change(hour: hour, min: minute, sec: 0)
+    # Конвертируем текущее UTC время в локальное время пользователя
+    now_local = now_utc + utc_offset.minutes
 
-    # Если время сегодня уже прошло, начинаем с завтра
-    next_send_time = if user_time >= today_send_time
-      today_send_time + 1.day
+    # Создаём время напоминания на "сегодня" в локальном времени пользователя
+    today_local = Time.new(now_local.year, now_local.month, now_local.day, hour, minute, 0, 0)
+
+    # Если время уже прошло сегодня, берём завтра
+    next_send_local = if now_local >= today_local
+      today_local + 1.day
     else
-      today_send_time
+      today_local
     end
 
-    # Ищем следующий подходящий день недели
+    # Ищем следующий подходящий день недели (в локальном времени пользователя)
     7.times do
-      if days_of_week.include?(next_send_time.wday)
-        # Конвертируем обратно в UTC
-        self.next_send_time_utc = next_send_time - utc_offset.minutes
+      if days_of_week.include?(next_send_local.wday)
+        # Конвертируем локальное время обратно в UTC для сохранения
+        self.next_send_time_utc = next_send_local - utc_offset.minutes
         return
       end
-      next_send_time += 1.day
+      next_send_local += 1.day
     end
 
     # Если не нашли подходящий день (не должно случиться), устанавливаем nil
