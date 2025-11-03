@@ -487,7 +487,7 @@ async def cmd_start(message: types.Message):
         )
     else:
         # Первая отправка - загружаем файл
-        image_path = os.path.join(os.path.dirname(__file__), "..", "images", "Welcome FinTrack.png")
+        image_path = "/images/Welcome FinTrack.png"
         photo = FSInputFile(image_path)
 
         sent_message = await message.answer_photo(
