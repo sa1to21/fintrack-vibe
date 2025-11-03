@@ -41,16 +41,12 @@ function AppContent() {
   // ВРЕМЕННО: Всегда показываем Welcome Page при каждом заходе
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      // const hasSeenWelcomeLS = localStorage.getItem('hasSeenWelcome');
+      // Очищаем флаг, чтобы Welcome Page показывалась всегда
+      localStorage.removeItem('hasSeenWelcome');
+      setHasSeenWelcome(false);
 
-      // if (hasSeenWelcomeLS === 'true') {
-      //   // Пользователь уже видел Welcome Page - идём сразу в Dashboard
-      //   setHasSeenWelcome(true);
-      //   setCurrentScreen('dashboard');
-      // } else {
-        // Всегда показываем Welcome Page
-        setCurrentScreen('welcome');
-      // }
+      // Всегда показываем Welcome Page
+      setCurrentScreen('welcome');
     }
   }, [loading, isAuthenticated]);
 
