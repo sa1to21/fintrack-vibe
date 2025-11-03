@@ -3,21 +3,21 @@ class Api::V1::NotificationSettingsController < Api::V1::BaseController
 
   # GET /api/v1/notification_settings
   def show
-    if @notification_setting
-      render json: @notification_setting
-    else
-      # Возвращаем дефолтные настройки, если их ещё нет
-      render json: {
-        id: nil,
-        user_id: current_user.id,
-        enabled: false,
-        reminder_time: "20:00",
-        timezone: "UTC",
-        utc_offset: 0,
-        days_of_week: [1, 2, 3, 4, 5, 6, 0],
-        next_send_time_utc: nil
-      }
+    # Если настроек ещё нет, создадим их с дефолтными значениями
+    unless @notification_setting
+      # Получаем timezone offset пользователя (по умолчанию UTC+3)
+      utc_offset = 180
+
+      @notification_setting = current_user.create_notification_setting(
+        enabled: true,
+        reminder_time: '20:00',
+        timezone: 'User/Local',
+        utc_offset: utc_offset,
+        days_of_week: [0, 1, 2, 3, 4, 5, 6]
+      )
     end
+
+    render json: @notification_setting
   end
 
   # POST /api/v1/notification_settings or PATCH /api/v1/notification_settings

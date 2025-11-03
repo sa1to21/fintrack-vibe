@@ -146,6 +146,9 @@ module Api
     end
 
     def create_default_notification_settings(user, params_hash)
+      # Проверяем, не созданы ли уже настройки
+      return if user.notification_setting.present?
+
       # Получаем timezone offset пользователя из Telegram (в минутах)
       # По умолчанию используем UTC+3 (Москва) = 180 минут
       utc_offset = params_hash[:timezone_offset]&.to_i || 180
