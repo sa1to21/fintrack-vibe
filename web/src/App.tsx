@@ -38,15 +38,19 @@ function AppContent() {
   const [hasSeenWelcome, setHasSeenWelcome] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
-  // ВРЕМЕННО: Всегда показываем Welcome Page при каждом заходе
+  // Автоматически пропускаем Welcome Page для вернувшихся пользователей
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      // Очищаем флаг, чтобы Welcome Page показывалась всегда
-      localStorage.removeItem('hasSeenWelcome');
-      setHasSeenWelcome(false);
+      const hasSeenWelcomeLS = localStorage.getItem('hasSeenWelcome');
 
-      // Всегда показываем Welcome Page
-      setCurrentScreen('welcome');
+      if (hasSeenWelcomeLS === 'true') {
+        // Пользователь уже видел Welcome Page - идём сразу в Dashboard
+        setHasSeenWelcome(true);
+        setCurrentScreen('dashboard');
+      } else {
+        // Первый раз в приложении - показываем Welcome Page
+        setCurrentScreen('welcome');
+      }
     }
   }, [loading, isAuthenticated]);
 
