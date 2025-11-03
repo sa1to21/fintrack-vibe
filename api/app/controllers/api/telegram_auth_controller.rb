@@ -33,9 +33,14 @@ module Api
         end
 
         # Создать дефолтный счет и категории для нового пользователя
-        create_default_account(user)
-        create_default_categories(user)
-        create_default_notification_settings(user)
+        begin
+          create_default_account(user)
+          create_default_categories(user)
+          create_default_notification_settings(user, user_params)
+        rescue => e
+          Rails.logger.error "Failed to create default data for user #{user.id}: #{e.message}"
+          Rails.logger.error e.backtrace.join("\n")
+        end
       else
         # Обновить данные существующего пользователя
         preferred_language = user.language_code.presence ||
@@ -140,10 +145,10 @@ module Api
       end
     end
 
-    def create_default_notification_settings(user)
+    def create_default_notification_settings(user, params_hash)
       # Получаем timezone offset пользователя из Telegram (в минутах)
       # По умолчанию используем UTC+3 (Москва) = 180 минут
-      utc_offset = user_params[:timezone_offset]&.to_i || 180
+      utc_offset = params_hash[:timezone_offset]&.to_i || 180
 
       user.create_notification_setting!(
         enabled: true,
