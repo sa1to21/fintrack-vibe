@@ -32,7 +32,6 @@ class Api::V1::NotificationSettingsController < Api::V1::BaseController
     else
       # Создаём новые настройки
       @notification_setting = current_user.build_notification_setting(notification_setting_params)
-      @notification_setting.id = SecureRandom.uuid
 
       if @notification_setting.save
         render json: @notification_setting, status: :created
