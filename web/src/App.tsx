@@ -41,18 +41,21 @@ function AppContent() {
   // Автоматически пропускаем Welcome Page для вернувшихся пользователей
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      if (!isNewUser) {
-        // Это вернувшийся пользователь - идём сразу в Dashboard
+      const hasSeenWelcomeLS = localStorage.getItem('hasSeenWelcome');
+
+      if (hasSeenWelcomeLS === 'true') {
+        // Пользователь уже видел Welcome Page - идём сразу в Dashboard
         setHasSeenWelcome(true);
         setCurrentScreen('dashboard');
       } else {
-        // Новый пользователь - показываем Welcome Page
+        // Первый раз в приложении - показываем Welcome Page
         setCurrentScreen('welcome');
       }
     }
-  }, [loading, isAuthenticated, isNewUser]);
+  }, [loading, isAuthenticated]);
 
   const handleGetStarted = () => {
+    localStorage.setItem('hasSeenWelcome', 'true');
     setHasSeenWelcome(true);
     setCurrentScreen('dashboard');
   };
