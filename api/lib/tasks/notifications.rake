@@ -26,39 +26,81 @@ namespace :notifications do
         next
       end
 
+      # Определяем язык пользователя
+      lang = user.language_code == 'ru' ? 'ru' : 'en'
+
       # Получаем последнюю транзакцию пользователя
       last_transaction = user.transactions.order(created_at: :desc).first
       last_activity_text = if last_transaction
         time_ago = Time.current - last_transaction.created_at
         hours = (time_ago / 3600).round
-        if hours < 1
-          "меньше часа назад"
-        elsif hours < 24
-          hours_word = hours == 1 ? 'час' : (hours < 5 ? 'часа' : 'часов')
-          "#{hours} #{hours_word} назад"
+
+        if lang == 'ru'
+          if hours < 1
+            "меньше часа назад"
+          elsif hours < 24
+            hours_word = hours == 1 ? 'час' : (hours < 5 ? 'часа' : 'часов')
+            "#{hours} #{hours_word} назад"
+          else
+            days = (hours / 24).round
+            days_word = days == 1 ? 'день' : (days < 5 ? 'дня' : 'дней')
+            "#{days} #{days_word} назад"
+          end
         else
-          days = (hours / 24).round
-          days_word = days == 1 ? 'день' : (days < 5 ? 'дня' : 'дней')
-          "#{days} #{days_word} назад"
+          if hours < 1
+            "less than an hour ago"
+          elsif hours < 24
+            "#{hours} hour#{hours == 1 ? '' : 's'} ago"
+          else
+            days = (hours / 24).round
+            "#{days} day#{days == 1 ? '' : 's'} ago"
+          end
         end
       else
-        "еще не было операций"
+        lang == 'ru' ? "еще не было операций" : "no transactions yet"
       end
 
-      # Формируем сообщение
+      # Формируем сообщение в зависимости от языка
+      texts = {
+        'ru' => {
+          header: "💰 Напоминание от WiseTrack",
+          reminder: "Не забудь внести свои траты за сегодня!",
+          last_operation: "📊 Последняя операция:",
+          useful_commands: "💡 Полезные команды:",
+          why_cmd: "/why - Зачем нужен учёт финансов",
+          guide_cmd: "/guide - Руководство по приложению",
+          button: "💰 Открыть WiseTrack"
+        },
+        'en' => {
+          header: "💰 Reminder from WiseTrack",
+          reminder: "Don't forget to track your expenses today!",
+          last_operation: "📊 Last transaction:",
+          useful_commands: "💡 Useful commands:",
+          why_cmd: "/why - Why track finances",
+          guide_cmd: "/guide - App guide",
+          button: "💰 Open WiseTrack"
+        }
+      }
+
+      t = texts[lang]
+
       message = <<~TEXT
-        💰 Напоминание от WiseTrack
+        #{t[:header]}
 
-        Не забудь внести свои траты за сегодня!
+        #{t[:reminder]}
 
-        📊 Последняя операция: #{last_activity_text}
+        #{t[:last_operation]} #{last_activity_text}
+
+        #{t[:useful_commands]}
+        #{t[:why_cmd]}
+        #{t[:guide_cmd]}
       TEXT
 
       # Кнопка для открытия приложения
       keyboard = {
         inline_keyboard: [
           [{
-            text: "💰 Открыть WiseTrack",
+            text: t[:button],
             web_app: { url: webapp_url }
           }]
         ]

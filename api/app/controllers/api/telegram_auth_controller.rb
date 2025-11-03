@@ -35,6 +35,7 @@ module Api
         # Создать дефолтный счет и категории для нового пользователя
         create_default_account(user)
         create_default_categories(user)
+        create_default_notification_settings(user)
       else
         # Обновить данные существующего пользователя
         preferred_language = user.language_code.presence ||
@@ -137,6 +138,20 @@ module Api
       default_categories.each do |category_attrs|
         user.categories.create!(category_attrs)
       end
+    end
+
+    def create_default_notification_settings(user)
+      # Получаем timezone offset пользователя из Telegram (в минутах)
+      # По умолчанию используем UTC+3 (Москва) = 180 минут
+      utc_offset = user_params[:timezone_offset]&.to_i || 180
+
+      user.create_notification_setting!(
+        enabled: true,
+        reminder_time: '20:00',
+        timezone: 'User/Local',
+        utc_offset: utc_offset,
+        days_of_week: [0, 1, 2, 3, 4, 5, 6] # Все дни недели
+      )
     end
   end
 end
