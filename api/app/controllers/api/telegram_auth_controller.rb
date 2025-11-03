@@ -34,9 +34,13 @@ module Api
 
         # Создать дефолтный счет и категории для нового пользователя
         begin
+          Rails.logger.info "Creating default data for new user #{user.id}"
           create_default_account(user)
+          Rails.logger.info "Created default account for user #{user.id}"
           create_default_categories(user)
+          Rails.logger.info "Created default categories for user #{user.id}"
           create_default_notification_settings(user, user_params)
+          Rails.logger.info "Created default notification settings for user #{user.id}"
         rescue => e
           Rails.logger.error "Failed to create default data for user #{user.id}: #{e.message}"
           Rails.logger.error e.backtrace.join("\n")
