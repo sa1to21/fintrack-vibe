@@ -31,7 +31,7 @@ services:
       dockerfile: Dockerfile
     container_name: fintrack_web
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
       api:
         condition: service_healthy
@@ -75,14 +75,16 @@ services:
       api:
         condition: service_healthy
     restart: unless-stopped
+    user: root
     command: >
       sh -c "
         echo '*/5 * * * * cd /rails && /usr/local/bundle/bin/bundle exec rake notifications:send_reminders >> /rails/log/cron.log 2>&1' > /etc/cron.d/notifications &&
         chmod 0644 /etc/cron.d/notifications &&
         crontab /etc/cron.d/notifications &&
         touch /rails/log/cron.log &&
+        chown rails:rails /rails/log/cron.log &&
         echo 'Cron service started. Notifications will run every 5 minutes.' &&
-        tail -f /rails/log/cron.log
+        cron -f
       "
 
 volumes:

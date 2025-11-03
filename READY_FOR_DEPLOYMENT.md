@@ -95,10 +95,11 @@ RAILS_MASTER_KEY=<сгенерировать ниже>
 API_URL=http://api:80
 ```
 
-Генерация RAILS_MASTER_KEY:
+Получение RAILS_MASTER_KEY:
 ```bash
-docker compose run --rm api bin/rails secret
-# Скопируйте результат в .env
+# Используйте ключ из файла api/config/master.key
+cat api/config/master.key
+# Скопируйте значение в .env (должно быть 32 символа)
 ```
 
 ### 4. Запуск приложения
@@ -131,11 +132,15 @@ server {
     server_name your-domain.com www.your-domain.com;
 
     location / {
-        proxy_pass http://localhost:80;
+        proxy_pass http://localhost:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
     }
 }
 ```
@@ -172,17 +177,17 @@ docker compose exec api bin/rails notifications:send_reminders
 │    VPS Server (your-domain.com)         │
 │  ┌────────────────────────────────────┐ │
 │  │  Nginx (Host) - SSL/HTTPS          │ │
-│  │  Port 443 → Port 80 (Docker)       │ │
+│  │  Port 443 → Port 8080 (Docker)     │ │
 │  └────────────────────────────────────┘ │
 │                    ↓                     │
 │  ┌────────────────────────────────────┐ │
-│  │  Web (Nginx) - Docker              │ │
+│  │  Web (Nginx) - Docker :8080        │ │
 │  │  - React статика                   │ │
 │  │  - Reverse proxy /api/* → API      │ │
 │  └────────────────────────────────────┘ │
 │                    ↓                     │
 │  ┌────────────────────────────────────┐ │
-│  │  API (Rails) - Docker              │ │
+│  │  API (Rails) - Docker :3000        │ │
 │  │  - REST API                        │ │
 │  │  - SQLite БД (4 databases)         │ │
 │  │  - Thruster server                 │ │
