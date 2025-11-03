@@ -6,13 +6,14 @@ import { TrendingUp, TrendingDown, DollarSign, CalendarIcon, Filter, BarChart3, 
 import accountsService, { type DebtStats } from "../services/accounts.service";
 import { OptimizedMotion } from "./ui/OptimizedMotion";
 import { LightMotion } from "./ui/LightMotion";
-import { getCurrencySymbol } from "../constants/currencies";
+import { getCurrencySymbol, DEFAULT_CURRENCY } from "../constants/currencies";
 import analyticsService, {
   AnalyticsSummary,
   CategoriesResponse,
   ComparisonResponse,
   InsightsResponse
 } from "../services/analytics.service";
+import usersService from "../services/users.service";
 
 export function AnalyticsPage() {
   const { t, i18n } = useTranslation('analytics');
@@ -30,6 +31,7 @@ export function AnalyticsPage() {
   const [debtStats, setDebtStats] = useState<DebtStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [baseCurrency, setBaseCurrency] = useState<string>(DEFAULT_CURRENCY);
 
   type DateRangeParams = { date_from: string; date_to: string };
   type FetchParams = Partial<DateRangeParams & { period: string }>;
@@ -91,6 +93,10 @@ export function AnalyticsPage() {
     try {
       setLoading(true);
       setError(null);
+
+      // Загружаем базовую валюту пользователя
+      const userData = await usersService.getCurrent();
+      setBaseCurrency(userData.base_currency);
 
       const dateRange = getDateRange();
       const baseParams: FetchParams = dateRange ? { ...dateRange } : {};
@@ -181,8 +187,9 @@ export function AnalyticsPage() {
     return colors[index % colors.length];
   };
 
-  const formatCurrency = (amount: number | string, currency: string = 'RUB') => {
-    const symbol = getCurrencySymbol(currency);
+  const formatCurrency = (amount: number | string, currency?: string) => {
+    const usedCurrency = currency || baseCurrency;
+    const symbol = getCurrencySymbol(usedCurrency);
     const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
     const locale = i18n.language === 'ru' ? 'ru-RU' : 'en-US';
     return `${numAmount.toLocaleString(locale, {
