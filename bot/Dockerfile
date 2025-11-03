@@ -10,14 +10,14 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
 # Install dependencies
-COPY requirements.txt .
+COPY bot/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy bot code
-COPY bot.py .
+COPY bot/bot.py .
 
 # Copy images directory
-COPY ../images /images
+COPY images /images
 
 # Run the bot
 CMD ["python", "bot.py"]
