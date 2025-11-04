@@ -176,8 +176,8 @@ export function TransferPage({ onBack, onSuccess }: TransferPageProps) {
   const formatCurrency = (amount: number, currency: string = 'RUB') => {
     const symbol = getCurrencySymbol(currency);
     return `${amount.toLocaleString('ru-RU', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
     })} ${symbol}`;
   };
 
