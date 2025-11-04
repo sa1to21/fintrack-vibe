@@ -66,6 +66,8 @@ services:
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       WEBAPP_URL: ${WEBAPP_URL}
+      BUNDLE_PATH: /usr/local/bundle
+      PATH: /usr/local/bundle/bin:/usr/local/bin:/usr/bin:/bin
     volumes:
       - api_storage:/rails/storage
       - api_logs:/rails/log
@@ -76,11 +78,15 @@ services:
     user: root
     command: >
       sh -c "
-        echo '*/5 * * * * cd /rails && /usr/local/bundle/bin/bundle exec rake notifications:send_reminders >> /rails/log/cron.log 2>&1' > /etc/cron.d/notifications &&
+        echo 'PATH=/usr/local/bundle/bin:/usr/local/bin:/usr/bin:/bin' > /etc/cron.d/notifications &&
+        echo 'BUNDLE_PATH=/usr/local/bundle' >> /etc/cron.d/notifications &&
+        echo 'RAILS_ENV=production' >> /etc/cron.d/notifications &&
+        echo 'RAILS_MASTER_KEY=${RAILS_MASTER_KEY}' >> /etc/cron.d/notifications &&
+        echo 'TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}' >> /etc/cron.d/notifications &&
+        echo 'WEBAPP_URL=${WEBAPP_URL}' >> /etc/cron.d/notifications &&
+        echo '*/5 * * * * root cd /rails && /usr/local/bin/bundle exec rake notifications:send_reminders >> /rails/log/cron.log 2>&1' >> /etc/cron.d/notifications &&
         chmod 0644 /etc/cron.d/notifications &&
-        crontab /etc/cron.d/notifications &&
         touch /rails/log/cron.log &&
-        chown rails:rails /rails/log/cron.log &&
         echo 'Cron service started. Notifications will run every 5 minutes.' &&
         cron -f
       "
