@@ -78,7 +78,7 @@ services:
     user: root
     command: >
       sh -c "
-        echo 'PATH=/usr/local/bundle/bin:/usr/local/bin:/usr/bin:/bin' > /etc/cron.d/notifications &&
+        echo 'PATH=/usr/local/bundle/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' > /etc/cron.d/notifications &&
         echo 'BUNDLE_PATH=/usr/local/bundle' >> /etc/cron.d/notifications &&
         echo 'RAILS_ENV=production' >> /etc/cron.d/notifications &&
         echo 'RAILS_MASTER_KEY=${RAILS_MASTER_KEY}' >> /etc/cron.d/notifications &&
@@ -88,7 +88,7 @@ services:
         chmod 0644 /etc/cron.d/notifications &&
         touch /rails/log/cron.log &&
         echo 'Cron service started. Notifications will run every 5 minutes.' &&
-        cron -f
+        /usr/sbin/cron -f
       "
 
 volumes:
