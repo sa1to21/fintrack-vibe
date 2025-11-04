@@ -193,7 +193,7 @@ export function AnalyticsPage() {
     const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
     const locale = i18n.language === 'ru' ? 'ru-RU' : 'en-US';
     return `${numAmount.toLocaleString(locale, {
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 1,
       maximumFractionDigits: 2
     })} ${symbol}`;
   };

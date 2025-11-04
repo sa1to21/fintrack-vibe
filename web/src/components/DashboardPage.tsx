@@ -266,7 +266,7 @@ export function DashboardPage({ onAddTransaction, onManageAccounts, onViewAllTra
   const formatCurrency = (amount: number, currency: string = 'RUB') => {
     const symbol = getCurrencySymbol(currency);
     return `${amount.toLocaleString('ru-RU', {
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 1,
       maximumFractionDigits: 2
     })} ${symbol}`;
   };

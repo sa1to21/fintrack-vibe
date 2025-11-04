@@ -21,7 +21,7 @@ export function DebtAccountCard({ account, onClick, showBalance = true }: DebtAc
     const symbol = getCurrencySymbol(account.currency);
     const locale = i18n.language === 'ru' ? 'ru-RU' : 'en-US';
     return `${Math.abs(amount).toLocaleString(locale, {
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 1,
       maximumFractionDigits: 2
     })} ${symbol}`;
   };
