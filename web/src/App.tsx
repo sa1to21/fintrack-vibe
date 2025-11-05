@@ -40,19 +40,27 @@ function AppContent() {
 
   // Автоматически пропускаем Welcome Page для вернувшихся пользователей
   useEffect(() => {
-    if (!loading && isAuthenticated) {
-      const hasSeenWelcomeLS = localStorage.getItem('hasSeenWelcome');
+    if (!loading) {
+      if (isAuthenticated) {
+        const hasSeenWelcomeLS = localStorage.getItem('hasSeenWelcome');
 
-      if (hasSeenWelcomeLS === 'true') {
-        // Пользователь уже видел Welcome Page - идём сразу в Dashboard
-        setHasSeenWelcome(true);
-        setCurrentScreen('dashboard');
+        if (hasSeenWelcomeLS === 'true') {
+          // Пользователь уже видел Welcome Page - идём сразу в Dashboard
+          setHasSeenWelcome(true);
+          setCurrentScreen('dashboard');
+        } else {
+          // Первый раз в приложении - показываем Welcome Page
+          setCurrentScreen('welcome');
+        }
+      } else if (error) {
+        // Если есть ошибка авторизации, показываем экран ошибки (обрабатывается ниже)
+        // currentScreen остаётся null, что нормально
       } else {
-        // Первый раз в приложении - показываем Welcome Page
+        // Если не авторизован и нет ошибки (не должно происходить, но на всякий случай)
         setCurrentScreen('welcome');
       }
     }
-  }, [loading, isAuthenticated]);
+  }, [loading, isAuthenticated, error]);
 
   const handleGetStarted = () => {
     localStorage.setItem('hasSeenWelcome', 'true');
@@ -147,7 +155,7 @@ function AppContent() {
       <div className="h-screen w-full bg-background overflow-hidden flex flex-col">
         <div className="flex-1 overflow-y-auto">
           <Suspense fallback={null}>
-            {!currentScreen && (
+            {!currentScreen && !error && (
               <div className="h-screen w-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
                 <div className="text-center space-y-4">
                   <div className="w-16 h-16 mx-auto flex items-center justify-center animate-pulse">
