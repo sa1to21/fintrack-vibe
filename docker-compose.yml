@@ -76,14 +76,14 @@ services:
         condition: service_healthy
     restart: unless-stopped
     user: root
-    command: >
+    command: |
       sh -c "
         cat > /etc/cron.d/notifications << 'CRONEOF'
-PATH=/usr/local/bundle/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-BUNDLE_PATH=/usr/local/bundle
-RAILS_ENV=production
-*/5 * * * * root cd /rails && RAILS_ENV=production BUNDLE_PATH=/usr/local/bundle /usr/local/bin/bundle exec rake notifications:send_reminders >> /rails/log/cron.log 2>&1
-CRONEOF
+      PATH=/usr/local/bundle/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      BUNDLE_PATH=/usr/local/bundle
+      RAILS_ENV=production
+      */5 * * * * root cd /rails && RAILS_ENV=production BUNDLE_PATH=/usr/local/bundle /usr/local/bin/bundle exec rake notifications:send_reminders >> /rails/log/cron.log 2>&1
+      CRONEOF
         chmod 0644 /etc/cron.d/notifications &&
         touch /rails/log/cron.log &&
         echo 'Cron service started. Notifications will run every 5 minutes.' &&
