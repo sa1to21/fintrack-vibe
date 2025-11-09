@@ -567,8 +567,8 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 <span className="relative z-10">{t('addNewAccount')}</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 p-0 gap-0 max-h-[90vh]" style={{ display: 'flex', flexDirection: 'column', height: '90vh' }}>
-              <DialogHeader className="flex-shrink-0 px-4 sm:px-6 pt-4 sm:pt-6 pb-2">
+            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 max-h-[90vh] overflow-hidden">
+              <DialogHeader>
                 <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   {t('createNewAccount')}
                 </DialogTitle>
@@ -576,7 +576,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   {t('dialogs.addDescription')}
                 </DialogDescription>
               </DialogHeader>
-              <div className="px-4 sm:px-6 py-2" style={{ flex: '1 1 0%', overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch', minHeight: 0 }}>
+              <div className="overflow-y-auto overflow-x-hidden max-h-[calc(90vh-180px)]">
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="account-name">{t('fields.accountName')}</Label>
@@ -722,7 +722,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 )}
                   </div>
                 </div>
-                <DialogFooter className="px-4 sm:px-6 pb-4 sm:pb-6 pt-3 border-t border-blue-100" style={{ flexShrink: 0 }}>
+                <DialogFooter className="border-t border-blue-100 mt-4">
                   <Button
                     variant="outline"
                     onClick={() => setIsAddDialogOpen(false)}
