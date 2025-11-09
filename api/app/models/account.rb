@@ -9,6 +9,8 @@ class Account < ApplicationRecord
   validate :debt_info_structure, if: :is_debt?
   validate :debt_balance_must_be_negative, if: -> { is_debt? && !marked_for_destruction? }
 
+  before_create :set_display_order
+
   scope :regular, -> { where(is_debt: false) }
   scope :debts, -> { where(is_debt: true) }
 
@@ -46,6 +48,12 @@ class Account < ApplicationRecord
   end
 
   private
+
+  def set_display_order
+    # Set display_order to be after all existing accounts for this user
+    max_order = user.accounts.maximum(:display_order) || -1
+    self.display_order = max_order + 1
+  end
 
   def debt_info_structure
     return unless debt_info.present?
