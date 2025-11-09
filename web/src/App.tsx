@@ -7,6 +7,7 @@ import { Toaster } from "./components/ui/sonner";
 const WelcomePage = lazy(() => import("./components/WelcomePage").then(m => ({ default: m.WelcomePage })));
 const DashboardPage = lazy(() => import("./components/DashboardPage").then(m => ({ default: m.DashboardPage })));
 const AddTransactionPage = lazy(() => import("./components/AddTransactionPage").then(m => ({ default: m.AddTransactionPage })));
+const CreateAccountPage = lazy(() => import("./components/CreateAccountPage").then(m => ({ default: m.CreateAccountPage })));
 const ManageAccountsPage = lazy(() => import("./components/ManageAccountsPage").then(m => ({ default: m.ManageAccountsPage })));
 const ManageCategoriesPage = lazy(() => import("./components/ManageCategoriesPage").then(m => ({ default: m.ManageCategoriesPage })));
 const AllTransactionsPage = lazy(() => import("./components/AllTransactionsPage").then(m => ({ default: m.AllTransactionsPage })));
@@ -29,7 +30,7 @@ interface Transaction {
   time: string;
 }
 
-type AppScreen = 'welcome' | 'dashboard' | 'analytics' | 'education' | 'settings' | 'add-transaction' | 'manage-accounts' | 'manage-categories' | 'all-transactions' | 'transaction-detail' | 'transfer';
+type AppScreen = 'welcome' | 'dashboard' | 'analytics' | 'education' | 'settings' | 'add-transaction' | 'create-account' | 'manage-accounts' | 'manage-categories' | 'all-transactions' | 'transaction-detail' | 'transfer';
 
 function AppContent() {
   const { isAuthenticated, loading, error, isNewUser } = useTelegramAuth();
@@ -114,6 +115,7 @@ function AppContent() {
 
   const showBottomNav = hasSeenWelcome &&
     currentScreen !== 'add-transaction' &&
+    currentScreen !== 'create-account' &&
     currentScreen !== 'manage-accounts' &&
     currentScreen !== 'manage-categories' &&
     currentScreen !== 'all-transactions' &&
@@ -186,8 +188,17 @@ function AppContent() {
                 onAddTransaction={handleAddNewTransaction}
               />
             )}
+            {currentScreen === 'create-account' && (
+              <CreateAccountPage
+                onBack={() => setCurrentScreen('manage-accounts')}
+                onAccountCreated={() => setCurrentScreen('manage-accounts')}
+              />
+            )}
             {currentScreen === 'manage-accounts' && (
-              <ManageAccountsPage onBack={handleBack} />
+              <ManageAccountsPage
+                onBack={handleBack}
+                onNavigateToCreateAccount={() => setCurrentScreen('create-account')}
+              />
             )}
             {currentScreen === 'manage-categories' && (
               <ManageCategoriesPage onBack={handleBack} />

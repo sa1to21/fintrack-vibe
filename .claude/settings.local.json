@@ -33,7 +33,13 @@
       "Bash(npm install:*)",
       "Bash(git restore:*)",
       "Bash(cmd /c:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(docker logs:*)",
+      "Bash(cp:*)",
+      "Bash(bin/rails generate:*)",
+      "Bash(ssh:*)",
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)"
     ],
     "deny": [],
     "ask": []

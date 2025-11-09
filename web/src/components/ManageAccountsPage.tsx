@@ -55,6 +55,7 @@ import { handleNumberInput } from "../utils/numberInput";
 
 interface ManageAccountsPageProps {
   onBack: () => void;
+  onNavigateToCreateAccount: () => void;
 }
 
 interface Account {
@@ -200,7 +201,7 @@ function SortableAccountItem({ account, accounts, formatCurrency, openBalanceDia
   );
 }
 
-export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
+export function ManageAccountsPage({ onBack, onNavigateToCreateAccount }: ManageAccountsPageProps) {
   const { t, i18n } = useTranslation('accounts');
   const isRussian = (i18n.language || 'en').startsWith('ru');
   const dateDisplayLocale = isRussian ? 'ru-RU' : 'en-US';
@@ -212,18 +213,11 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
   const [newAccountName, setNewAccountName] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState(DEFAULT_CURRENCY);
   const [selectedIcon, setSelectedIcon] = useState(accountIcons[0]);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isBalanceDialogOpen, setIsBalanceDialogOpen] = useState(false);
   const [balanceChange, setBalanceChange] = useState("");
   const [balanceChangeType, setBalanceChangeType] = useState<'increase' | 'decrease'>('increase');
   const [actionLoading, setActionLoading] = useState(false);
-  const [isDebt, setIsDebt] = useState(false);
-  const [debtCreditor, setDebtCreditor] = useState("");
-  const [debtInitialAmount, setDebtInitialAmount] = useState("");
-  const [debtDueDate, setDebtDueDate] = useState("");
-  const [debtNotes, setDebtNotes] = useState("");
-  const [initialBalance, setInitialBalance] = useState("");
 
   // Drag and drop sensors
   const sensors = useSensors(
@@ -556,191 +550,15 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
         transition={{ duration: 0.4, delay: 0.15 }}
       >
         {/* Add Account Button */}
-        <LightMotion
-          whileTap={{ scale: 0.98 }}
-        >
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white p-4 h-auto gap-2 shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                <Plus className="w-5 h-5 relative z-10" />
-                <span className="relative z-10">{t('addNewAccount')}</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 p-0 h-[600px] max-h-[85vh]">
-              <div className="flex flex-col h-full p-6 overflow-hidden">
-                <DialogHeader className="flex-shrink-0 pb-4">
-                  <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                    {t('createNewAccount')}
-                  </DialogTitle>
-                  <DialogDescription className="text-slate-600">
-                    {t('dialogs.addDescription')}
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="flex-1 overflow-y-scroll overflow-x-hidden pr-2 min-h-0">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="account-name">{t('fields.accountName')}</Label>
-                      <Input
-                        id="account-name"
-                        placeholder={t('placeholders.enterName')}
-                        value={newAccountName}
-                        onChange={(e) => setNewAccountName(e.target.value)}
-                        className="border-blue-200 focus:border-blue-400"
-                      />
-                    </div>
-                <div className="space-y-2">
-                  <Label htmlFor="account-currency">{t('fields.currency')}</Label>
-                  <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
-                    <SelectTrigger className="border-blue-200 focus:border-blue-400">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CURRENCIES.map((currency) => (
-                        <SelectItem key={currency.code} value={currency.code}>
-                          <div className="flex items-center gap-2">
-                            <span>{currency.flag}</span>
-                            <span>{currency.code}</span>
-                            <span className="text-slate-500">({currency.symbol})</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="account-icon">{t('fields.icon')}</Label>
-                  <Select
-                    value={accountIcons.findIndex(icon => icon.type === selectedIcon.type && icon.nameKey === selectedIcon.nameKey).toString()}
-                    onValueChange={(value) => setSelectedIcon(accountIcons[parseInt(value)])}
-                  >
-                    <SelectTrigger className="border-blue-200 focus:border-blue-400">
-                      <SelectValue>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">{selectedIcon.emoji}</span>
-                          <span>{t(selectedIcon.nameKey)}</span>
-                        </div>
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {accountIcons.map((iconData, index) => (
-                        <SelectItem key={index} value={index.toString()} className="cursor-pointer">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xl">{iconData.emoji}</span>
-                            <span>{t(iconData.nameKey)}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {!isDebt && (
-                  <div className="space-y-2">
-                    <Label htmlFor="initial-balance">{t('fields.initialBalance')}</Label>
-                    <div className="relative">
-                      <Input
-                        id="initial-balance"
-                        type="number"
-                        placeholder=""
-                        value={initialBalance}
-                        onChange={handleNumberInput(setInitialBalance)}
-                        onWheel={(e) => e.currentTarget.blur()}
-                        className="border-blue-200 focus:border-blue-400 pr-10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        step="0.01"
-                      />
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none">
-                        {getCurrencySymbol(selectedCurrency)}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex items-center space-x-2 p-3 bg-amber-50 rounded-lg border border-amber-200">
-                  <Checkbox
-                    id="is-debt"
-                    checked={isDebt}
-                    onCheckedChange={(checked) => setIsDebt(checked as boolean)}
-                  />
-                  <Label
-                    htmlFor="is-debt"
-                    className="text-sm font-medium text-amber-800 cursor-pointer"
-                  >
-                    💳 {t('debt.title')}
-                  </Label>
-                </div>
-
-                {isDebt && (
-                  <div className="space-y-3 p-3 bg-amber-50/50 rounded-lg border border-amber-200">
-                    <div className="space-y-2">
-                      <Label htmlFor="debt-creditor">{t('debt.creditor')}</Label>
-                      <Input
-                        id="debt-creditor"
-                        placeholder={t('debt.creditorPlaceholder')}
-                        value={debtCreditor}
-                        onChange={(e) => setDebtCreditor(e.target.value)}
-                        className="border-amber-200 focus:border-amber-400"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="debt-amount">{t('debt.amount')}</Label>
-                      <Input
-                        id="debt-amount"
-                        type="number"
-                        placeholder={t('placeholders.enterAmount')}
-                        value={debtInitialAmount}
-                        onChange={handleNumberInput(setDebtInitialAmount)}
-                        onWheel={(e) => e.currentTarget.blur()}
-                        className="border-amber-200 focus:border-amber-400 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
-                        step="0.01"
-                        min="0"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="debt-due-date">{t('debt.dueDate')}</Label>
-                      <DatePicker
-                        id="debt-due-date"
-                        value={debtDueDate}
-                        onChange={setDebtDueDate}
-                        placeholder={t('messages.enterDueDate')}
-                        displayLocale={dateDisplayLocale}
-                        calendarLocale={calendarLocale}
-                        className="h-10 border-amber-200 focus-visible:ring-amber-400/70 focus-visible:ring-offset-0"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="debt-notes">{t('debt.notes')}</Label>
-                      <Textarea
-                        id="debt-notes"
-                        placeholder={t('debt.notesPlaceholder')}
-                        value={debtNotes}
-                        onChange={(e) => setDebtNotes(e.target.value)}
-                        className="border-amber-200 focus:border-amber-400 resize-none"
-                        rows={2}
-                      />
-                    </div>
-                  </div>
-                )}
-                  </div>
-                </div>
-                <DialogFooter className="flex-shrink-0 border-t border-blue-100 pt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsAddDialogOpen(false)}
-                    className="border-blue-300"
-                  >
-                    {t('actions.cancel')}
-                  </Button>
-                  <Button
-                    onClick={handleAddAccount}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-                  >
-                    {t('actions.create')}
-                  </Button>
-                </DialogFooter>
-              </div>
-            </DialogContent>
-          </Dialog>
+        <LightMotion whileTap={{ scale: 0.98 }}>
+          <Button
+            onClick={onNavigateToCreateAccount}
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white p-4 h-auto gap-2 shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            <Plus className="w-5 h-5 relative z-10" />
+            <span className="relative z-10">{t('addNewAccount')}</span>
+          </Button>
         </LightMotion>
 
         {/* Accounts List with Drag and Drop */}
