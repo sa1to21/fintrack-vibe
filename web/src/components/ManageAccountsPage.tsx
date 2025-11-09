@@ -51,6 +51,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Checkbox } from "./ui/checkbox";
 import { Textarea } from "./ui/textarea";
 import { enUS, ru } from "date-fns/locale";
+import { handleNumberInput } from "../utils/numberInput";
 
 interface ManageAccountsPageProps {
   onBack: () => void;
@@ -642,7 +643,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                         type="number"
                         placeholder=""
                         value={initialBalance}
-                        onChange={(e) => setInitialBalance(e.target.value)}
+                        onChange={handleNumberInput(setInitialBalance)}
                         onWheel={(e) => e.currentTarget.blur()}
                         className="border-blue-200 focus:border-blue-400 pr-10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         step="0.01"
@@ -687,7 +688,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                         type="number"
                         placeholder={t('placeholders.enterAmount')}
                         value={debtInitialAmount}
-                        onChange={(e) => setDebtInitialAmount(e.target.value)}
+                        onChange={handleNumberInput(setDebtInitialAmount)}
                         onWheel={(e) => e.currentTarget.blur()}
                         className="border-amber-200 focus:border-amber-400 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                         step="0.01"
@@ -921,7 +922,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                     type="number"
                     placeholder="0"
                     value={balanceChange}
-                    onChange={(e) => setBalanceChange(e.target.value)}
+                    onChange={handleNumberInput(setBalanceChange)}
                     onWheel={(e) => e.currentTarget.blur()}
                     className="text-xl font-medium text-center py-4 border-green-200 focus:border-green-400 focus:ring-green-400/20 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                     step="0.01"

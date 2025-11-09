@@ -25,6 +25,7 @@ import accountsService, { Account } from "../services/accounts.service";
 import { getAccountIconComponent } from "../utils/accountIcons";
 import { getCurrencySymbol } from "../constants/currencies";
 import { useTranslation } from "react-i18next";
+import { handleNumberInput } from "../utils/numberInput";
 
 interface Transaction {
   id: string;
@@ -419,7 +420,7 @@ export function AddTransactionPage({ onBack, onAddTransaction }: AddTransactionP
                       type="number"
                       placeholder="0"
                       value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
+                      onChange={handleNumberInput(setAmount)}
                       onWheel={(e) => e.currentTarget.blur()}
                       className="text-2xl font-medium text-center py-6 border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 bg-gradient-to-br from-white to-blue-50/30 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                       step="0.01"

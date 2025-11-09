@@ -44,6 +44,7 @@ import transactionsService from "../services/transactions.service";
 import transfersService from "../services/transfers.service";
 import { getCurrencySymbol, DEFAULT_CURRENCY } from "../constants/currencies";
 import { enUS, ru } from "date-fns/locale";
+import { handleNumberInput } from "../utils/numberInput";
 
 interface Transaction {
   id: string;
@@ -600,7 +601,7 @@ export function TransactionDetailPage({ transaction, onBack, onUpdate, onDelete 
                       type="number"
                       placeholder="0"
                       value={editData.amount}
-                      onChange={(e) => setEditData(prev => ({ ...prev, amount: e.target.value }))}
+                      onChange={handleNumberInput((value) => setEditData(prev => ({ ...prev, amount: value })))}
                       className="text-xl font-medium text-center py-4 pr-16 border-blue-200 focus:border-blue-400 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                       step="0.01"
                       min="0"
