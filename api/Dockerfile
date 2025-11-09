@@ -66,10 +66,7 @@ RUN groupadd --system --gid 1000 rails && \
     chown -R rails:rails db log storage tmp
 
 # Setup cron for rails user
-RUN crontab -u rails /rails/config/crontab && \
-    touch /rails/log/cron.log && \
-    chown rails:rails /rails/log/cron.log && \
-    chmod +x /rails/bin/start-server.sh
+RUN crontab -u rails /rails/config/crontab
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
