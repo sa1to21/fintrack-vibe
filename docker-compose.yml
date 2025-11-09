@@ -78,11 +78,13 @@ services:
     user: root
     command: |
       sh -c "
-        cat > /etc/cron.d/notifications << 'CRONEOF'
+        cat > /etc/cron.d/notifications << CRONEOF
       PATH=/usr/local/bundle/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       BUNDLE_PATH=/usr/local/bundle
       RAILS_ENV=production
-      */5 * * * * root cd /rails && RAILS_ENV=production BUNDLE_PATH=/usr/local/bundle /usr/local/bin/bundle exec rake notifications:send_reminders >> /rails/log/cron.log 2>&1
+      RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
+      TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      */5 * * * * root cd /rails && /usr/local/bin/bundle exec rake notifications:send_reminders >> /rails/log/cron.log 2>&1
       CRONEOF
         chmod 0644 /etc/cron.d/notifications &&
         touch /rails/log/cron.log &&
