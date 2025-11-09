@@ -64,11 +64,16 @@ COPY --from=build /rails /rails
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp
-USER 1000:1000
+
+# Setup cron for rails user
+RUN crontab -u rails /rails/config/crontab && \
+    touch /rails/log/cron.log && \
+    chown rails:rails /rails/log/cron.log && \
+    chmod +x /rails/bin/start-server.sh
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start server via Thruster by default, this can be overwritten at runtime
+# Start cron and server
 EXPOSE 80
-CMD ["./bin/thrust", "./bin/rails", "server"]
+CMD ["/bin/bash", "-c", "service cron start && su -s /bin/bash -c './bin/thrust ./bin/rails server' rails"]

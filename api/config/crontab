@@ -1,0 +1,2 @@
+# Run notification reminders every 5 minutes
+*/5 * * * * cd /rails && /usr/local/bundle/bin/bundle exec rake notifications:send_reminders >> /rails/log/cron.log 2>&1
