@@ -567,8 +567,8 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 <span className="relative z-10">{t('addNewAccount')}</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 max-h-[85vh] !gap-0 !grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden">
-              <DialogHeader className="pb-4">
+            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 h-[600px] max-h-[85vh] !gap-0 !grid-rows-[auto_1fr_auto] overflow-hidden">
+              <DialogHeader className="pb-4 flex-shrink-0">
                 <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   {t('createNewAccount')}
                 </DialogTitle>
@@ -576,7 +576,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   {t('dialogs.addDescription')}
                 </DialogDescription>
               </DialogHeader>
-              <div className="overflow-y-auto overflow-x-hidden pr-2 min-h-0">
+              <div className="overflow-y-scroll overflow-x-hidden pr-2">
                   <div className="space-y-4 pb-4">
                     <div className="space-y-2">
                       <Label htmlFor="account-name">{t('fields.accountName')}</Label>
