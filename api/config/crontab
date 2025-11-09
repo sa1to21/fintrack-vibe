@@ -1,2 +1,6 @@
+SHELL=/bin/bash
+PATH=/usr/local/bundle/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+RAILS_ENV=production
+
 # Run notification reminders every 5 minutes
 */5 * * * * cd /rails && /usr/local/bundle/bin/bundle exec rake notifications:send_reminders >> /rails/log/cron.log 2>&1
