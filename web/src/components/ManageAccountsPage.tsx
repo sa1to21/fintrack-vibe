@@ -567,8 +567,8 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 <span className="relative z-10">{t('addNewAccount')}</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 max-h-[90vh] overflow-hidden">
-              <DialogHeader>
+            <DialogContent className="border-blue-200 bg-gradient-to-br from-white to-blue-50/30 max-h-[85vh] flex flex-col">
+              <DialogHeader className="flex-shrink-0">
                 <DialogTitle className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   {t('createNewAccount')}
                 </DialogTitle>
@@ -576,8 +576,8 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                   {t('dialogs.addDescription')}
                 </DialogDescription>
               </DialogHeader>
-              <div className="overflow-y-auto overflow-x-hidden max-h-[calc(90vh-180px)]">
-                  <div className="space-y-4">
+              <div className="overflow-y-auto overflow-x-hidden flex-1 pr-2">
+                  <div className="space-y-4 pb-2">
                     <div className="space-y-2">
                       <Label htmlFor="account-name">{t('fields.accountName')}</Label>
                       <Input
@@ -722,7 +722,7 @@ export function ManageAccountsPage({ onBack }: ManageAccountsPageProps) {
                 )}
                   </div>
                 </div>
-                <DialogFooter className="border-t border-blue-100 mt-4">
+                <DialogFooter className="border-t border-blue-100 flex-shrink-0">
                   <Button
                     variant="outline"
                     onClick={() => setIsAddDialogOpen(false)}
