@@ -53,8 +53,8 @@
     "withdraw": "Withdraw",
     "depositOperation": "Deposit funds",
     "withdrawOperation": "Withdraw funds",
-    "deposited": "deposited",
-    "withdrawn": "withdrawn"
+    "deposited": "successfully deposited",
+    "withdrawn": "successfully updated"
   },
   "dialogs": {
     "addDescription": "Add a new account to track your finances",

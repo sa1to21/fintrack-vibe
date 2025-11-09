@@ -53,8 +53,8 @@
     "withdraw": "Снять",
     "depositOperation": "Пополнение средств",
     "withdrawOperation": "Снятие средств",
-    "deposited": "пополнен",
-    "withdrawn": "уменьшен"
+    "deposited": "успешно пополнен",
+    "withdrawn": "успешно изменен"
   },
   "dialogs": {
     "addDescription": "Добавьте новый счёт для отслеживания ваших финансов",
