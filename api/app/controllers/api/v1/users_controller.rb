@@ -17,12 +17,19 @@ class Api::V1::UsersController < Api::V1::BaseController
 
   def update_by_telegram
     user = User.find_or_initialize_by(telegram_id: params[:telegram_id])
+    is_new_user = user.new_record?
 
     user.assign_attributes(telegram_user_params)
     user.name = default_telegram_name if user.name.blank?
     user.base_currency ||= 'RUB'
 
     if user.save
+      # Создаем дефолтный счет для нового пользователя
+      # Категории и notification_settings создаются через after_create колбэки
+      if is_new_user
+        create_default_account(user)
+      end
+
       render json: user, serializer: UserSerializer
     else
       render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
@@ -72,5 +79,23 @@ class Api::V1::UsersController < Api::V1::BaseController
     params[:name].presence ||
       params[:username].presence ||
       "Telegram user #{params[:telegram_id]}"
+  end
+
+  def create_default_account(user)
+    lang = user.language_code == 'ru' ? 'ru' : 'en'
+
+    account_name = {
+      'ru' => 'Основной счёт',
+      'en' => 'Main Account'
+    }
+
+    user.accounts.create!(
+      name: account_name[lang],
+      balance: 0,
+      currency: 'RUB',
+      account_type: 'cash'
+    )
+  rescue => e
+    Rails.logger.error "Failed to create default account for user #{user.id}: #{e.message}"
   end
 end

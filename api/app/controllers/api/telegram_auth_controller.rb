@@ -53,6 +53,17 @@ module Api
           username: user_params[:username],
           language_code: preferred_language
         )
+
+        # Проверяем наличие счета и создаем если его нет
+        if user.accounts.empty?
+          begin
+            Rails.logger.warn "User #{user.id} has no accounts, creating default account"
+            create_default_account(user)
+            Rails.logger.info "Created default account for existing user #{user.id}"
+          rescue => e
+            Rails.logger.error "Failed to create default account for user #{user.id}: #{e.message}"
+          end
+        end
       end
 
       # Генерируем токен
